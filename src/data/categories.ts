@@ -1,0 +1,60 @@
+import type { Category } from "@/types/category";
+
+export const categories: Category[] = [
+  {
+    id: "cat-01",
+    slug: "desktop-stands",
+    name: "پایه رومیزی",
+    description: "پایه‌های مینیمال برای موبایل و تبلت روی میز کار",
+    image: "/images/categories/desktop-stands.jpg",
+  },
+  {
+    id: "cat-02",
+    slug: "charging-docks",
+    name: "داک شارژ",
+    description: "ایستگاه‌های شارژ چندکاره برای دسک و اتاق خواب",
+    image: "/images/categories/charging-docks.jpg",
+  },
+  {
+    id: "cat-03",
+    slug: "phone-mounts",
+    name: "نگهدارنده موبایل",
+    description: "گیره و نگهدارنده موبایل برای خودرو، دوچرخه و لوازم دیگر",
+    image: "/images/categories/phone-mounts.jpg",
+  },
+  {
+    id: "cat-04",
+    slug: "wall-hooks",
+    name: "قلاب و آویز دیواری",
+    description: "قلاب‌های دیواری بدون پیچ برای سازمان‌دهی فضا",
+    image: "/images/categories/wall-hooks.jpg",
+  },
+  {
+    id: "cat-05",
+    slug: "modular-grid",
+    name: "سیستم مدولار گرید",
+    description: "قطعات مدولار قابل‌ترکیب برای چیدمان دلخواه روی میز",
+    image: "/images/categories/modular-grid.jpg",
+  },
+  {
+    id: "cat-06",
+    slug: "travel-folding",
+    name: "لوازم سفر و تاشو",
+    description: "پایه‌های تاشوی سبک و جمع‌وجور برای سفر",
+    image: "/images/categories/travel-folding.jpg",
+  },
+  {
+    id: "cat-07",
+    slug: "magnetic-mounts",
+    name: "نگهدارنده مغناطیسی",
+    description: "نگهدارنده‌های مغناطیسی سازگار با MagSafe",
+    image: "/images/categories/magnetic-mounts.jpg",
+  },
+  {
+    id: "cat-08",
+    slug: "accessories",
+    name: "اکسسوری و قطعات",
+    description: "قطعات جانبی و لوازم تکمیلی محصولات VYBE",
+    image: "/images/categories/accessories.jpg",
+  },
+];

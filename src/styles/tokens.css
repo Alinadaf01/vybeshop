@@ -1,0 +1,156 @@
+/*
+ * GENERATED FILE — do not hand-edit.
+ * Source: design/tokens.json (v1.1.0)
+ * Regenerate with: npm run tokens:build
+ */
+
+:root {
+  /* color.brand */
+  --color-graphite: #0B0B0C;
+  --color-fog-white: #F5F5F3;
+  --color-titanium: #7A7D82;
+  --color-silver: #B8BCC2;
+  --color-cyan: #00D1FF;
+
+  /* color.neutral */
+  --color-white: #FFFFFF;
+  --color-gray-100: #ECECEC;
+  --color-gray-500: #9A9A9A;
+  --color-gray-800: #4A4A4A;
+  --color-black: #000000;
+
+  /* extra dark-surface tokens used in design HTML but not yet formalized in tokens.json — flagged in design/NOTES.md */
+  --color-ink: #1A1A1C;
+  --color-surface: #141416;
+  --color-edge: #26262A;
+  /* overlay scrim — gray800 with alpha baked in, since bg-x/50 can't apply to a var() color */
+  --color-overlay: rgba(74, 74, 74, 0.6);
+
+  /* color.status */
+  --color-danger: #D64545;
+  --color-success: #2FB66B;
+  --color-warning: #F4B400;
+  --color-info: #00D1FF;
+  --color-danger-ink: #B23434;
+  --color-success-ink: #1E7A47;
+  --color-warning-ink: #8A6400;
+  --color-danger-dark: #E86A6A;
+  --color-success-dark: #2FB66B;
+  --color-warning-dark: #F4B400;
+
+  /* color.semantic (references resolved against color.brand/neutral) */
+  --semantic-bg-page: #F5F5F3;
+  --semantic-bg-header: #0B0B0C;
+  --semantic-bg-footer: #0B0B0C;
+  --semantic-bg-card: #FFFFFF;
+  --semantic-bg-section-inverse: #0B0B0C;
+  --semantic-text-primary: #0B0B0C;
+  --semantic-text-secondary: #4A4A4A;
+  --semantic-text-secondary-large: #7A7D82;
+  --semantic-text-on-dark: #FFFFFF;
+  --semantic-text-on-dark-muted: #7A7D82;
+  --semantic-text-on-stripe-muted: #B8BCC2;
+  --semantic-text-disabled: #B8BCC2;
+  --semantic-link-on-light: #0B0B0C;
+  --semantic-link-on-light-underline: #00D1FF;
+  --semantic-link-on-dark: #00D1FF;
+  --semantic-btn-primary-bg: #0B0B0C;
+  --semantic-btn-primary-bg-hover: #1A1A1C;
+  --semantic-btn-primary-text: #FFFFFF;
+  --semantic-btn-secondary-bg: #FFFFFF;
+  --semantic-btn-secondary-text: #0B0B0C;
+  --semantic-btn-disabled-bg: #B8BCC2;
+  --semantic-border: #7A7D82;
+  --semantic-border-subtle: #ECECEC;
+  --semantic-focus-ring: #00D1FF;
+
+  /* font.family */
+  --font-peyda: "Peyda", system-ui, sans-serif;
+  --font-sora: "Sora", system-ui, sans-serif;
+  --font-inter: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* typeScale — mobile values (desktop override below) */
+  --fs-display: 40px;
+  --lh-display: 1.1;
+  --ls-display: -0.02em;
+  --fs-h1: 32px;
+  --lh-h1: 1.2;
+  --ls-h1: 0;
+  --fs-h2: 26px;
+  --lh-h2: 1.2;
+  --ls-h2: 0;
+  --fs-h3: 22px;
+  --lh-h3: 1.2;
+  --ls-h3: 0;
+  --fs-h4: 20px;
+  --lh-h4: 1.2;
+  --ls-h4: 0;
+  --fs-body-large: 18px;
+  --lh-body-large: 1.5;
+  --ls-body-large: 0;
+  --fs-body: 16px;
+  --lh-body: 1.5;
+  --ls-body: 0;
+  --fs-small: 14px;
+  --lh-small: 1.5;
+  --ls-small: 0;
+  --fs-caption: 12px;
+  --lh-caption: 1.4;
+  --ls-caption: 0.01em;
+  --fs-micro: 10px;
+  --lh-micro: 1.4;
+  --ls-micro: 0.01em;
+
+  /* space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 80px;
+  --space-9: 120px;
+  --space-10: 160px;
+
+  /* layout */
+  --layout-max-text-width: 720px;
+  --layout-max-content-width: 1440px;
+  --layout-gutter: 20px;
+  --layout-paragraph-gap: 24px;
+  --layout-section-gap: 56px;
+  --layout-icon-text-gap: 8px;
+  --layout-header-height: 72px;
+
+  /* radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 999px;
+
+  /* border */
+  --border-hairline: 1px;
+  --border-thick: 2px;
+
+  /* motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --dur-slow: 600ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    /* typeScale — desktop overrides */
+    --fs-display: 64px;
+    --fs-h1: 48px;
+    --fs-h2: 36px;
+    --fs-h3: 28px;
+    --fs-h4: 24px;
+    --fs-body-large: 20px;
+    --layout-gutter: 40px;
+    --layout-section-gap: 80px;
+  }
+}
