@@ -13,23 +13,12 @@ import { Rating } from "@/components/ui/Rating";
 import { SpecTable } from "@/components/product/SpecTable";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductCard } from "@/components/product/ProductCard";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { Image } from "@/components/ui/Image";
 import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { productDetailContent as c } from "@/content/productDetail";
 
 const LOW_STOCK_THRESHOLD = 10;
-
-const highlights = [
-  "پرینت‌شده به‌صورت یک‌تکه، بدون پیچ یا چسب",
-  "سطح مات، اثر انگشت نمی‌گیرد",
-  "بازرسی دستی قبل از ارسال",
-];
-
-const fakeReviews = [
-  { name: "سارا م.", date: "1404/03/11", rating: 5, body: "اندازه‌اش دقیقاً همان چیزی است که در مشخصات نوشته." },
-  { name: "امیر ک.", date: "1404/02/28", rating: 4, body: "کیفیت سطح خوب است ولی رنگ کمی روشن‌تر از عکس سایت به نظر می‌رسد." },
-  { name: "نگار ر.", date: "1404/02/09", rating: 5, body: "دو ماه استفاده کردم، نه ترک خورد نه لق شد." },
-];
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -51,7 +40,7 @@ export default function ProductDetailPage() {
   if (isError) return <NotFoundPage />;
   if (isLoading || !product) return <PageLoadingFallback />;
 
-  const category = categories.find((c) => c.slug === product.category);
+  const category = categories.find((c2) => c2.slug === product.category);
   const isOutOfStock = product.stockCount <= 0;
   const isLowStock = !isOutOfStock && product.stockCount <= LOW_STOCK_THRESHOLD;
   const selectedColor = product.colors[selectedColorIndex];
@@ -97,12 +86,12 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
-              <Rating value={4.6} count={23} />
+              <Rating value={c.ratingValue} count={c.ratingCount} />
               <a
                 href="#reviews"
                 className="text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite"
               >
-                ۲۳ دیدگاه ثبت‌شده
+                {c.reviewsCountLabel}
               </a>
             </div>
 
@@ -110,12 +99,13 @@ export default function ProductDetailPage() {
               <span dir="ltr" className="font-mono text-h3 font-medium text-graphite">
                 {formatPrice(product.price)}
               </span>
-              <span className="text-small text-gray-800">قیمت نهایی؛ ارسال جداگانه محاسبه می‌شود.</span>
+              <span className="text-small text-gray-800">{c.priceNote}</span>
             </div>
 
             <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
               <legend className="mb-1 p-0 text-small font-semibold">
-                رنگ فیلامنت{selectedColor ? ` — ${selectedColor.name}` : ""}
+                {c.colorLegend}
+                {selectedColor ? ` — ${selectedColor.name}` : ""}
               </legend>
               <div className="flex flex-wrap gap-3">
                 {product.colors.map((color, index) => (
@@ -134,39 +124,39 @@ export default function ProductDetailPage() {
             <div className="flex flex-wrap items-center gap-3">
               <QuantityStepper value={quantity} onChange={setQuantity} disabled={isOutOfStock} aria-label="تعداد" />
               <Button variant="primary" disabled={isOutOfStock} className="min-w-[180px] flex-1">
-                {isOutOfStock ? "ناموجود" : "افزودن به سبد"}
+                {isOutOfStock ? c.outOfStock : c.addToCart}
               </Button>
             </div>
 
             <div className="flex flex-wrap gap-3">
               <Button variant="secondary" className="flex-1">
-                ذخیره در علاقه‌مندی‌ها
+                {c.saveToFavorites}
               </Button>
               <Button variant="secondary" className="font-mono text-micro">
-                SHARE
+                {c.share}
               </Button>
             </div>
 
             {isLowStock && (
               <p className="m-0 flex items-center gap-2 rounded-md border border-gray-100 bg-white p-4 text-small text-warning-ink">
                 <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-warning" />
-                تنها {product.stockCount.toLocaleString("en-US")} عدد در رنگ {product.colors[0]?.name} باقی مانده است.
+                {c.lowStockTemplate(product.stockCount, product.colors[0]?.name ?? "")}
               </p>
             )}
 
             <dl className="m-0 flex flex-col border-t border-gray-100">
               <div className="flex justify-between gap-4 border-b border-gray-100 py-3">
-                <dt className="text-small text-gray-800">ارسال</dt>
-                <dd className="m-0 text-small">۲ تا ۴ روز کاری، تهران و شهرستان</dd>
+                <dt className="text-small text-gray-800">{c.shipping.label}</dt>
+                <dd className="m-0 text-small">{c.shipping.value}</dd>
               </div>
               <div className="flex justify-between gap-4 border-b border-gray-100 py-3">
-                <dt className="text-small text-gray-800">مرجوعی</dt>
-                <dd className="m-0 text-small">۷ روز، بدون قید</dd>
+                <dt className="text-small text-gray-800">{c.returns.label}</dt>
+                <dd className="m-0 text-small">{c.returns.value}</dd>
               </div>
               <div className="flex justify-between gap-4 py-3">
-                <dt className="text-small text-gray-800">وضعیت ساخت</dt>
+                <dt className="text-small text-gray-800">{c.buildStatus.label}</dt>
                 <dd dir="ltr" className={`m-0 font-mono text-small ${isOutOfStock ? "text-danger-ink" : "text-success-ink"}`}>
-                  {isOutOfStock ? "OUT OF STOCK" : "IN STOCK · SHIPS FROM WORKSHOP"}
+                  {isOutOfStock ? c.buildStatus.outOfStock : c.buildStatus.inStock}
                 </dd>
               </div>
             </dl>
@@ -175,10 +165,10 @@ export default function ProductDetailPage() {
 
         <section className="grid grid-cols-1 gap-10 border-t border-gray-100 py-14 md:py-20 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-16">
           <div className="flex max-w-text flex-col gap-6">
-            <h2 className="m-0 text-h2 font-semibold">چرا این شکل</h2>
+            <h2 className="m-0 text-h2 font-semibold">{c.whyThisShape.heading}</h2>
             <p className="m-0 text-body-large leading-[1.7] text-gray-800 [text-wrap:pretty]">{product.description}</p>
             <ul className="m-0 flex list-none flex-col gap-3 p-0">
-              {highlights.map((item, index) => (
+              {c.whyThisShape.highlights.map((item, index) => (
                 <li key={item} className="flex gap-3 border-t border-gray-100 pt-3 text-body text-gray-800">
                   <span aria-hidden="true" className="font-mono text-micro text-titanium">
                     {String(index + 1).padStart(2, "0")}
@@ -191,25 +181,25 @@ export default function ProductDetailPage() {
 
           <div className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-6">
             <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">
-              TECHNICAL SPEC
+              {c.specTable.kicker}
             </p>
             <SpecTable
               rows={[
-                { label: "کد مدل", value: product.sku },
-                { label: "ابعاد", value: formatDimensions(product.dimensions) },
-                { label: "وزن", value: `${product.weight} g` },
-                { label: "متریال", value: product.material },
-                { label: "ارتفاع لایه", value: `${product.layerHeight} mm` },
-                { label: "دسته‌بندی", value: category?.name ?? product.category },
+                { label: c.specTable.labels.sku, value: product.sku },
+                { label: c.specTable.labels.dimensions, value: formatDimensions(product.dimensions) },
+                { label: c.specTable.labels.weight, value: `${product.weight} g` },
+                { label: c.specTable.labels.material, value: product.material },
+                { label: c.specTable.labels.layerHeight, value: `${product.layerHeight} mm` },
+                { label: c.specTable.labels.category, value: category?.name ?? product.category },
               ]}
             />
             <p className="m-0 border-t border-gray-100 pt-4 text-small leading-[1.6] text-gray-800">
-              PLA در آفتاب مستقیم داخل خودرو نرم می‌شود. جزئیات نگهداری در{" "}
+              {c.specTable.careNoteBefore}{" "}
               <Link
                 to="/blog/polycarbonate-care-guide"
                 className="text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite"
               >
-                راهنمای نگهداری قطعات
+                {c.specTable.careLinkLabel}
               </Link>
               .
             </p>
@@ -217,46 +207,40 @@ export default function ProductDetailPage() {
         </section>
 
         <section className="mb-14 grid grid-cols-1 gap-8 rounded-xl bg-graphite p-6 text-fog-white md:mb-20 md:p-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-          <ImagePlaceholder
-            caption="MACRO · LAYER LINES 0.2 MM"
+          <Image
+            src="/images/marketing/macro-layer-lines.jpg"
+            alt={c.howItsMade.macroImageAlt}
+            width={1200}
+            height={800}
             dark
-            className="h-[280px] items-end rounded-lg border border-edge"
+            className="h-[280px] w-full rounded-lg border border-edge object-cover"
           />
           <div className="flex flex-col gap-4">
             <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">
-              HOW IT IS MADE
+              {c.howItsMade.kicker}
             </p>
-            <h2 className="m-0 text-h2 font-semibold">خط لایه را پنهان نمی‌کنیم</h2>
-            <p className="m-0 text-body-large leading-[1.7] text-silver [text-wrap:pretty]">
-              هر قطعه در کارگاه خودمان چاپ، پخ‌زنی و بازرسی می‌شود. رد ساخت روی سطح می‌ماند؛ این بخشی از شکل محصول
-              است، نه نقص آن.
-            </p>
+            <h2 className="m-0 text-h2 font-semibold">{c.howItsMade.heading}</h2>
+            <p className="m-0 text-body-large leading-[1.7] text-silver [text-wrap:pretty]">{c.howItsMade.body}</p>
             <Link
               to="/blog/from-idea-to-3d-print"
               className="self-start border-b border-titanium pb-1 text-body font-medium text-fog-white no-underline transition-colors duration-fast hover:border-cyan"
             >
-              فرایند تولید
+              {c.howItsMade.linkLabel}
             </Link>
           </div>
         </section>
 
         <section id="reviews" className="grid grid-cols-1 gap-10 border-t border-gray-100 py-14 md:py-20 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-16">
           <div className="flex flex-col gap-4 lg:sticky lg:top-[104px] lg:self-start">
-            <h2 className="m-0 text-h2 font-semibold">دیدگاه‌ها</h2>
+            <h2 className="m-0 text-h2 font-semibold">{c.reviews.heading}</h2>
             <div className="flex items-baseline gap-3">
               <span dir="ltr" className="font-mono text-display font-medium leading-none">
-                4.6
+                {c.ratingValue}
               </span>
-              <span className="text-small text-gray-800">از ۲۳ دیدگاه</span>
+              <span className="text-small text-gray-800">{c.reviews.ofLabel}</span>
             </div>
             <div className="flex flex-col gap-2">
-              {[
-                { star: 5, count: 15, pct: 65 },
-                { star: 4, count: 6, pct: 26 },
-                { star: 3, count: 2, pct: 9 },
-                { star: 2, count: 0, pct: 0 },
-                { star: 1, count: 0, pct: 0 },
-              ].map((row) => (
+              {c.reviews.distribution.map((row) => (
                 <div key={row.star} className="flex items-center gap-3">
                   <span dir="ltr" className="w-4 font-mono text-caption text-gray-800">
                     {row.star}
@@ -271,17 +255,17 @@ export default function ProductDetailPage() {
               ))}
             </div>
             <Button variant="secondary" className="mt-2 self-start">
-              نوشتن دیدگاه
+              {c.reviews.writeReview}
             </Button>
           </div>
 
           <div className="flex flex-col gap-4">
-            {fakeReviews.map((review) => (
+            {c.reviews.items.map((review) => (
               <article key={review.name} className="flex flex-col gap-3 rounded-lg border border-gray-100 bg-white p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <span className="text-body font-semibold">{review.name}</span>
                   <span dir="ltr" className="font-mono text-micro tracking-[0.06em] text-gray-800">
-                    {review.date} &middot; خرید تأییدشده
+                    {review.date} &middot; {c.reviews.confirmedPurchase}
                   </span>
                 </div>
                 <Rating value={review.rating} />
@@ -294,13 +278,13 @@ export default function ProductDetailPage() {
         {related.length > 0 && (
           <section className="flex flex-col gap-8 border-t border-gray-100 py-14 md:py-20">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <h2 className="m-0 text-h2 font-semibold">در همین دسته</h2>
+              <h2 className="m-0 text-h2 font-semibold">{c.related.heading}</h2>
               {category && (
                 <Link
                   to={`/products?category=${category.slug}`}
                   className="text-body font-medium text-graphite no-underline underline-offset-4 hover:underline"
                 >
-                  همه محصولات {category.name}
+                  {c.related.viewAllTemplate(category.name)}
                 </Link>
               )}
             </div>
@@ -321,7 +305,7 @@ export default function ProductDetailPage() {
           </span>
         </div>
         <Button variant="primary" disabled={isOutOfStock} className="ms-auto shrink-0">
-          {isOutOfStock ? "ناموجود" : "افزودن به سبد"}
+          {isOutOfStock ? c.outOfStock : c.addToCart}
         </Button>
       </div>
     </div>

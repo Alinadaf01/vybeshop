@@ -6,8 +6,10 @@ import { formatPrice, formatJalaliDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { Image } from "@/components/ui/Image";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/home/Reveal";
+import { homeContent } from "@/content/home";
 
 export default function HomePage() {
   const { data: productsPage } = useQuery({
@@ -34,21 +36,25 @@ export default function HomePage() {
       {/* هیرو */}
       <section className="relative flex min-h-[calc(100vh-72px)] flex-col items-center justify-center gap-10 bg-graphite px-5 py-14 text-center text-fog-white md:py-20 xl:px-10">
         <div className="flex aspect-square w-full max-w-[520px] items-end rounded-xl border border-edge">
-          <ImagePlaceholder
-            caption="محصول قهرمان، مشکی مات، مرکز کادر — نور نرم از بالا · 1:1"
+          <Image
+            src="/images/marketing/hero.jpg"
+            alt={homeContent.hero.imageAlt}
+            width={1200}
+            height={1200}
+            priority
             dark
-            className="size-full rounded-xl"
+            className="size-full rounded-xl object-cover"
           />
         </div>
         <div className="flex max-w-text flex-col items-center gap-6">
-          <h1 className="m-0 text-display font-extrabold">هر قطعه، یک تصمیم طراحی</h1>
-          <p className="m-0 text-body-large text-silver">اشیای کاربردی روزمره، پرینت‌شده لایه به لایه در کارگاه ما.</p>
+          <h1 className="m-0 text-display font-extrabold">{homeContent.hero.title}</h1>
+          <p className="m-0 text-body-large text-silver">{homeContent.hero.subtitle}</p>
           <Link to="/products">
-            <Button className="h-14 bg-white px-8 text-graphite hover:bg-gray-100">مجموعه را کاوش کنید</Button>
+            <Button className="h-14 bg-white px-8 text-graphite hover:bg-gray-100">{homeContent.hero.cta}</Button>
           </Link>
         </div>
         <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-titanium">
-          PLA &middot; FDM &middot; 0.2MM LAYER
+          {homeContent.hero.caption}
         </span>
         <div id="hero-sentinel" className="absolute bottom-0 h-px w-full" aria-hidden="true" />
       </section>
@@ -56,14 +62,20 @@ export default function HomePage() {
       {/* نوار جوهره */}
       <section className="border-b border-gray-100 bg-white px-5 py-14 text-center md:py-16 xl:px-10">
         <Reveal>
-          <h2 className="m-0 text-h2 font-semibold">طراحی مینیمال. حداکثر کاربرد.</h2>
+          <h2 className="m-0 text-h2 font-semibold">{homeContent.essence.heading}</h2>
         </Reveal>
       </section>
 
       {/* نمایش محصول ۱ */}
       {showcaseA && (
         <section className="grid grid-cols-1 bg-fog-white lg:grid-cols-2">
-          <ImagePlaceholder caption="محصول روی بتن، نور کناری · 1:1" className="aspect-square" />
+          <Image
+            src={showcaseA.images[0]}
+            alt={showcaseA.name}
+            width={1200}
+            height={1200}
+            className="aspect-square w-full object-cover"
+          />
           <Reveal className="flex flex-col justify-center gap-6 px-5 py-14 md:py-20 xl:px-10">
             <div className="flex max-w-[520px] flex-col gap-4">
               <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
@@ -143,27 +155,31 @@ export default function HomePage() {
               </div>
             </dl>
             <Link to={`/products/${showcaseB.slug}`} className="self-start">
-              <Button
-                variant="text"
-                className="border-titanium text-fog-white hover:border-cyan"
-              >
+              <Button variant="text" className="border-titanium text-fog-white hover:border-cyan">
                 جزئیات را ببینید
               </Button>
             </Link>
           </Reveal>
-          <ImagePlaceholder caption="محصول مشکی مات روی مشکی، نور کناری · 1:1" dark className="order-first aspect-square lg:order-none" />
+          <Image
+            src={showcaseB.images[0]}
+            alt={showcaseB.name}
+            width={1200}
+            height={1200}
+            dark
+            className="order-first aspect-square w-full object-cover lg:order-none"
+          />
         </section>
       )}
 
       {/* دسته‌بندی‌ها */}
       <section className="mx-auto max-w-page px-5 py-14 md:py-20 xl:px-10">
         <Reveal className="mb-8 flex flex-wrap items-baseline justify-between gap-6">
-          <h2 className="m-0 text-h2 font-semibold">دسته‌بندی‌ها</h2>
+          <h2 className="m-0 text-h2 font-semibold">{homeContent.categories.heading}</h2>
           <Link
             to="/categories"
             className="text-body font-medium text-graphite underline decoration-cyan decoration-2 underline-offset-4 transition-colors duration-fast hover:text-cyan"
           >
-            همه دسته‌ها
+            {homeContent.categories.viewAll}
           </Link>
         </Reveal>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -174,7 +190,13 @@ export default function HomePage() {
                   to={`/products?category=${category.slug}`}
                   className="block overflow-hidden rounded-lg border border-gray-100 bg-white no-underline transition-colors duration-base hover:border-titanium"
                 >
-                  <ImagePlaceholder caption={`${category.name} · 16:11`} className="aspect-[16/11]" />
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    width={1600}
+                    height={1100}
+                    className="aspect-[16/11] w-full object-cover"
+                  />
                   <span className="flex items-baseline justify-between gap-2 p-4">
                     <span className="text-h4 font-semibold text-graphite">{category.name}</span>
                     <span dir="ltr" className="font-mono text-caption text-gray-800">
@@ -195,24 +217,20 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-page flex-col gap-12 px-5 xl:px-10">
           <Reveal className="flex max-w-text flex-col gap-4">
             <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-cyan">
-              PROCESS
+              {homeContent.process.kicker}
             </span>
-            <h2 className="m-0 text-h2 font-semibold">چگونه ساخته می‌شود</h2>
-            <p className="m-0 text-body-large text-silver">خط لایه را پنهان نمی‌کنیم. ردّ ساخت روی هر سطح می‌ماند.</p>
+            <h2 className="m-0 text-h2 font-semibold">{homeContent.process.heading}</h2>
+            <p className="m-0 text-body-large text-silver">{homeContent.process.subtitle}</p>
           </Reveal>
           <Reveal>
             <ImagePlaceholder
-              caption="ماکرو خطوط لایه‌ای، تمام‌عرض — نور کناری تند، عمق میدان کم · 16:4"
+              caption={homeContent.process.macroImageAlt}
               dark
               className="h-[280px] items-end rounded-lg border border-edge"
             />
           </Reveal>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {[
-              { step: "01 / DESIGN", title: "طراحی", body: "از طرح دستی تا مدل پارامتریک. میانگین شش نمونه تا نسخه نهایی." },
-              { step: "02 / PRINT", title: "پرینت", body: "فیلامنت PLA، ارتفاع لایه ۰.۲ میلی‌متر، بدون پرداخت شیمیایی." },
-              { step: "03 / DELIVER", title: "تحویل", body: "بازرسی دستی هر قطعه، بسته‌بندی مقوایی بدون پلاستیک." },
-            ].map((item) => (
+            {homeContent.process.steps.map((item) => (
               <Reveal key={item.step} className="flex flex-col gap-3 border-t border-edge pt-6">
                 <span dir="ltr" className="font-mono text-micro text-titanium">
                   {item.step}
@@ -223,10 +241,9 @@ export default function HomePage() {
             ))}
           </div>
           <div dir="ltr" className="flex flex-wrap gap-6 border-t border-edge pt-6 font-mono text-caption tracking-[0.06em] text-titanium">
-            <span>PLA</span>
-            <span>FDM</span>
-            <span>0.2MM LAYER</span>
-            <span>BAMBU LAB P1S</span>
+            {homeContent.process.tags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
           </div>
         </div>
       </section>
@@ -234,12 +251,12 @@ export default function HomePage() {
       {/* اکنون موجود است */}
       <section className="mx-auto max-w-page px-5 py-14 md:py-20 xl:px-10">
         <Reveal className="mb-8 flex flex-wrap items-baseline justify-between gap-6">
-          <h2 className="m-0 text-h2 font-semibold">اکنون موجود است</h2>
+          <h2 className="m-0 text-h2 font-semibold">{homeContent.featured.heading}</h2>
           <Link
             to="/products"
             className="text-body font-medium text-graphite underline decoration-cyan decoration-2 underline-offset-4 transition-colors duration-fast hover:text-cyan"
           >
-            همه محصولات
+            {homeContent.featured.viewAll}
           </Link>
         </Reveal>
         <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
@@ -259,12 +276,12 @@ export default function HomePage() {
       <section className="border-y border-gray-100 bg-white px-5 py-14 md:py-20 xl:px-10">
         <div className="mx-auto max-w-page">
           <Reveal className="mb-8 flex flex-wrap items-baseline justify-between gap-6">
-            <h2 className="m-0 text-h2 font-semibold">از بلاگ</h2>
+            <h2 className="m-0 text-h2 font-semibold">{homeContent.blog.heading}</h2>
             <Link
               to="/blog"
               className="text-body font-medium text-graphite underline decoration-cyan decoration-2 underline-offset-4 transition-colors duration-fast hover:text-cyan"
             >
-              همه نوشته‌ها
+              {homeContent.blog.viewAll}
             </Link>
           </Reveal>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -275,7 +292,13 @@ export default function HomePage() {
                     to={`/blog/${post.slug}`}
                     className="block overflow-hidden rounded-lg border border-gray-100 bg-white no-underline transition-colors duration-base hover:border-titanium"
                   >
-                    <ImagePlaceholder caption="تصویر شاخص مقاله · 16:10" className="aspect-[16/10]" />
+                    <Image
+                      src={post.coverImage}
+                      alt={post.title}
+                      width={1600}
+                      height={1000}
+                      className="aspect-[16/10] w-full object-cover"
+                    />
                     <span className="flex flex-col gap-2 p-4">
                       <span dir="ltr" className="font-mono text-micro tracking-[0.06em] text-gray-800">
                         {post.tags[0]} &middot; {formatJalaliDate(post.publishedAt)} &middot; {post.readingTime} دقیقه
@@ -297,24 +320,22 @@ export default function HomePage() {
       <section className="mx-auto grid max-w-page grid-cols-1 items-center gap-12 px-5 py-14 md:py-20 lg:grid-cols-2 xl:px-10">
         <Reveal className="flex max-w-[520px] flex-col gap-4">
           <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-            COMMUNITY
+            {homeContent.community.kicker}
           </span>
-          <h2 className="m-0 text-h2 font-semibold">جامعه VYBE</h2>
-          <p className="m-0 text-body-large text-gray-800">
-            ماهی یک ایمیل: محصول تازه و یادداشت‌های کارگاه. عکس‌های شما را با برچسب VYBE می‌بینیم.
-          </p>
+          <h2 className="m-0 text-h2 font-semibold">{homeContent.community.heading}</h2>
+          <p className="m-0 text-body-large text-gray-800">{homeContent.community.body}</p>
           <form className="mt-2 flex max-w-[420px] gap-2" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
               required
-              placeholder="ایمیل شما"
+              placeholder={homeContent.community.emailPlaceholder}
               className="h-12 flex-1 rounded-md border border-silver bg-white px-4 text-body outline-none transition-colors duration-fast hover:border-titanium focus-visible:border-graphite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"
             />
             <button
               type="submit"
               className="h-12 rounded-md border-0 bg-graphite px-6 text-body font-medium text-fog-white transition-colors duration-fast hover:bg-ink"
             >
-              عضویت
+              {homeContent.community.submitLabel}
             </button>
           </form>
         </Reveal>

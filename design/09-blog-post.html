@@ -1,0 +1,320 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VYBE · 09 نوشته</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--color-graphite:#0B0B0C; --color-fog-white:#F5F5F3; --color-titanium:#7A7D82; --color-silver:#B8BCC2; --color-cyan:#00D1FF;
+--color-ink:#1A1A1C; --color-surface:#141416; --color-edge:#26262A; --color-white:#FFFFFF; --color-line:#ECECEC;
+--color-gray-500:#9A9A9A; --color-gray-800:#4A4A4A; --color-black:#000000;
+--color-danger:#D64545; --color-danger-ink:#B23434; --color-danger-dark:#E86A6A;
+--color-success:#2FB66B; --color-success-ink:#1E7A47; --color-warning:#F4B400; --color-warning-ink:#8A6400;
+--font-peyda:"Peyda","Vazirmatn",system-ui,sans-serif; --font-sora:"Sora",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display:40px; --fs-h1:32px; --fs-h2:26px; --fs-h3:22px; --fs-h4:20px;
+--fs-body-large:18px; --fs-body:16px; --fs-small:14px; --fs-caption:12px; --fs-micro:10px;
+--radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+--ease:cubic-bezier(0.4,0,0.2,1); --dur-fast:150ms; --dur-base:300ms; --dur-slow:600ms;
+}
+@media (min-width:768px){:root{
+--fs-display:64px; --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:24px; --fs-body-large:20px;
+}}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");font-weight:800;font-display:swap}
+html,body{margin:0}
+a{color:var(--color-graphite)}
+a:hover{color:var(--color-ink)}
+@keyframes vybeShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.skeleton{background:linear-gradient(90deg,#ECECEC 0%,#F7F7F5 50%,#ECECEC 100%);background-size:200% 100%;animation:vybeShimmer 1.4s linear infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+<script>tailwind.config={theme:{extend:{
+colors:{graphite:'var(--color-graphite)','fog-white':'var(--color-fog-white)',titanium:'var(--color-titanium)',silver:'var(--color-silver)',cyan:'var(--color-cyan)',ink:'var(--color-ink)',surface:'var(--color-surface)',edge:'var(--color-edge)',line:'var(--color-line)','gray-500':'var(--color-gray-500)','gray-800':'var(--color-gray-800)',danger:'var(--color-danger)','danger-ink':'var(--color-danger-ink)','danger-dark':'var(--color-danger-dark)',success:'var(--color-success)','success-ink':'var(--color-success-ink)',warning:'var(--color-warning)','warning-ink':'var(--color-warning-ink)'},
+fontFamily:{peyda:['Peyda','Vazirmatn','system-ui','sans-serif'],sora:['Sora','system-ui','sans-serif'],mono:['JetBrains Mono','ui-monospace','monospace']},
+fontWeight:{display:'800',h1:'700',h2:'600',h3:'600',h4:'500',body:'400',ui:'500'},
+fontSize:{display:['var(--fs-display)',{lineHeight:'1.1',letterSpacing:'-0.02em'}],h1:['var(--fs-h1)',{lineHeight:'1.2'}],h2:['var(--fs-h2)',{lineHeight:'1.2'}],h3:['var(--fs-h3)',{lineHeight:'1.2'}],h4:['var(--fs-h4)',{lineHeight:'1.2'}],'body-large':['var(--fs-body-large)',{lineHeight:'1.5'}],body:['var(--fs-body)',{lineHeight:'1.5'}],small:['var(--fs-small)',{lineHeight:'1.5'}],caption:['var(--fs-caption)',{lineHeight:'1.4',letterSpacing:'0.01em'}],micro:['var(--fs-micro)',{lineHeight:'1.4',letterSpacing:'0.01em'}]},
+spacing:{sp1:'4px',sp2:'8px',sp3:'16px',sp4:'24px',sp5:'32px',sp6:'48px',sp7:'64px',sp8:'80px',sp9:'120px',sp10:'160px',gutter:'20px','gutter-desktop':'40px',section:'80px','section-mobile':'56px',header:'72px',hit:'44px'},
+borderRadius:{none:'0',sm:'var(--radius-sm)',md:'var(--radius-md)',lg:'var(--radius-lg)',xl:'var(--radius-xl)',full:'var(--radius-full)'},
+maxWidth:{text:'720px',page:'1440px'},
+transitionTimingFunction:{DEFAULT:'var(--ease)'},
+transitionDuration:{fast:'150ms',base:'300ms',slow:'600ms'},
+screens:{sm:'375px',md:'768px',lg:'1024px',xl:'1440px'}
+}}}</script>
+</head>
+<body class="bg-fog-white font-peyda text-body font-body text-graphite antialiased">
+
+  <header class="sticky top-0 z-50 flex h-header items-center gap-sp5 bg-graphite px-gutter xl:px-gutter-desktop">
+    <a href="03-home.html" dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver no-underline">VYBE MASTER LOGO</a>
+    <nav class="hidden flex-1 flex-nowrap items-center gap-sp4 overflow-hidden whitespace-nowrap lg:flex">
+      <a href="03-home.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">خانه</a>
+      <a href="04-products.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="border-b-2 border-cyan py-sp4 text-body font-ui text-white no-underline transition-fast">بلاگ</a>
+      <a href="10-about.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">تماس با ما</a>
+    </nav>
+    <div class="ms-auto flex shrink-0 items-center gap-sp5">
+      <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">SEARCH</button>
+      <div class="relative flex items-center">
+        <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">CART</button>
+        <span dir="ltr" class="absolute -top-1.5 -left-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite">2</span>
+      </div>
+      <button type="button" class="hidden rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white sm:block">ACCOUNT</button>
+    </div>
+    <button type="button" data-menu-open class="order-last h-hit w-hit rounded-md border border-edge bg-transparent font-mono text-micro text-fog-white lg:hidden">MENU</button>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-[100] hidden flex-col bg-graphite text-fog-white">
+    <div class="flex h-header items-center justify-between px-gutter">
+      <button type="button" data-menu-close class="h-hit w-hit rounded-md border border-edge bg-transparent text-body text-fog-white">&#10005;</button>
+      <div dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+    </div>
+    <nav class="flex flex-1 flex-col items-start gap-sp4 px-gutter py-sp4">
+      <a href="03-home.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">خانه</a>
+      <a href="04-products.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="text-h3 font-h3 text-white no-underline">بلاگ</a>
+      <a href="10-about.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">تماس با ما</a>
+    </nav>
+  </div>
+
+  <main class="mx-auto max-w-page px-gutter xl:px-gutter-desktop">
+
+    <nav aria-label="مسیر" class="flex flex-wrap items-center gap-sp2 py-sp4 text-small text-gray-800">
+      <a href="03-home.html" class="text-gray-800 no-underline hover:text-graphite">خانه</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <a href="08-blog-list.html" class="text-gray-800 no-underline hover:text-graphite">بلاگ</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <span aria-current="page" class="text-graphite">چرا خط لایه را صاف نمی‌کنیم</span>
+    </nav>
+
+    <article data-screen-label="نوشته" class="grid grid-cols-1 gap-sp6 pb-section-mobile lg:grid-cols-[240px_minmax(0,720px)] lg:justify-center lg:gap-sp7 md:pb-section">
+
+      <aside class="hidden flex-col gap-sp3 lg:sticky lg:top-[104px] lg:flex lg:self-start">
+        <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">CONTENTS</span>
+        <nav class="flex flex-col gap-sp2">
+          <a href="#s1" class="border-s-2 border-line ps-sp3 text-small text-gray-800 no-underline transition-fast hover:border-graphite hover:text-graphite">۱. تصمیم اولیه</a>
+          <a href="#s2" class="border-s-2 border-line ps-sp3 text-small text-gray-800 no-underline transition-fast hover:border-graphite hover:text-graphite">۲. سنباده چه چیزی را پاک می‌کند</a>
+          <a href="#s3" class="border-s-2 border-line ps-sp3 text-small text-gray-800 no-underline transition-fast hover:border-graphite hover:text-graphite">۳. آزمایش سه سطح</a>
+          <a href="#s4" class="border-s-2 border-line ps-sp3 text-small text-gray-800 no-underline transition-fast hover:border-graphite hover:text-graphite">۴. هزینه تصمیم</a>
+          <a href="#s5" class="border-s-2 border-line ps-sp3 text-small text-gray-800 no-underline transition-fast hover:border-graphite hover:text-graphite">۵. آنچه ماند</a>
+        </nav>
+        <div class="mt-sp3 flex flex-col gap-sp2 border-t border-line pt-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">SHARE</span>
+          <div dir="ltr" class="flex flex-wrap gap-sp2 font-mono text-micro text-gray-800"><span class="rounded-sm border border-silver px-sp2 py-1">TELEGRAM</span><span class="rounded-sm border border-silver px-sp2 py-1">COPY LINK</span></div>
+        </div>
+      </aside>
+
+      <div class="flex max-w-text flex-col gap-sp5">
+        <header class="flex flex-col gap-sp3">
+          <span class="flex flex-wrap items-center gap-sp2">
+            <span class="rounded-full border border-silver px-sp2 py-[2px] text-caption text-gray-800">طراحی</span>
+            <span dir="ltr" class="font-mono text-micro text-gray-800">1404/02/28 &middot; ۶ دقیقه مطالعه</span>
+          </span>
+          <h1 class="m-0 text-display font-display [text-wrap:pretty]">چرا خط لایه را صاف نمی‌کنیم</h1>
+          <p class="m-0 text-body-large leading-[1.7] text-gray-800 [text-wrap:pretty]">سنباده و پرایمر سطح را یکدست می‌کند، اما جنس ساخت را هم پاک می‌کند. این یادداشت درباره تصمیمی است که ظاهر همه محصولات ما را تعیین کرد.</p>
+          <div class="flex items-center gap-sp3 border-y border-line py-sp3">
+            <span dir="ltr" class="grid h-10 w-10 place-items-center rounded-full bg-line font-mono text-micro text-gray-800">ع.م</span>
+            <span class="flex flex-col">
+              <span class="text-small font-h2">علی محسنی</span>
+              <span class="text-caption text-gray-800">طراحی محصول، کارگاه VYBE</span>
+            </span>
+          </div>
+        </header>
+
+        <figure class="m-0 flex flex-col gap-sp2">
+          <div class="flex aspect-[16/9] w-full items-end rounded-lg border border-line bg-[repeating-linear-gradient(180deg,#E4E4E2_0_6px,#F5F5F3_6px_12px)] p-sp4"><span dir="ltr" class="font-mono text-micro leading-[1.6] text-gray-800">MACRO &middot; LAYER LINES 0.2 MM<br>جای‌نگهدار — عکس ماکرو سطح قطعه</span></div>
+          <figcaption class="text-caption text-gray-800">سطح قطعه W4001 با ارتفاع لایه ۰٫۲ میلی‌متر، بدون پس‌پردازش.</figcaption>
+        </figure>
+
+        <section id="s1" class="flex flex-col gap-sp3">
+          <h2 class="m-0 mt-sp3 text-h2 font-h2">۱. تصمیم اولیه</h2>
+          <p class="m-0 text-body leading-[1.8] text-gray-800 [text-wrap:pretty]">اولین سری جاکارتی را سنباده زدیم. نتیجه سطحی بود که از قطعه تزریقی ارزان قابل تشخیص نبود. مشتری اول همین را گفت: شبیه پلاستیک معمولی شده است. دو هفته بعد سری دوم را بدون پس‌پردازش فرستادیم و بازخورد برعکس شد.</p>
+          <p class="m-0 text-body leading-[1.8] text-gray-800 [text-wrap:pretty]">از آن به بعد قاعده ثابت شد: سطح همان‌طور که از پرینتر بیرون می‌آید تحویل داده می‌شود، فقط پخ‌های دستی و بازرسی ابعاد.</p>
+        </section>
+
+        <section id="s2" class="flex flex-col gap-sp3">
+          <h2 class="m-0 mt-sp3 text-h2 font-h2">۲. سنباده چه چیزی را پاک می‌کند</h2>
+          <p class="m-0 text-body leading-[1.8] text-gray-800 [text-wrap:pretty]">خط لایه فقط بافت نیست؛ نقشه مسیر نازل است. از روی آن می‌شود جهت چاپ، تعداد دیواره و محل تغییر سرعت را خواند. با سنباده این اطلاعات از بین می‌رود و همراهش دقت ابعادی هم افت می‌کند، چون سنباده روی لبه‌ها بیشتر برمی‌دارد.</p>
+          <blockquote class="m-0 border-s-2 border-graphite bg-white p-sp4 text-body-large leading-[1.7] text-graphite">قطعه‌ای که ساختش پیدا نیست، درباره خودش دروغ می‌گوید.</blockquote>
+          <p class="m-0 text-body leading-[1.8] text-gray-800 [text-wrap:pretty]">این جمله در برند بوک ما ماند و تکلیف بحث‌های بعدی را روشن کرد.</p>
+        </section>
+
+        <section id="s3" class="flex flex-col gap-sp3">
+          <h2 class="m-0 mt-sp3 text-h2 font-h2">۳. آزمایش سه سطح</h2>
+          <p class="m-0 text-body leading-[1.8] text-gray-800 [text-wrap:pretty]">سه نمونه از یک فایل چاپ کردیم و ۱۲ نفر را خواستیم بدون توضیح مرتبشان کنند.</p>
+          <div class="overflow-x-auto rounded-lg border border-line bg-white">
+            <table class="w-full border-collapse text-small">
+              <thead>
+                <tr class="border-b border-line text-start">
+                  <th class="p-sp3 text-start font-h2">نمونه</th>
+                  <th class="p-sp3 text-start font-h2">پس‌پردازش</th>
+                  <th dir="ltr" class="p-sp3 text-start font-h2">خطای ابعاد</th>
+                  <th class="p-sp3 text-start font-h2">انتخاب اول</th>
+                </tr>
+              </thead>
+              <tbody class="text-gray-800">
+                <tr class="border-b border-line"><td class="p-sp3">A</td><td class="p-sp3">هیچ</td><td dir="ltr" class="p-sp3 font-mono">0.05 mm</td><td dir="ltr" class="p-sp3 font-mono">7 / 12</td></tr>
+                <tr class="border-b border-line"><td class="p-sp3">B</td><td class="p-sp3">سنباده ۴۰۰</td><td dir="ltr" class="p-sp3 font-mono">0.14 mm</td><td dir="ltr" class="p-sp3 font-mono">3 / 12</td></tr>
+                <tr><td class="p-sp3">C</td><td class="p-sp3">سنباده + پرایمر</td><td dir="ltr" class="p-sp3 font-mono">0.21 mm</td><td dir="ltr" class="p-sp3 font-mono">2 / 12</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="m-0 text-caption text-gray-800">نمونه‌ها از یک فایل و یک رول فیلامنت، پرینتر Bambu Lab P1S، ارتفاع لایه ۰٫۲ میلی‌متر.</p>
+        </section>
+
+        <section id="s4" class="flex flex-col gap-sp3">
+          <h2 class="m-0 mt-sp3 text-h2 font-h2">۴. هزینه تصمیم</h2>
+          <p class="m-0 text-body leading-[1.8] text-gray-800 [text-wrap:pretty]">وقتی سطح پوشانده نمی‌شود، هر ایراد چاپ مستقیم به دست مشتری می‌رسد. مجبور شدیم بازرسی را سخت‌تر کنیم: هر قطعه زیر نور جانبی چک می‌شود و نرخ دورریز از ۲ به ۶ درصد رسید. در عوض شکایت‌های مربوط به «حس ارزان بودن» صفر شد.</p>
+          <ul class="m-0 flex list-none flex-col p-0">
+            <li class="flex gap-sp3 border-t border-line py-sp2 text-body text-gray-800"><span aria-hidden="true" class="font-mono text-micro text-titanium">01</span>بازرسی زیر نور جانبی، هر قطعه</li>
+            <li class="flex gap-sp3 border-t border-line py-sp2 text-body text-gray-800"><span aria-hidden="true" class="font-mono text-micro text-titanium">02</span>تعویض نازل هر ۳۰۰ ساعت، نه ۵۰۰</li>
+            <li class="flex gap-sp3 border-y border-line py-sp2 text-body text-gray-800"><span aria-hidden="true" class="font-mono text-micro text-titanium">03</span>رول فیلامنت باز شده بیش از دو هفته کنار گذاشته می‌شود</li>
+          </ul>
+        </section>
+
+        <section id="s5" class="flex flex-col gap-sp3">
+          <h2 class="m-0 mt-sp3 text-h2 font-h2">۵. آنچه ماند</h2>
+          <p class="m-0 text-body leading-[1.8] text-gray-800 [text-wrap:pretty]">امروز خط لایه بخشی از زبان بصری برند است؛ در عکاسی محصول، در بافت پس‌زمینه سایت و در چاپ کاتالوگ از همان الگو استفاده می‌کنیم. تصمیمی که از یک بازخورد شروع شد، حالا تکلیف عکاس و طراح را هم روشن می‌کند.</p>
+        </section>
+
+        <div class="flex flex-wrap items-center justify-between gap-sp3 border-t border-line pt-sp4">
+          <span class="text-small text-gray-800">این نوشته را مفید دیدید؟</span>
+          <div class="flex gap-sp2">
+            <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">بله</button>
+            <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">نه چندان</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <section data-screen-label="مرتبط" class="flex flex-col gap-sp5 border-t border-line py-section-mobile md:py-section">
+      <div class="flex flex-wrap items-baseline justify-between gap-sp3">
+        <h2 class="m-0 text-h2 font-h2">نوشته‌های مرتبط</h2>
+        <a href="08-blog-list.html" class="text-body font-ui text-graphite no-underline underline-offset-4 hover:underline">همه نوشته‌ها</a>
+      </div>
+      <div class="grid grid-cols-1 gap-sp4 md:grid-cols-3">
+        <a href="09-blog-post.html" class="flex flex-col overflow-hidden rounded-lg border border-line bg-white no-underline transition-base hover:border-titanium">
+          <span class="flex aspect-[16/10] items-end border-b border-line bg-[repeating-linear-gradient(180deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-sp3"><span dir="ltr" class="font-mono text-micro text-gray-800">جای‌نگهدار تصویر</span></span>
+          <span class="flex flex-1 flex-col gap-sp2 p-sp4">
+            <span class="flex items-center gap-sp2">
+              <span class="rounded-full border border-silver px-sp2 py-[2px] text-caption text-gray-800">آموزش</span>
+              <span dir="ltr" class="font-mono text-micro text-gray-800">1404/01/14 &middot; ۵ دقیقه</span>
+            </span>
+            <span class="text-h4 font-h1 leading-[1.35] text-graphite [text-wrap:pretty]">انتخاب ارتفاع لایه: ۰٫۱۶ یا ۰٫۲</span>
+            <span class="text-small leading-[1.6] text-gray-800">مقایسه کیفیت سطح و زمان چاپ روی یک قطعه واقعی.</span>
+            <span class="mt-sp2 self-start border-b border-silver pb-1 text-small font-ui text-graphite">خواندن</span>
+          </span>
+        </a>
+        <a href="09-blog-post.html" class="flex flex-col overflow-hidden rounded-lg border border-line bg-white no-underline transition-base hover:border-titanium">
+          <span class="flex aspect-[16/10] items-end border-b border-line bg-[repeating-linear-gradient(135deg,#E4E4E2_0_8px,#F5F5F3_8px_16px)] p-sp3"><span dir="ltr" class="font-mono text-micro text-gray-800">جای‌نگهدار تصویر</span></span>
+          <span class="flex flex-1 flex-col gap-sp2 p-sp4">
+            <span class="flex items-center gap-sp2">
+              <span class="rounded-full border border-silver px-sp2 py-[2px] text-caption text-gray-800">طراحی</span>
+              <span dir="ltr" class="font-mono text-micro text-gray-800">1403/12/26 &middot; ۴ دقیقه</span>
+            </span>
+            <span class="text-h4 font-h1 leading-[1.35] text-graphite [text-wrap:pretty]">رنگ گرافیت چطور انتخاب شد</span>
+            <span class="text-small leading-[1.6] text-gray-800">سه فیلامنت مشکی را زیر نور کارگاه و نور روز کنار هم گذاشتیم.</span>
+            <span class="mt-sp2 self-start border-b border-silver pb-1 text-small font-ui text-graphite">خواندن</span>
+          </span>
+        </a>
+        <a href="09-blog-post.html" class="flex flex-col overflow-hidden rounded-lg border border-line bg-white no-underline transition-base hover:border-titanium">
+          <span class="flex aspect-[16/10] items-end border-b border-line bg-[repeating-linear-gradient(45deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-sp3"><span dir="ltr" class="font-mono text-micro text-gray-800">جای‌نگهدار تصویر</span></span>
+          <span class="flex flex-1 flex-col gap-sp2 p-sp4">
+            <span class="flex items-center gap-sp2">
+              <span class="rounded-full border border-silver px-sp2 py-[2px] text-caption text-gray-800">محصول</span>
+              <span dir="ltr" class="font-mono text-micro text-gray-800">1403/12/18 &middot; ۳ دقیقه</span>
+            </span>
+            <span class="text-h4 font-h1 leading-[1.35] text-graphite [text-wrap:pretty]">پیش‌سفارش چطور کار می‌کند</span>
+            <span class="text-small leading-[1.6] text-gray-800">چرا برای بعضی قطعه‌ها انبار نگه نمی‌داریم.</span>
+            <span class="mt-sp2 self-start border-b border-silver pb-1 text-small font-ui text-graphite">خواندن</span>
+          </span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+    <div class="mx-auto max-w-page">
+      <div class="flex flex-col gap-sp2 border-b border-edge pb-sp6">
+        <div dir="ltr" class="grid h-7 w-[140px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+        <p class="mt-sp2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-sp5 border-b border-edge py-sp6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">دسته‌بندی‌ها</span>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">میز کار</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">آشپزخانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خودرو</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سازمان‌دهی</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سفر</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">لینک‌های سریع</span>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">محصولات</a>
+          <a href="07-catalog.html" class="text-small text-silver no-underline hover:text-white">کاتالوگ</a>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">تازه‌ها</a>
+          <a href="08-blog-list.html" class="text-small text-silver no-underline hover:text-white">بلاگ</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">درباره ما</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">پشتیبانی و راهنما</span>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">پیگیری سفارش</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">ارسال و تحویل</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">مرجوعی</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">نگهداری قطعات PLA</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">سؤالات متداول</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">درباره VYBE</span>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">کارگاه</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">فرایند تولید</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">همکاری با ما</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">تماس با ما</a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-sp5 pt-sp6">
+        <div class="flex max-w-[420px] flex-col gap-sp2">
+          <span class="text-small font-h2">خبرنامه</span>
+          <p class="m-0 text-small leading-[1.6] text-titanium">ماهی یک ایمیل. محصول تازه و یادداشت‌های کارگاه.</p>
+          <form class="flex gap-sp2">
+            <input type="email" placeholder="ایمیل شما" class="h-12 flex-1 rounded-md border border-edge bg-surface px-sp3 text-small text-fog-white outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" class="h-12 rounded-md border-0 bg-white px-sp4 text-small font-ui text-graphite hover:bg-line">عضویت</button>
+          </form>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <div dir="ltr" class="flex gap-sp3 font-mono text-micro text-silver"><span>INSTAGRAM</span><span>TELEGRAM</span><span>PINTEREST</span><span>YOUTUBE</span></div>
+          <div class="flex gap-sp2">
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">نماد<br>اعتماد</div>
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">درگاه<br>پرداخت</div>
+          </div>
+        </div>
+      </div>
+      <p dir="ltr" class="m-0 mt-sp6 font-mono text-micro tracking-[0.06em] text-titanium">&copy; 1404 VYBE &middot; ALL RIGHTS RESERVED</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var menu=document.getElementById('mobileMenu');
+  function openMenu(){menu.classList.remove('hidden');menu.classList.add('flex');document.body.style.overflow='hidden';}
+  function closeMenu(){menu.classList.add('hidden');menu.classList.remove('flex');document.body.style.overflow='';}
+  document.querySelectorAll('[data-menu-open]').forEach(function(b){b.addEventListener('click',openMenu)});
+  document.querySelectorAll('[data-menu-close]').forEach(function(b){b.addEventListener('click',closeMenu)});
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+})();
+</script>
+</body>
+</html>

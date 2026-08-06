@@ -1,0 +1,331 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VYBE · 10 درباره ما</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--color-graphite:#0B0B0C; --color-fog-white:#F5F5F3; --color-titanium:#7A7D82; --color-silver:#B8BCC2; --color-cyan:#00D1FF;
+--color-ink:#1A1A1C; --color-surface:#141416; --color-edge:#26262A; --color-white:#FFFFFF; --color-line:#ECECEC;
+--color-gray-500:#9A9A9A; --color-gray-800:#4A4A4A; --color-black:#000000;
+--color-danger:#D64545; --color-danger-ink:#B23434; --color-danger-dark:#E86A6A;
+--color-success:#2FB66B; --color-success-ink:#1E7A47; --color-warning:#F4B400; --color-warning-ink:#8A6400;
+--font-peyda:"Peyda","Vazirmatn",system-ui,sans-serif; --font-sora:"Sora",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display:40px; --fs-h1:32px; --fs-h2:26px; --fs-h3:22px; --fs-h4:20px;
+--fs-body-large:18px; --fs-body:16px; --fs-small:14px; --fs-caption:12px; --fs-micro:10px;
+--radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+--ease:cubic-bezier(0.4,0,0.2,1); --dur-fast:150ms; --dur-base:300ms; --dur-slow:600ms;
+}
+@media (min-width:768px){:root{
+--fs-display:64px; --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:24px; --fs-body-large:20px;
+}}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");font-weight:800;font-display:swap}
+html,body{margin:0}
+a{color:var(--color-graphite)}
+a:hover{color:var(--color-ink)}
+@keyframes vybeShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.skeleton{background:linear-gradient(90deg,#ECECEC 0%,#F7F7F5 50%,#ECECEC 100%);background-size:200% 100%;animation:vybeShimmer 1.4s linear infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+<script>tailwind.config={theme:{extend:{
+colors:{graphite:'var(--color-graphite)','fog-white':'var(--color-fog-white)',titanium:'var(--color-titanium)',silver:'var(--color-silver)',cyan:'var(--color-cyan)',ink:'var(--color-ink)',surface:'var(--color-surface)',edge:'var(--color-edge)',line:'var(--color-line)','gray-500':'var(--color-gray-500)','gray-800':'var(--color-gray-800)',danger:'var(--color-danger)','danger-ink':'var(--color-danger-ink)','danger-dark':'var(--color-danger-dark)',success:'var(--color-success)','success-ink':'var(--color-success-ink)',warning:'var(--color-warning)','warning-ink':'var(--color-warning-ink)'},
+fontFamily:{peyda:['Peyda','Vazirmatn','system-ui','sans-serif'],sora:['Sora','system-ui','sans-serif'],mono:['JetBrains Mono','ui-monospace','monospace']},
+fontWeight:{display:'800',h1:'700',h2:'600',h3:'600',h4:'500',body:'400',ui:'500'},
+fontSize:{display:['var(--fs-display)',{lineHeight:'1.1',letterSpacing:'-0.02em'}],h1:['var(--fs-h1)',{lineHeight:'1.2'}],h2:['var(--fs-h2)',{lineHeight:'1.2'}],h3:['var(--fs-h3)',{lineHeight:'1.2'}],h4:['var(--fs-h4)',{lineHeight:'1.2'}],'body-large':['var(--fs-body-large)',{lineHeight:'1.5'}],body:['var(--fs-body)',{lineHeight:'1.5'}],small:['var(--fs-small)',{lineHeight:'1.5'}],caption:['var(--fs-caption)',{lineHeight:'1.4',letterSpacing:'0.01em'}],micro:['var(--fs-micro)',{lineHeight:'1.4',letterSpacing:'0.01em'}]},
+spacing:{sp1:'4px',sp2:'8px',sp3:'16px',sp4:'24px',sp5:'32px',sp6:'48px',sp7:'64px',sp8:'80px',sp9:'120px',sp10:'160px',gutter:'20px','gutter-desktop':'40px',section:'80px','section-mobile':'56px',header:'72px',hit:'44px'},
+borderRadius:{none:'0',sm:'var(--radius-sm)',md:'var(--radius-md)',lg:'var(--radius-lg)',xl:'var(--radius-xl)',full:'var(--radius-full)'},
+maxWidth:{text:'720px',page:'1440px'},
+transitionTimingFunction:{DEFAULT:'var(--ease)'},
+transitionDuration:{fast:'150ms',base:'300ms',slow:'600ms'},
+screens:{sm:'375px',md:'768px',lg:'1024px',xl:'1440px'}
+}}}</script>
+</head>
+<body class="bg-fog-white font-peyda text-body font-body text-graphite antialiased">
+
+  <header class="sticky top-0 z-50 flex h-header items-center gap-sp5 bg-graphite px-gutter xl:px-gutter-desktop">
+    <a href="03-home.html" dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver no-underline">VYBE MASTER LOGO</a>
+    <nav class="hidden flex-1 flex-nowrap items-center gap-sp4 overflow-hidden whitespace-nowrap lg:flex">
+      <a href="03-home.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">خانه</a>
+      <a href="04-products.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="border-b-2 border-cyan py-sp4 text-body font-ui text-white no-underline transition-fast">درباره ما</a>
+      <a href="11-contact.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">تماس با ما</a>
+    </nav>
+    <div class="ms-auto flex shrink-0 items-center gap-sp5">
+      <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">SEARCH</button>
+      <div class="relative flex items-center">
+        <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">CART</button>
+        <span dir="ltr" class="absolute -top-1.5 -left-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite">2</span>
+      </div>
+      <button type="button" class="hidden rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white sm:block">ACCOUNT</button>
+    </div>
+    <button type="button" data-menu-open class="order-last h-hit w-hit rounded-md border border-edge bg-transparent font-mono text-micro text-fog-white lg:hidden">MENU</button>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-[100] hidden flex-col bg-graphite text-fog-white">
+    <div class="flex h-header items-center justify-between px-gutter">
+      <button type="button" data-menu-close class="h-hit w-hit rounded-md border border-edge bg-transparent text-body text-fog-white">&#10005;</button>
+      <div dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+    </div>
+    <nav class="flex flex-1 flex-col items-start gap-sp4 px-gutter py-sp4">
+      <a href="03-home.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">خانه</a>
+      <a href="04-products.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="text-h3 font-h3 text-white no-underline">درباره ما</a>
+      <a href="11-contact.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">تماس با ما</a>
+    </nav>
+  </div>
+
+  <main>
+
+    <section data-screen-label="مأموریت" class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+      <div class="mx-auto flex max-w-page flex-col gap-sp4">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-titanium">ABOUT VYBE &middot; WORKSHOP, TEHRAN</p>
+        <h1 class="m-0 max-w-[900px] text-display font-display [text-wrap:pretty]">ما قطعه‌های کوچکی می‌سازیم که روز را کمی مرتب‌تر می‌کنند.</h1>
+        <p class="m-0 max-w-text text-body-large leading-[1.7] text-silver [text-wrap:pretty]">VYBE یک کارگاه پرینت سه‌بعدی است، نه یک برند واردکننده. طراحی، چاپ، بازرسی و بسته‌بندی در یک اتاق انجام می‌شود و هر قطعه‌ای که می‌فرستیم از دست خودمان رد شده است.</p>
+        <dl dir="ltr" class="m-0 mt-sp3 grid grid-cols-2 gap-sp4 border-t border-edge pt-sp4 md:grid-cols-4">
+          <div class="flex flex-col gap-sp1"><dt class="font-mono text-micro text-titanium">FOUNDED</dt><dd class="m-0 font-mono text-h3 text-white">1401</dd></div>
+          <div class="flex flex-col gap-sp1"><dt class="font-mono text-micro text-titanium">PRODUCTS</dt><dd class="m-0 font-mono text-h3 text-white">53</dd></div>
+          <div class="flex flex-col gap-sp1"><dt class="font-mono text-micro text-titanium">PRINTERS</dt><dd class="m-0 font-mono text-h3 text-white">6</dd></div>
+          <div class="flex flex-col gap-sp1"><dt class="font-mono text-micro text-titanium">ORDERS SHIPPED</dt><dd class="m-0 font-mono text-h3 text-white">4,180</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section data-screen-label="چرا وجود داریم" class="bg-fog-white px-gutter py-section-mobile md:py-section xl:px-gutter-desktop">
+      <div class="mx-auto grid max-w-page grid-cols-1 gap-sp6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+        <div class="flex max-w-text flex-col gap-sp4">
+          <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">WHY WE EXIST</p>
+          <h2 class="m-0 text-h1 font-h1 [text-wrap:pretty]">چرا VYBE وجود دارد</h2>
+          <p class="m-0 text-body-large leading-[1.7] text-gray-800 [text-wrap:pretty]">مشکل ساده بود: قطعه‌ای که دقیقاً اندازه میز، دریچه یا کشو شما باشد در بازار وجود ندارد. تولید انبوه برای ابعاد متوسط طراحی می‌کند و نتیجه چیزی است که تقریباً جا می‌شود.</p>
+          <p class="m-0 text-body-large leading-[1.7] text-gray-800 [text-wrap:pretty]">پرینت سه‌بعدی این محدودیت را برمی‌دارد. می‌توانیم برای یک ضخامت کارت مشخص یا یک عرض دریچه مشخص طراحی کنیم، نمونه بسازیم و اگر جواب نداد فردا نسخه بعدی را چاپ کنیم. برای همین کاتالوگ ما به‌جای رشد سریع، آرام و اصلاح‌شده بزرگ می‌شود.</p>
+        </div>
+        <div class="flex aspect-[4/3] w-full items-end rounded-xl border border-line bg-[repeating-linear-gradient(135deg,#E4E4E2_0_10px,#F5F5F3_10px_20px)] p-sp4">
+          <span dir="ltr" class="font-mono text-micro leading-[1.6] text-gray-800">WORKSHOP WIDE SHOT<br>جای‌نگهدار — عکس کارگاه</span>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="اصول طراحی" class="bg-fog-white px-gutter pb-section-mobile md:pb-section xl:px-gutter-desktop">
+      <div class="mx-auto flex max-w-page flex-col gap-sp4 border-t border-line pt-section-mobile md:pt-section">
+        <div class="flex flex-col gap-sp2">
+          <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">FIVE PRINCIPLES</p>
+          <h2 class="m-0 text-h1 font-h1">پنج اصل طراحی</h2>
+        </div>
+        <div class="flex flex-col">
+        <div class="flex flex-col gap-sp2 border-t border-line py-sp4 md:flex-row md:gap-sp5">
+          <span dir="ltr" class="font-mono text-caption text-titanium md:w-16">۰۱</span>
+          <span class="text-h3 font-h3 md:w-[240px]">کمترین قطعه</span>
+          <span class="text-body leading-[1.7] text-gray-800 md:flex-1 [text-wrap:pretty]">هر اتصال یک نقطه شکست است. اگر می‌شود یک‌تکه چاپ شد، یک‌تکه چاپ می‌شود.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 border-t border-line py-sp4 md:flex-row md:gap-sp5">
+          <span dir="ltr" class="font-mono text-caption text-titanium md:w-16">۰۲</span>
+          <span class="text-h3 font-h3 md:w-[240px]">ابعاد واقعی</span>
+          <span class="text-body leading-[1.7] text-gray-800 md:flex-1 [text-wrap:pretty]">هر عدد روی سایت با کولیس اندازه‌گیری شده، نه از فایل CAD خوانده شده.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 border-t border-line py-sp4 md:flex-row md:gap-sp5">
+          <span dir="ltr" class="font-mono text-caption text-titanium md:w-16">۰۳</span>
+          <span class="text-h3 font-h3 md:w-[240px]">رد ساخت می‌ماند</span>
+          <span class="text-body leading-[1.7] text-gray-800 md:flex-1 [text-wrap:pretty]">خط لایه پوشانده نمی‌شود. سطح همان است که از پرینتر بیرون می‌آید.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 border-t border-line py-sp4 md:flex-row md:gap-sp5">
+          <span dir="ltr" class="font-mono text-caption text-titanium md:w-16">۰۴</span>
+          <span class="text-h3 font-h3 md:w-[240px]">یک کار، درست</span>
+          <span class="text-body leading-[1.7] text-gray-800 md:flex-1 [text-wrap:pretty]">قطعه‌ای که پنج کار می‌کند، هیچ‌کدام را خوب انجام نمی‌دهد.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 border-t border-line py-sp4 md:flex-row md:gap-sp5">
+          <span dir="ltr" class="font-mono text-caption text-titanium md:w-16">۰۵</span>
+          <span class="text-h3 font-h3 md:w-[240px]">قابل تعمیر</span>
+          <span class="text-body leading-[1.7] text-gray-800 md:flex-1 [text-wrap:pretty]">هر قطعه که بشکند دوباره چاپ می‌شود. فایل و کد مدل نگه داشته می‌شود.</span>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="فرایند تولید" class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+      <div class="mx-auto flex max-w-page flex-col gap-sp6">
+        <div class="grid grid-cols-1 gap-sp6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+          <div class="flex h-[320px] items-end rounded-lg border border-edge bg-[repeating-linear-gradient(180deg,#191919_0_3px,#0B0B0C_3px_6px)] p-sp4">
+            <span dir="ltr" class="font-mono text-micro leading-[1.6] text-titanium">MACRO &middot; LAYER LINES 0.2 MM<br>جای‌نگهدار — عکس ماکرو سطح قطعه</span>
+          </div>
+          <div class="flex flex-col gap-sp4">
+            <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-titanium">HOW IT IS MADE</p>
+            <h2 class="m-0 text-h1 font-h1 [text-wrap:pretty]">فرایند تولید را پنهان نمی‌کنیم</h2>
+            <p class="m-0 max-w-text text-body-large leading-[1.7] text-silver [text-wrap:pretty]">شش پرینتر Bambu Lab P1S، فیلامنت PLA+ مات و PETG برای قطعه‌های در معرض حرارت. پارامتر چاپ هر قطعه ثبت می‌شود تا نسخه بعدی همان کیفیت را داشته باشد.</p>
+            <dl dir="ltr" class="m-0 flex flex-col border-t border-edge">
+              <div class="flex justify-between gap-sp3 border-b border-edge py-sp2"><dt class="font-mono text-small text-titanium">PRINTER</dt><dd class="m-0 font-mono text-small text-white">Bambu Lab P1S &times; 6</dd></div>
+              <div class="flex justify-between gap-sp3 border-b border-edge py-sp2"><dt class="font-mono text-small text-titanium">MATERIAL</dt><dd class="m-0 font-mono text-small text-white">PLA+ matte &middot; PETG</dd></div>
+              <div class="flex justify-between gap-sp3 border-b border-edge py-sp2"><dt class="font-mono text-small text-titanium">LAYER</dt><dd class="m-0 font-mono text-small text-white">0.2 mm &middot; 3 walls</dd></div>
+              <div class="flex justify-between gap-sp3 py-sp2"><dt class="font-mono text-small text-titanium">REJECT RATE</dt><dd class="m-0 font-mono text-small text-white">~6%</dd></div>
+            </dl>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-sp3 md:grid-cols-3 lg:grid-cols-5">
+        <div class="flex flex-col gap-sp2 rounded-lg border border-edge bg-surface p-sp4">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-titanium">STEP 1 &middot; CAD</span>
+          <span class="text-h4 font-h3 text-white">طراحی</span>
+          <span class="text-small leading-[1.7] text-silver [text-wrap:pretty]">هر قطعه از یک اندازه‌گیری واقعی شروع می‌شود: ضخامت کارت، قطر لیوان، عرض دریچه کولر.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 rounded-lg border border-edge bg-surface p-sp4">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-titanium">STEP 2 &middot; PROTOTYPE</span>
+          <span class="text-h4 font-h3 text-white">نمونه</span>
+          <span class="text-small leading-[1.7] text-silver [text-wrap:pretty]">دو تا پنج نمونه چاپ می‌شود تا زاویه دیواره و فنریت درست دربیاید.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 rounded-lg border border-edge bg-surface p-sp4">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-titanium">STEP 3 &middot; P1S · PLA+</span>
+          <span class="text-h4 font-h3 text-white">چاپ</span>
+          <span class="text-small leading-[1.7] text-silver [text-wrap:pretty]">ارتفاع لایه ۰٫۲ میلی‌متر، سه دیواره، بدون ساپورت در بیشتر قطعه‌ها.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 rounded-lg border border-edge bg-surface p-sp4">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-titanium">STEP 4 &middot; QC</span>
+          <span class="text-h4 font-h3 text-white">بازرسی</span>
+          <span class="text-small leading-[1.7] text-silver [text-wrap:pretty]">ابعاد با کولیس و سطح زیر نور جانبی. نرخ دورریز حدود ۶ درصد.</span>
+        </div>
+        <div class="flex flex-col gap-sp2 rounded-lg border border-edge bg-surface p-sp4">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-titanium">STEP 5 &middot; PACK</span>
+          <span class="text-h4 font-h3 text-white">بسته‌بندی</span>
+          <span class="text-small leading-[1.7] text-silver [text-wrap:pretty]">جعبه مقوایی بدون پلاستیک، برگه مشخصات با کد مدل.</span>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="ارزش‌ها" class="bg-fog-white px-gutter py-section-mobile md:py-section xl:px-gutter-desktop">
+      <div class="mx-auto flex max-w-page flex-col gap-sp5">
+        <div class="flex flex-col gap-sp2">
+          <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">VALUES</p>
+          <h2 class="m-0 text-h1 font-h1">چه چیزی را جدی می‌گیریم</h2>
+        </div>
+        <div class="grid grid-cols-1 gap-sp4 md:grid-cols-3">
+          <div class="flex flex-col gap-sp2 rounded-lg border border-line bg-white p-sp4">
+            <span class="text-h4 font-h3">صداقت در مشخصات</span>
+            <p class="m-0 text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">اگر قطعه در آفتاب خودرو نرم می‌شود، همان جا نوشته می‌شود. توضیح محدودیت جزئی از توضیح محصول است.</p>
+          </div>
+          <div class="flex flex-col gap-sp2 rounded-lg border border-line bg-white p-sp4">
+            <span class="text-h4 font-h3">بدون فشار فروش</span>
+            <p class="m-0 text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">تایمر تخفیف، موجودی جعلی و خبرنامه اجباری نداریم. کاتالوگ آزاد دانلود می‌شود.</p>
+          </div>
+          <div class="flex flex-col gap-sp2 rounded-lg border border-line bg-white p-sp4">
+            <span class="text-h4 font-h3">دور ریز کمتر</span>
+            <p class="m-0 text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">قطعه‌های معیوب خرد و به فیلامنت بازیافتی تبدیل می‌شوند. بسته‌بندی بدون پلاستیک است.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="کارگاه" class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+      <div class="mx-auto flex max-w-page flex-col gap-sp5">
+        <div class="flex flex-wrap items-baseline justify-between gap-sp3">
+          <div class="flex flex-col gap-sp2">
+            <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-titanium">THE WORKSHOP</p>
+            <h2 class="m-0 text-h1 font-h1">کارگاه</h2>
+          </div>
+          <p class="m-0 max-w-text text-body leading-[1.7] text-silver [text-wrap:pretty]">یک اتاق ۴۰ متری در شرق تهران؛ سه نفر، شش پرینتر و یک میز بازرسی زیر نور جانبی.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-sp3 md:grid-cols-4">
+          <div class="flex aspect-square items-end rounded-lg border border-edge bg-[repeating-linear-gradient(135deg,#191919_0_6px,#0B0B0C_6px_12px)] p-sp3"><span dir="ltr" class="font-mono text-micro text-titanium">PRINT FARM</span></div>
+          <div class="flex aspect-square items-end rounded-lg border border-edge bg-[repeating-linear-gradient(45deg,#191919_0_6px,#0B0B0C_6px_12px)] p-sp3"><span dir="ltr" class="font-mono text-micro text-titanium">QC TABLE</span></div>
+          <div class="flex aspect-square items-end rounded-lg border border-edge bg-[repeating-linear-gradient(180deg,#191919_0_4px,#0B0B0C_4px_8px)] p-sp3"><span dir="ltr" class="font-mono text-micro text-titanium">FILAMENT</span></div>
+          <div class="flex aspect-square items-end rounded-lg border border-edge bg-[repeating-linear-gradient(135deg,#191919_0_6px,#0B0B0C_6px_12px)] p-sp3"><span dir="ltr" class="font-mono text-micro text-titanium">PACKING</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="CTA" class="bg-fog-white px-gutter py-section-mobile md:py-section xl:px-gutter-desktop">
+      <div class="mx-auto flex max-w-page flex-col items-start gap-sp4 border-t border-line pt-section-mobile md:pt-section">
+        <h2 class="m-0 max-w-[800px] text-h1 font-h1 [text-wrap:pretty]">۵۳ قطعه، همه با مشخصات کامل</h2>
+        <p class="m-0 max-w-text text-body-large leading-[1.7] text-gray-800 [text-wrap:pretty]">ابعاد، متریال و زمان چاپ هر قطعه در صفحه خودش نوشته شده است.</p>
+        <div class="flex flex-wrap gap-sp3">
+          <a href="04-products.html" class="h-12 rounded-md bg-graphite px-sp5 text-body font-ui leading-[48px] text-fog-white no-underline transition-fast hover:bg-ink">دیدن محصولات</a>
+          <a href="07-catalog.html" class="h-12 rounded-md border border-silver bg-white px-sp5 text-body font-ui leading-[46px] text-graphite no-underline transition-fast hover:border-titanium">دانلود کاتالوگ</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+    <div class="mx-auto max-w-page">
+      <div class="flex flex-col gap-sp2 border-b border-edge pb-sp6">
+        <div dir="ltr" class="grid h-7 w-[140px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+        <p class="mt-sp2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-sp5 border-b border-edge py-sp6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">دسته‌بندی‌ها</span>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">میز کار</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">آشپزخانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خودرو</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سازمان‌دهی</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سفر</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">لینک‌های سریع</span>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">محصولات</a>
+          <a href="07-catalog.html" class="text-small text-silver no-underline hover:text-white">کاتالوگ</a>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">تازه‌ها</a>
+          <a href="08-blog-list.html" class="text-small text-silver no-underline hover:text-white">بلاگ</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">درباره ما</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">پشتیبانی و راهنما</span>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">پیگیری سفارش</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">ارسال و تحویل</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">مرجوعی</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">نگهداری قطعات PLA</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">سؤالات متداول</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">درباره VYBE</span>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">کارگاه</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">فرایند تولید</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">همکاری با ما</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">تماس با ما</a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-sp5 pt-sp6">
+        <div class="flex max-w-[420px] flex-col gap-sp2">
+          <span class="text-small font-h2">خبرنامه</span>
+          <p class="m-0 text-small leading-[1.6] text-titanium">ماهی یک ایمیل. محصول تازه و یادداشت‌های کارگاه.</p>
+          <form class="flex gap-sp2">
+            <input type="email" placeholder="ایمیل شما" class="h-12 flex-1 rounded-md border border-edge bg-surface px-sp3 text-small text-fog-white outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" class="h-12 rounded-md border-0 bg-white px-sp4 text-small font-ui text-graphite hover:bg-line">عضویت</button>
+          </form>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <div dir="ltr" class="flex gap-sp3 font-mono text-micro text-silver"><span>INSTAGRAM</span><span>TELEGRAM</span><span>PINTEREST</span><span>YOUTUBE</span></div>
+          <div class="flex gap-sp2">
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">نماد<br>اعتماد</div>
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">درگاه<br>پرداخت</div>
+          </div>
+        </div>
+      </div>
+      <p dir="ltr" class="m-0 mt-sp6 font-mono text-micro tracking-[0.06em] text-titanium">&copy; 1404 VYBE &middot; ALL RIGHTS RESERVED</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var menu=document.getElementById('mobileMenu');
+  function openMenu(){menu.classList.remove('hidden');menu.classList.add('flex');document.body.style.overflow='hidden';}
+  function closeMenu(){menu.classList.add('hidden');menu.classList.remove('flex');document.body.style.overflow='';}
+  document.querySelectorAll('[data-menu-open]').forEach(function(b){b.addEventListener('click',openMenu)});
+  document.querySelectorAll('[data-menu-close]').forEach(function(b){b.addEventListener('click',closeMenu)});
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+})();
+</script>
+</body>
+</html>

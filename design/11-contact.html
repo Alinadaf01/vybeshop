@@ -1,0 +1,418 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VYBE · 11 تماس با ما</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--color-graphite:#0B0B0C; --color-fog-white:#F5F5F3; --color-titanium:#7A7D82; --color-silver:#B8BCC2; --color-cyan:#00D1FF;
+--color-ink:#1A1A1C; --color-surface:#141416; --color-edge:#26262A; --color-white:#FFFFFF; --color-line:#ECECEC;
+--color-gray-500:#9A9A9A; --color-gray-800:#4A4A4A; --color-black:#000000;
+--color-danger:#D64545; --color-danger-ink:#B23434; --color-danger-dark:#E86A6A;
+--color-success:#2FB66B; --color-success-ink:#1E7A47; --color-warning:#F4B400; --color-warning-ink:#8A6400;
+--font-peyda:"Peyda","Vazirmatn",system-ui,sans-serif; --font-sora:"Sora",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display:40px; --fs-h1:32px; --fs-h2:26px; --fs-h3:22px; --fs-h4:20px;
+--fs-body-large:18px; --fs-body:16px; --fs-small:14px; --fs-caption:12px; --fs-micro:10px;
+--radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+--ease:cubic-bezier(0.4,0,0.2,1); --dur-fast:150ms; --dur-base:300ms; --dur-slow:600ms;
+}
+@media (min-width:768px){:root{
+--fs-display:64px; --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:24px; --fs-body-large:20px;
+}}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");font-weight:800;font-display:swap}
+html,body{margin:0}
+a{color:var(--color-graphite)}
+a:hover{color:var(--color-ink)}
+@keyframes vybeShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.skeleton{background:linear-gradient(90deg,#ECECEC 0%,#F7F7F5 50%,#ECECEC 100%);background-size:200% 100%;animation:vybeShimmer 1.4s linear infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+<script>tailwind.config={theme:{extend:{
+colors:{graphite:'var(--color-graphite)','fog-white':'var(--color-fog-white)',titanium:'var(--color-titanium)',silver:'var(--color-silver)',cyan:'var(--color-cyan)',ink:'var(--color-ink)',surface:'var(--color-surface)',edge:'var(--color-edge)',line:'var(--color-line)','gray-500':'var(--color-gray-500)','gray-800':'var(--color-gray-800)',danger:'var(--color-danger)','danger-ink':'var(--color-danger-ink)','danger-dark':'var(--color-danger-dark)',success:'var(--color-success)','success-ink':'var(--color-success-ink)',warning:'var(--color-warning)','warning-ink':'var(--color-warning-ink)'},
+fontFamily:{peyda:['Peyda','Vazirmatn','system-ui','sans-serif'],sora:['Sora','system-ui','sans-serif'],mono:['JetBrains Mono','ui-monospace','monospace']},
+fontWeight:{display:'800',h1:'700',h2:'600',h3:'600',h4:'500',body:'400',ui:'500'},
+fontSize:{display:['var(--fs-display)',{lineHeight:'1.1',letterSpacing:'-0.02em'}],h1:['var(--fs-h1)',{lineHeight:'1.2'}],h2:['var(--fs-h2)',{lineHeight:'1.2'}],h3:['var(--fs-h3)',{lineHeight:'1.2'}],h4:['var(--fs-h4)',{lineHeight:'1.2'}],'body-large':['var(--fs-body-large)',{lineHeight:'1.5'}],body:['var(--fs-body)',{lineHeight:'1.5'}],small:['var(--fs-small)',{lineHeight:'1.5'}],caption:['var(--fs-caption)',{lineHeight:'1.4',letterSpacing:'0.01em'}],micro:['var(--fs-micro)',{lineHeight:'1.4',letterSpacing:'0.01em'}]},
+spacing:{sp1:'4px',sp2:'8px',sp3:'16px',sp4:'24px',sp5:'32px',sp6:'48px',sp7:'64px',sp8:'80px',sp9:'120px',sp10:'160px',gutter:'20px','gutter-desktop':'40px',section:'80px','section-mobile':'56px',header:'72px',hit:'44px'},
+borderRadius:{none:'0',sm:'var(--radius-sm)',md:'var(--radius-md)',lg:'var(--radius-lg)',xl:'var(--radius-xl)',full:'var(--radius-full)'},
+maxWidth:{text:'720px',page:'1440px'},
+transitionTimingFunction:{DEFAULT:'var(--ease)'},
+transitionDuration:{fast:'150ms',base:'300ms',slow:'600ms'},
+screens:{sm:'375px',md:'768px',lg:'1024px',xl:'1440px'}
+}}}</script>
+</head>
+<body class="bg-fog-white font-peyda text-body font-body text-graphite antialiased">
+
+  <header class="sticky top-0 z-50 flex h-header items-center gap-sp5 bg-graphite px-gutter xl:px-gutter-desktop">
+    <a href="03-home.html" dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver no-underline">VYBE MASTER LOGO</a>
+    <nav class="hidden flex-1 flex-nowrap items-center gap-sp4 overflow-hidden whitespace-nowrap lg:flex">
+      <a href="03-home.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">خانه</a>
+      <a href="04-products.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="border-b-2 border-cyan py-sp4 text-body font-ui text-white no-underline transition-fast">تماس با ما</a>
+    </nav>
+    <div class="ms-auto flex shrink-0 items-center gap-sp5">
+      <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">SEARCH</button>
+      <div class="relative flex items-center">
+        <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">CART</button>
+        <span dir="ltr" class="absolute -top-1.5 -left-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite">2</span>
+      </div>
+      <button type="button" class="hidden rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white sm:block">ACCOUNT</button>
+    </div>
+    <button type="button" data-menu-open class="order-last h-hit w-hit rounded-md border border-edge bg-transparent font-mono text-micro text-fog-white lg:hidden">MENU</button>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-[100] hidden flex-col bg-graphite text-fog-white">
+    <div class="flex h-header items-center justify-between px-gutter">
+      <button type="button" data-menu-close class="h-hit w-hit rounded-md border border-edge bg-transparent text-body text-fog-white">&#10005;</button>
+      <div dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+    </div>
+    <nav class="flex flex-1 flex-col items-start gap-sp4 px-gutter py-sp4">
+      <a href="03-home.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">خانه</a>
+      <a href="04-products.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="text-h3 font-h3 text-white no-underline">تماس با ما</a>
+    </nav>
+  </div>
+
+  <main class="mx-auto max-w-page px-gutter xl:px-gutter-desktop">
+
+    <nav aria-label="مسیر" class="flex flex-wrap items-center gap-sp2 py-sp4 text-small text-gray-800">
+      <a href="03-home.html" class="text-gray-800 no-underline hover:text-graphite">خانه</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <span aria-current="page" class="text-graphite">تماس با ما</span>
+    </nav>
+
+    <div class="flex flex-col gap-sp3 pb-sp6">
+      <h1 class="m-0 text-h1 font-h1">تماس با ما</h1>
+      <p class="m-0 max-w-text text-body-large text-gray-800 [text-wrap:pretty]">سؤال درباره ابعاد، سفارش عمده یا ایراد یک قطعه — همه از همین یک فرم. پاسخ در ساعات کاری معمولاً زیر یک روز کاری است.</p>
+    </div>
+
+    <section data-screen-label="تماس" class="grid grid-cols-1 gap-sp6 pb-section-mobile lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-sp7 md:pb-section">
+
+      <form id="contactForm" novalidate class="flex flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+        <div class="flex flex-col gap-sp2">
+          <h2 class="m-0 text-h3 font-h3">فرم پیام</h2>
+          <p class="m-0 text-small text-gray-800">فیلدهای ستاره‌دار الزامی است.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-sp4 md:grid-cols-2">
+          <label for="name" class="flex flex-col gap-sp2">
+            <span class="text-small font-ui">نام و نام خانوادگی *</span>
+            <input id="name" name="name" type="text" placeholder="مثلاً سارا محمدی" required class="h-12 w-full rounded-md border border-silver bg-white px-sp3 text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+          </label>
+          <label for="email" class="flex flex-col gap-sp2">
+            <span class="text-small font-ui">ایمیل *</span>
+            <input id="email" name="email" type="email" placeholder="name@example.com" required class="h-12 w-full rounded-md border border-silver bg-white px-sp3 text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+          </label>
+        </div>
+
+        <label for="subject" class="flex flex-col gap-sp2">
+          <span class="text-small font-ui">موضوع *</span>
+          <select id="subject" name="subject" required class="h-12 w-full rounded-md border border-silver bg-white px-sp3 text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <option value="">انتخاب کنید</option>
+            <option>سؤال درباره محصول</option>
+            <option>پیگیری سفارش</option>
+            <option>ایراد یا مرجوعی</option>
+            <option>سفارش عمده</option>
+            <option>همکاری</option>
+          </select>
+        </label>
+
+          <label for="message" class="flex flex-col gap-sp2">
+            <span class="text-small font-ui">پیام *</span>
+            <textarea id="message" name="message" rows="6" placeholder="کد مدل قطعه و توضیح کوتاه مسئله را بنویسید." class="w-full resize-y rounded-md border border-silver bg-white p-sp3 text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"></textarea>
+          </label>
+
+        <label class="flex items-start gap-sp2 text-small text-gray-800">
+          <input type="checkbox" class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+          <span>خبرنامه ماهانه کارگاه را هم برایم بفرستید.</span>
+        </label>
+
+        <div class="flex flex-wrap items-center gap-sp3 border-t border-line pt-sp4">
+          <button type="submit" id="submitBtn" class="h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">ارسال پیام</button>
+          <span class="text-small text-gray-800">پاسخ به همین ایمیل فرستاده می‌شود.</span>
+        </div>
+        <div id="formNote" class="hidden"></div>
+      </form>
+
+      <aside class="flex flex-col gap-sp4">
+        <div class="flex flex-col rounded-xl border border-line bg-white p-sp4">
+          <div class="flex flex-col gap-sp1 border-b border-line pb-sp3">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">ADDRESS</span>
+            <p class="m-0 text-body leading-[1.7] text-graphite">تهران، خیابان شریعتی، کوچه بهار، پلاک ۱۲، واحد ۴</p>
+          </div>
+          <div class="flex flex-col gap-sp1 border-b border-line py-sp3">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">EMAIL</span>
+            <a href="mailto:hello@vybe.ir" dir="ltr" class="font-mono text-body text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite">hello@vybe.ir</a>
+          </div>
+          <div class="flex flex-col gap-sp1 border-b border-line py-sp3">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">PHONE</span>
+            <a href="tel:+982112345678" dir="ltr" class="font-mono text-body text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite">021 1234 5678</a>
+          </div>
+          <div class="flex flex-col gap-sp2 border-b border-line py-sp3">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">HOURS</span>
+            <div class="flex justify-between gap-sp3 text-small"><span class="text-gray-800">شنبه تا چهارشنبه</span><span dir="ltr" class="font-mono">9:00 — 18:00</span></div>
+            <div class="flex justify-between gap-sp3 text-small"><span class="text-gray-800">پنجشنبه</span><span dir="ltr" class="font-mono">9:00 — 13:00</span></div>
+            <div class="flex justify-between gap-sp3 text-small"><span class="text-gray-800">جمعه</span><span class="text-gray-800">تعطیل</span></div>
+          </div>
+          <div class="flex flex-col gap-sp2 pt-sp3">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">SOCIAL</span>
+            <div dir="ltr" class="flex flex-wrap gap-sp2">
+              <a href="#" class="rounded-sm border border-silver px-sp2 py-1 font-mono text-micro text-gray-800 no-underline transition-fast hover:border-titanium">INSTAGRAM</a>
+              <a href="#" class="rounded-sm border border-silver px-sp2 py-1 font-mono text-micro text-gray-800 no-underline transition-fast hover:border-titanium">TELEGRAM</a>
+              <a href="#" class="rounded-sm border border-silver px-sp2 py-1 font-mono text-micro text-gray-800 no-underline transition-fast hover:border-titanium">PINTEREST</a>
+              <a href="#" class="rounded-sm border border-silver px-sp2 py-1 font-mono text-micro text-gray-800 no-underline transition-fast hover:border-titanium">YOUTUBE</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp2">
+          <div class="relative flex aspect-[4/3] w-full items-end overflow-hidden rounded-xl border border-line bg-[repeating-linear-gradient(90deg,#E8E8E6_0_1px,transparent_1px_48px),repeating-linear-gradient(0deg,#E8E8E6_0_1px,transparent_1px_48px)] bg-fog-white p-sp3">
+            <span class="absolute left-1/2 top-1/2 flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-graphite"><span class="h-1.5 w-1.5 rounded-full bg-cyan"></span></span>
+            <span dir="ltr" class="font-mono text-micro leading-[1.6] text-gray-800">MAP &middot; GRAYSCALE STYLE<br>جای‌نگهدار — نقشه با استایل خاکستری</span>
+          </div>
+          <a href="#" class="self-start text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">مسیریابی روی نقشه</a>
+        </div>
+      </aside>
+    </section>
+
+    <section data-screen-label="سؤالات متداول" class="flex flex-col gap-sp4 border-t border-line py-section-mobile md:py-section">
+      <div class="flex flex-col gap-sp2">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">FAQ</p>
+        <h2 class="m-0 text-h2 font-h2">سؤالات متداول</h2>
+      </div>
+      <div class="overflow-hidden rounded-xl border border-line">
+        <details class="group border-b border-line bg-white px-sp4 py-sp3" open>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-sp3 text-body font-ui text-graphite marker:content-none">
+            ارسال چند روز طول می‌کشد؟
+            <span aria-hidden="true" class="font-mono text-h4 text-titanium transition-fast group-open:hidden">+</span>
+            <span aria-hidden="true" class="hidden font-mono text-h4 text-titanium group-open:block">&minus;</span>
+          </summary>
+          <p class="m-0 mt-sp3 max-w-text text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">قطعه‌های موجود ۲ تا ۴ روز کاری. پیش‌سفارش‌ها بعد از چاپ ارسال می‌شوند و زمان تقریبی در صفحه محصول نوشته شده است.</p>
+        </details>
+        <details class="group border-b border-line bg-white px-sp4 py-sp3">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-sp3 text-body font-ui text-graphite marker:content-none">
+            اگر قطعه بشکند چه می‌شود؟
+            <span aria-hidden="true" class="font-mono text-h4 text-titanium transition-fast group-open:hidden">+</span>
+            <span aria-hidden="true" class="hidden font-mono text-h4 text-titanium group-open:block">&minus;</span>
+          </summary>
+          <p class="m-0 mt-sp3 max-w-text text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">فایل و کد مدل هر قطعه نگه داشته می‌شود. عکس بفرستید؛ اگر ایراد از ساخت باشد قطعه جدید چاپ و بدون هزینه ارسال می‌شود.</p>
+        </details>
+        <details class="group border-b border-line bg-white px-sp4 py-sp3">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-sp3 text-body font-ui text-graphite marker:content-none">
+            سفارش با ابعاد دلخواه می‌گیرید؟
+            <span aria-hidden="true" class="font-mono text-h4 text-titanium transition-fast group-open:hidden">+</span>
+            <span aria-hidden="true" class="hidden font-mono text-h4 text-titanium group-open:block">&minus;</span>
+          </summary>
+          <p class="m-0 mt-sp3 max-w-text text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">برای ابعاد خاص روی قطعه‌های موجود بله. طراحی از صفر را فعلاً فقط برای سفارش‌های بالای ۲۰ عدد قبول می‌کنیم.</p>
+        </details>
+        <details class="group border-b border-line bg-white px-sp4 py-sp3">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-sp3 text-body font-ui text-graphite marker:content-none">
+            قطعه‌ها در گرما تغییر شکل می‌دهند؟
+            <span aria-hidden="true" class="font-mono text-h4 text-titanium transition-fast group-open:hidden">+</span>
+            <span aria-hidden="true" class="hidden font-mono text-h4 text-titanium group-open:block">&minus;</span>
+          </summary>
+          <p class="m-0 mt-sp3 max-w-text text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">PLA+ تا حدود ۵۵ درجه پایدار است و برای داخل خودرو در تابستان مناسب نیست. برای آن موارد نسخه PETG داریم.</p>
+        </details>
+        <details class="group border-b border-line bg-white px-sp4 py-sp3">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-sp3 text-body font-ui text-graphite marker:content-none">
+            امکان فاکتور رسمی هست؟
+            <span aria-hidden="true" class="font-mono text-h4 text-titanium transition-fast group-open:hidden">+</span>
+            <span aria-hidden="true" class="hidden font-mono text-h4 text-titanium group-open:block">&minus;</span>
+          </summary>
+          <p class="m-0 mt-sp3 max-w-text text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">بله. در توضیحات سفارش بنویسید یا از همین فرم اطلاعات شرکت را بفرستید.</p>
+        </details>
+      </div>
+    </section>
+
+    <section data-screen-label="حالت‌های فرم" class="flex flex-col gap-sp5 border-t border-line py-section-mobile md:py-section">
+      <div class="flex flex-col gap-sp2">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">HANDOFF &middot; FORM STATES</p>
+        <h2 class="m-0 text-h2 font-h2">حالت‌های فرم</h2>
+        <p class="m-0 max-w-text text-small text-gray-800">حالت پر و خالی فرم بالاتر است. این بخش برای تحویل به کد است و در نسخه نهایی رندر نمی‌شود.</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-sp4 lg:grid-cols-2">
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">VALIDATION &middot; FIELD ERRORS</span>
+          <div class="flex flex-col gap-sp4 rounded-lg border border-line bg-white p-sp4">
+            <label class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">ایمیل *</span>
+              <input type="email" value="sara@" aria-invalid="true" class="h-12 w-full rounded-md border-2 border-danger-ink bg-white px-sp3 text-body text-graphite outline-none">
+              <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>ایمیل معتبر نیست. الگوی درست: name@example.com</span>
+            </label>
+            <label class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">موضوع *</span>
+              <select aria-invalid="true" class="h-12 w-full rounded-md border-2 border-danger-ink bg-white px-sp3 text-body text-gray-800 outline-none"><option>انتخاب کنید</option></select>
+              <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>یک موضوع انتخاب کنید.</span>
+            </label>
+            <label class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">پیام *</span>
+              <textarea rows="2" class="w-full rounded-md border border-silver bg-white p-sp3 text-body outline-none">سلام</textarea>
+              <span class="flex items-center gap-sp2 text-caption text-warning-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-warning"></span>پیام کوتاه است؛ کد مدل قطعه را هم بنویسید.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp4">
+          <div class="flex flex-col gap-sp3">
+            <span dir="ltr" class="font-mono text-micro text-gray-800">SUBMITTING</span>
+            <div class="flex flex-col gap-sp3 rounded-lg border border-line bg-white p-sp4">
+              <div class="flex flex-col gap-sp2 opacity-60">
+                <span class="skeleton h-12 w-full rounded-md"></span>
+                <span class="skeleton h-12 w-full rounded-md"></span>
+              </div>
+              <button type="button" disabled class="flex h-12 cursor-wait items-center justify-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white"><span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال ارسال…</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-sp3">
+            <span dir="ltr" class="font-mono text-micro text-gray-800">SUCCESS</span>
+            <div class="flex flex-col items-start gap-sp3 rounded-lg border border-success-ink bg-white p-sp4">
+              <span class="flex items-center gap-sp2 text-body font-ui text-success-ink"><span aria-hidden="true">&#10003;</span>پیام شما ثبت شد</span>
+              <p class="m-0 text-small leading-[1.7] text-gray-800">شماره پیگیری <span dir="ltr" class="font-mono text-graphite">MSG-4812</span> — پاسخ به ایمیل شما فرستاده می‌شود، معمولاً زیر یک روز کاری.</p>
+              <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">ارسال پیام دیگر</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-sp3">
+            <span dir="ltr" class="font-mono text-micro text-gray-800">SUBMIT ERROR</span>
+            <div class="flex flex-col items-start gap-sp3 rounded-lg border border-danger-ink bg-white p-sp4">
+              <span class="flex items-center gap-sp2 text-body font-ui text-danger-ink"><span aria-hidden="true">&#10005;</span>پیام ارسال نشد</span>
+              <p class="m-0 text-small leading-[1.7] text-gray-800">ارتباط با سرور قطع شد. متن پیام حفظ شده است؛ می‌توانید دوباره تلاش کنید یا به <a href="mailto:hello@vybe.ir" dir="ltr" class="font-mono text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">hello@vybe.ir</a> ایمیل بزنید.</p>
+              <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">تلاش مجدد</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+    <div class="mx-auto max-w-page">
+      <div class="flex flex-col gap-sp2 border-b border-edge pb-sp6">
+        <div dir="ltr" class="grid h-7 w-[140px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+        <p class="mt-sp2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-sp5 border-b border-edge py-sp6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">دسته‌بندی‌ها</span>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">میز کار</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">آشپزخانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خودرو</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سازمان‌دهی</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سفر</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">لینک‌های سریع</span>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">محصولات</a>
+          <a href="07-catalog.html" class="text-small text-silver no-underline hover:text-white">کاتالوگ</a>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">تازه‌ها</a>
+          <a href="08-blog-list.html" class="text-small text-silver no-underline hover:text-white">بلاگ</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">درباره ما</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">پشتیبانی و راهنما</span>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">پیگیری سفارش</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">ارسال و تحویل</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">مرجوعی</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">نگهداری قطعات PLA</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">سؤالات متداول</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">درباره VYBE</span>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">کارگاه</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">فرایند تولید</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">همکاری با ما</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">تماس با ما</a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-sp5 pt-sp6">
+        <div class="flex max-w-[420px] flex-col gap-sp2">
+          <span class="text-small font-h2">خبرنامه</span>
+          <p class="m-0 text-small leading-[1.6] text-titanium">ماهی یک ایمیل. محصول تازه و یادداشت‌های کارگاه.</p>
+          <form class="flex gap-sp2">
+            <input type="email" placeholder="ایمیل شما" class="h-12 flex-1 rounded-md border border-edge bg-surface px-sp3 text-small text-fog-white outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" class="h-12 rounded-md border-0 bg-white px-sp4 text-small font-ui text-graphite hover:bg-line">عضویت</button>
+          </form>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <div dir="ltr" class="flex gap-sp3 font-mono text-micro text-silver"><span>INSTAGRAM</span><span>TELEGRAM</span><span>PINTEREST</span><span>YOUTUBE</span></div>
+          <div class="flex gap-sp2">
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">نماد<br>اعتماد</div>
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">درگاه<br>پرداخت</div>
+          </div>
+        </div>
+      </div>
+      <p dir="ltr" class="m-0 mt-sp6 font-mono text-micro tracking-[0.06em] text-titanium">&copy; 1404 VYBE &middot; ALL RIGHTS RESERVED</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var menu=document.getElementById('mobileMenu');
+  function openMenu(){menu.classList.remove('hidden');menu.classList.add('flex');document.body.style.overflow='hidden';}
+  function closeMenu(){menu.classList.add('hidden');menu.classList.remove('flex');document.body.style.overflow='';}
+  document.querySelectorAll('[data-menu-open]').forEach(function(b){b.addEventListener('click',openMenu)});
+  document.querySelectorAll('[data-menu-close]').forEach(function(b){b.addEventListener('click',closeMenu)});
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+
+  document.querySelectorAll('#contactForm input, #contactForm select, #contactForm textarea').forEach(function(el){
+    el.addEventListener('blur',function(){
+      var wrap=el.closest('label'); if(!wrap)return;
+      var old=wrap.querySelector('[data-err]'); if(old)old.remove();
+      el.classList.remove('border-2','border-danger-ink');
+      if(el.required&&!el.checkValidity()){
+        el.classList.add('border-2','border-danger-ink');
+        el.setAttribute('aria-invalid','true');
+        var s=document.createElement('span');
+        s.setAttribute('data-err','');
+        s.className='flex items-center gap-sp2 text-caption text-danger-ink';
+        s.innerHTML='<span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>'+(el.value?'مقدار وارد‌شده معتبر نیست.':'این فیلد الزامی است.');
+        wrap.appendChild(s);
+      } else { el.removeAttribute('aria-invalid'); }
+    });
+  });
+
+  var form=document.getElementById('contactForm'),btn=document.getElementById('submitBtn'),note=document.getElementById('formNote');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){
+      form.querySelectorAll('input,select,textarea').forEach(function(el){el.dispatchEvent(new Event('blur'))});
+      note.className='flex items-center gap-sp2 rounded-md border border-danger-ink bg-white p-sp3 text-small text-danger-ink';
+      note.innerHTML='<span aria-hidden="true">&#10005;</span>چند فیلد کامل نیست. موارد مشخص‌شده را بررسی کنید.';
+      return;
+    }
+    btn.disabled=true;
+    btn.className='flex h-12 cursor-wait items-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white';
+    btn.innerHTML='<span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال ارسال…';
+    note.className='hidden';
+    setTimeout(function(){
+      btn.disabled=false;
+      btn.className='h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink';
+      btn.textContent='ارسال پیام';
+      note.className='flex flex-col gap-sp1 rounded-md border border-success-ink bg-white p-sp3 text-small';
+      note.innerHTML='<span class="flex items-center gap-sp2 font-ui text-success-ink"><span aria-hidden="true">&#10003;</span>پیام شما ثبت شد</span><span class="text-gray-800">شماره پیگیری <span dir="ltr" class="font-mono text-graphite">MSG-4812</span> — پاسخ به ایمیل شما فرستاده می‌شود.</span>';
+      form.reset();
+    },1500);
+  });
+})();
+</script>
+</body>
+</html>

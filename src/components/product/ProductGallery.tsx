@@ -1,5 +1,6 @@
 import { useRef, type KeyboardEvent } from "react";
 import { cn } from "@/lib/cn";
+import { Image } from "@/components/ui/Image";
 
 export interface ProductGalleryProps {
   images: string[];
@@ -27,15 +28,15 @@ export function ProductGallery({ images, productName, activeIndex, onActiveIndex
 
   return (
     <div className="flex flex-col gap-4">
-      <div
-        role="img"
-        aria-label={`${productName} — تصویر ${activeIndex + 1} از ${images.length}`}
-        className="flex aspect-square w-full items-end overflow-hidden rounded-xl border border-gray-100 bg-[repeating-linear-gradient(135deg,#E4E4E2_0_10px,#F5F5F3_10px_20px)] p-6"
-      >
-        <span dir="ltr" aria-hidden="true" className="font-mono text-micro leading-[1.6] text-gray-800">
-          {productName} &middot; IMAGE {activeIndex + 1}/{images.length}
-        </span>
-      </div>
+      <Image
+        key={activeIndex}
+        src={images[activeIndex]}
+        alt={`${productName} — تصویر ${activeIndex + 1} از ${images.length}`}
+        width={1200}
+        height={1200}
+        priority
+        className="aspect-square w-full rounded-xl border border-gray-100 object-cover"
+      />
       <div role="tablist" aria-label="گالری تصاویر محصول" className="grid grid-cols-4 gap-3 md:grid-cols-5">
         {images.map((image, index) => {
           const selected = index === activeIndex;
@@ -53,13 +54,11 @@ export function ProductGallery({ images, productName, activeIndex, onActiveIndex
               onClick={() => onActiveIndexChange(index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               className={cn(
-                "flex aspect-square items-end rounded-md bg-[repeating-linear-gradient(45deg,#E4E4E2_0_8px,#F5F5F3_8px_16px)] p-2 text-start transition-colors duration-fast",
+                "overflow-hidden rounded-md transition-colors duration-fast",
                 selected ? "border-2 border-graphite" : "border border-gray-100 hover:border-titanium",
               )}
             >
-              <span dir="ltr" className="font-mono text-micro text-gray-800">
-                {String(index + 1).padStart(2, "0")}
-              </span>
+              <Image src={image} alt="" width={200} height={200} className="aspect-square w-full object-cover" />
             </button>
           );
         })}

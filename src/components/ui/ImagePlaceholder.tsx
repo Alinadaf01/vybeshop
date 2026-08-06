@@ -1,16 +1,19 @@
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 
 export interface ImagePlaceholderProps {
   caption: string;
   dark?: boolean;
   className?: string;
+  style?: CSSProperties;
 }
 
-export function ImagePlaceholder({ caption, dark, className }: ImagePlaceholderProps) {
+export function ImagePlaceholder({ caption, dark, className, style }: ImagePlaceholderProps) {
   return (
     <div
       role="img"
       aria-label={caption}
+      style={style}
       className={cn(
         "flex items-end p-4",
         dark
