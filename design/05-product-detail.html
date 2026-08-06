@@ -1,0 +1,419 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VYBE · 05 صفحه محصول</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--color-graphite:#0B0B0C; --color-fog-white:#F5F5F3; --color-titanium:#7A7D82; --color-silver:#B8BCC2; --color-cyan:#00D1FF;
+--color-ink:#1A1A1C; --color-surface:#141416; --color-edge:#26262A; --color-line:#ECECEC;
+--color-gray-500:#9A9A9A; --color-gray-800:#4A4A4A;
+--color-danger:#D64545; --color-danger-ink:#B23434; --color-danger-dark:#E86A6A; --color-success:#2FB66B; --color-success-ink:#1E7A47; --color-warning:#F4B400; --color-warning-ink:#8A6400;
+--font-fa:"Peyda","Vazirmatn",system-ui,sans-serif; --font-latin:"Sora",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display:40px; --fs-h1:32px; --fs-h2:26px; --fs-h3:22px; --fs-h4:20px;
+--fs-body-lg:18px; --fs-body:16px; --fs-small:14px; --fs-caption:12px; --fs-micro:10px;
+--radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+--ease:cubic-bezier(0.4,0,0.2,1); --dur-fast:150ms; --dur-base:300ms; --dur-slow:600ms;
+}
+@media (min-width:768px){:root{
+--fs-display:64px; --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:24px; --fs-body-lg:20px;
+}}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");font-weight:800;font-display:swap}
+html,body{margin:0}
+a{color:var(--color-graphite)}
+a:hover{color:var(--color-ink)}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+<script>tailwind.config={theme:{extend:{
+colors:{graphite:'var(--color-graphite)',fog:'var(--color-fog-white)',titanium:'var(--color-titanium)',silver:'var(--color-silver)',cyan:'var(--color-cyan)',ink:'var(--color-ink)',surface:'var(--color-surface)',edge:'var(--color-edge)',line:'var(--color-line)',gray500:'var(--color-gray-500)',gray800:'var(--color-gray-800)',danger:'var(--color-danger)',dangerink:'var(--color-danger-ink)',dangerdark:'var(--color-danger-dark)',success:'var(--color-success)',successink:'var(--color-success-ink)',warning:'var(--color-warning)',warningink:'var(--color-warning-ink)'},
+fontFamily:{fa:['Peyda','Vazirmatn','system-ui','sans-serif'],latin:['Sora','system-ui','sans-serif'],mono:['JetBrains Mono','ui-monospace','monospace']},
+fontSize:{display:['var(--fs-display)',{lineHeight:'1.1',letterSpacing:'-0.02em'}],h1:['var(--fs-h1)',{lineHeight:'1.2'}],h2:['var(--fs-h2)',{lineHeight:'1.2'}],h3:['var(--fs-h3)',{lineHeight:'1.2'}],h4:['var(--fs-h4)',{lineHeight:'1.2'}],bodylg:['var(--fs-body-lg)',{lineHeight:'1.5'}],body:['var(--fs-body)',{lineHeight:'1.5'}],sm:['var(--fs-small)',{lineHeight:'1.5'}],cap:['var(--fs-caption)',{lineHeight:'1.4',letterSpacing:'0.01em'}],micro:['var(--fs-micro)',{lineHeight:'1.4',letterSpacing:'0.01em'}]},
+borderRadius:{none:'0',sm:'var(--radius-sm)',md:'var(--radius-md)',lg:'var(--radius-lg)',xl:'var(--radius-xl)',full:'var(--radius-full)'},
+maxWidth:{text:'720px',page:'1440px'},
+transitionTimingFunction:{DEFAULT:'var(--ease)'},
+transitionDuration:{fast:'150ms',base:'300ms',slow:'600ms'},
+screens:{sm:'375px',md:'768px',lg:'1024px',xl:'1440px'}
+}}}</script>
+</head>
+<body class="bg-fog font-fa text-body text-graphite antialiased">
+
+  <header class="sticky top-0 z-50 flex h-[72px] items-center gap-8 bg-graphite px-5 xl:px-10">
+    <a href="03-home.html" dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver no-underline">VYBE MASTER LOGO</a>
+    <nav class="hidden flex-1 flex-nowrap items-center gap-6 overflow-hidden whitespace-nowrap lg:flex">
+      <a href="03-home.html" class="py-6 text-body font-medium text-silver no-underline transition-fast hover:text-white">خانه</a>
+      <a href="#" class="border-b-2 border-cyan py-6 text-body font-medium text-white no-underline transition-fast">محصولات</a>
+      <a href="#" class="py-6 text-body font-medium text-silver no-underline transition-fast hover:text-white">دسته‌بندی‌ها</a>
+      <a href="#" class="py-6 text-body font-medium text-silver no-underline transition-fast hover:text-white">کاتالوگ</a>
+      <a href="#" class="py-6 text-body font-medium text-silver no-underline transition-fast hover:text-white">بلاگ</a>
+      <a href="#" class="py-6 text-body font-medium text-silver no-underline transition-fast hover:text-white">درباره ما</a>
+      <a href="#" class="py-6 text-body font-medium text-silver no-underline transition-fast hover:text-white">تماس با ما</a>
+    </nav>
+    <div class="ms-auto flex shrink-0 items-center gap-5">
+      <button type="button" class="rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver hover:text-white">SEARCH</button>
+      <div class="relative flex items-center">
+        <button type="button" class="rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver hover:text-white">CART</button>
+        <span dir="ltr" class="absolute -top-1.5 -left-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite">2</span>
+      </div>
+      <button type="button" class="hidden rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver hover:text-white sm:block">ACCOUNT</button>
+    </div>
+    <button type="button" data-menu-open class="order-last h-11 w-11 rounded-md border border-edge bg-transparent font-mono text-micro text-fog lg:hidden">MENU</button>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-[100] hidden flex-col bg-graphite text-fog">
+    <div class="flex h-[72px] items-center justify-between px-5">
+      <button type="button" data-menu-close class="h-11 w-11 rounded-md border border-edge bg-transparent text-body text-fog">&#10005;</button>
+      <div dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+    </div>
+    <nav class="flex flex-1 flex-col items-start gap-6 px-5 py-6">
+      <a href="03-home.html" class="text-h3 font-semibold text-silver no-underline hover:text-white">خانه</a>
+      <a href="#" class="text-h3 font-semibold text-white no-underline">محصولات</a>
+      <a href="#" class="text-h3 font-semibold text-silver no-underline hover:text-white">دسته‌بندی‌ها</a>
+      <a href="#" class="text-h3 font-semibold text-silver no-underline hover:text-white">کاتالوگ</a>
+      <a href="#" class="text-h3 font-semibold text-silver no-underline hover:text-white">بلاگ</a>
+      <a href="#" class="text-h3 font-semibold text-silver no-underline hover:text-white">درباره ما</a>
+      <a href="#" class="text-h3 font-semibold text-silver no-underline hover:text-white">تماس با ما</a>
+    </nav>
+  </div>
+
+  <main class="mx-auto max-w-page px-5 xl:px-10">
+
+    <nav aria-label="مسیر" class="flex flex-wrap items-center gap-2 py-6 text-sm text-gray800">
+      <a href="03-home.html" class="text-gray800 no-underline hover:text-graphite">خانه</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <a href="#" class="text-gray800 no-underline hover:text-graphite">محصولات</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <a href="#" class="text-gray800 no-underline hover:text-graphite">میز کار</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <span aria-current="page" class="text-graphite">جاکارتی مینیمال W4001</span>
+    </nav>
+
+    <section data-screen-label="محصول" class="grid grid-cols-1 gap-10 pb-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-16 md:pb-20">
+
+      <div class="flex flex-col gap-4">
+        <div id="galleryMain" class="flex aspect-square w-full items-end rounded-xl border border-line bg-[repeating-linear-gradient(135deg,#E4E4E2_0_10px,#F5F5F3_10px_20px)] p-6">
+          <span dir="ltr" class="font-mono text-micro leading-[1.6] text-gray800">تصویر ۱ &middot; PRODUCT HERO<br>1600 &times; 1600 &middot; NEUTRAL SET, SIDE LIGHT<br>جای‌نگهدار — عکس واقعی جایگزین شود</span>
+        </div>
+        <div class="grid grid-cols-4 gap-3 md:grid-cols-5">
+          <button type="button" data-thumb aria-pressed="true" class="flex aspect-square items-end rounded-md border-2 border-graphite bg-[repeating-linear-gradient(135deg,#E4E4E2_0_8px,#F5F5F3_8px_16px)] p-2 text-start"><span dir="ltr" class="font-mono text-micro text-gray800">01</span></button>
+          <button type="button" data-thumb aria-pressed="false" class="flex aspect-square items-end rounded-md border border-line bg-[repeating-linear-gradient(45deg,#E4E4E2_0_8px,#F5F5F3_8px_16px)] p-2 text-start transition-fast hover:border-titanium"><span dir="ltr" class="font-mono text-micro text-gray800">02</span></button>
+          <button type="button" data-thumb aria-pressed="false" class="flex aspect-square items-end rounded-md border border-line bg-[repeating-linear-gradient(180deg,#E4E4E2_0_4px,#F5F5F3_4px_8px)] p-2 text-start transition-fast hover:border-titanium"><span dir="ltr" class="font-mono text-micro text-gray800">03</span></button>
+          <button type="button" data-thumb aria-pressed="false" class="flex aspect-square items-end rounded-md border border-line bg-[repeating-linear-gradient(135deg,#141416_0_8px,#0B0B0C_8px_16px)] p-2 text-start transition-fast hover:border-titanium"><span dir="ltr" class="font-mono text-micro text-titanium">04</span></button>
+          <button type="button" data-thumb aria-pressed="false" class="flex aspect-square items-end rounded-md border border-line bg-[repeating-linear-gradient(45deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-2 text-start transition-fast hover:border-titanium"><span dir="ltr" class="font-mono text-micro text-gray800">05</span></button>
+        </div>
+        <p dir="ltr" class="m-0 font-mono text-micro leading-[1.6] text-gray800">GALLERY &middot; 5 SHOTS &middot; HERO, SIDE, MACRO LAYER, IN HAND, SCALE REFERENCE</p>
+      </div>
+
+      <div class="flex flex-col gap-6 lg:sticky lg:top-[104px] lg:self-start">
+        <div class="flex flex-col gap-3">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray800">میز کار &middot; W4001</span>
+          <h1 class="m-0 text-h1 font-bold [text-wrap:pretty]">جاکارتی مینیمال مدل W4001</h1>
+          <p class="m-0 text-bodylg text-gray800">هفت کارت، تک‌قطعه، بدون پیچ.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span dir="ltr" aria-hidden="true" class="font-mono text-body tracking-[0.1em] text-graphite">&#9733;&#9733;&#9733;&#9733;<span class="text-silver">&#9733;</span></span>
+            <span dir="ltr" class="font-mono text-sm text-gray800">4.6</span>
+          </div>
+          <a href="#reviews" class="text-sm text-gray800 underline decoration-silver underline-offset-4 hover:decoration-graphite">۲۳ دیدگاه ثبت‌شده</a>
+        </div>
+
+        <div class="flex flex-col gap-2 border-t border-line pt-6">
+          <span dir="ltr" class="font-mono text-h3 font-medium text-graphite">1,057,000 تومان</span>
+          <span class="text-sm text-gray800">قیمت نهایی؛ ارسال جداگانه محاسبه می‌شود.</span>
+        </div>
+
+        <fieldset class="m-0 flex flex-col gap-3 border-0 p-0">
+          <legend class="mb-1 p-0 text-sm font-semibold">رنگ فیلامنت</legend>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" data-swatch aria-pressed="true" class="flex h-11 items-center gap-2 rounded-md border-2 border-graphite bg-white px-3 text-sm"><span class="h-4 w-4 rounded-full bg-graphite"></span>گرافیت</button>
+            <button type="button" data-swatch aria-pressed="false" class="flex h-11 items-center gap-2 rounded-md border border-silver bg-white px-3 text-sm transition-fast hover:border-titanium"><span class="h-4 w-4 rounded-full border border-line bg-fog"></span>سفید مه</button>
+            <button type="button" data-swatch aria-pressed="false" class="flex h-11 items-center gap-2 rounded-md border border-silver bg-white px-3 text-sm transition-fast hover:border-titanium"><span class="h-4 w-4 rounded-full bg-titanium"></span>تیتانیوم</button>
+            <button type="button" data-swatch aria-pressed="false" disabled class="flex h-11 cursor-not-allowed items-center gap-2 rounded-md border border-line bg-white px-3 text-sm text-silver"><span class="h-4 w-4 rounded-full bg-silver"></span>نقره‌ای — ناموجود</button>
+          </div>
+        </fieldset>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex h-12 items-center rounded-md border border-silver bg-white">
+            <button type="button" data-qty="-1" aria-label="کاهش تعداد" class="h-11 w-11 border-0 bg-transparent text-h4 text-graphite">&minus;</button>
+            <span dir="ltr" id="qty" class="grid min-w-11 place-items-center font-mono text-body">1</span>
+            <button type="button" data-qty="1" aria-label="افزایش تعداد" class="h-11 w-11 border-0 bg-transparent text-h4 text-graphite">+</button>
+          </div>
+          <button type="button" class="h-12 min-w-[180px] flex-1 rounded-md border-0 bg-graphite px-6 text-body font-medium text-fog transition-fast hover:bg-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">افزودن به سبد</button>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <button type="button" class="h-12 flex-1 rounded-md border border-silver bg-white px-5 text-body font-medium text-graphite transition-fast hover:border-titanium">ذخیره در علاقه‌مندی‌ها</button>
+          <button type="button" class="h-12 rounded-md border border-silver bg-white px-5 font-mono text-micro text-gray800 transition-fast hover:border-titanium">SHARE</button>
+        </div>
+
+        <p class="m-0 flex items-center gap-2 rounded-md border border-line bg-white p-4 text-sm text-warningink">
+          <span aria-hidden="true" class="h-2 w-2 shrink-0 rounded-full bg-warning"></span>
+          تنها ۲ عدد در رنگ گرافیت باقی مانده است.
+        </p>
+
+        <dl class="m-0 flex flex-col border-t border-line">
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">ارسال</dt><dd class="m-0 text-sm">۲ تا ۴ روز کاری، تهران و شهرستان</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">مرجوعی</dt><dd class="m-0 text-sm">۷ روز، بدون قید</dd></div>
+          <div class="flex justify-between gap-4 py-3"><dt class="text-sm text-gray800">وضعیت ساخت</dt><dd dir="ltr" class="m-0 font-mono text-sm text-successink">IN STOCK &middot; SHIPS FROM WORKSHOP</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section data-screen-label="مشخصات" class="grid grid-cols-1 gap-10 border-t border-line py-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-16 md:py-20">
+      <div class="flex max-w-text flex-col gap-6">
+        <h2 class="m-0 text-h2 font-semibold">چرا این شکل</h2>
+        <p class="m-0 text-bodylg leading-[1.7] text-gray800 [text-wrap:pretty]">بدنه از یک قطعه پرینت می‌شود؛ نه پیچی هست، نه چسبی. زاویه دیواره‌ها طوری انتخاب شده که کارت‌ها با فشار انگشت شست بیرون بیایند و در جیب یا کیف جابه‌جا نشوند. لبه بالایی ۰٫۸ میلی‌متر پخ دارد تا سر کارت گیر نکند.</p>
+        <p class="m-0 text-bodylg leading-[1.7] text-gray800 [text-wrap:pretty]">ظرفیت واقعی هفت کارت بانکی است. با کارت‌های نازک‌تر تا نُه کارت جا می‌شود، اما فنریت دیواره برای هفت عدد تنظیم شده است.</p>
+        <ul class="m-0 flex list-none flex-col gap-3 p-0">
+          <li class="flex gap-3 border-t border-line pt-3 text-body text-gray800"><span aria-hidden="true" class="font-mono text-micro text-titanium">01</span>خروج کارت با یک حرکت شست</li>
+          <li class="flex gap-3 border-t border-line pt-3 text-body text-gray800"><span aria-hidden="true" class="font-mono text-micro text-titanium">02</span>بدون قطعه متحرک و بدون اتصال</li>
+          <li class="flex gap-3 border-t border-line pt-3 text-body text-gray800"><span aria-hidden="true" class="font-mono text-micro text-titanium">03</span>سطح مات، اثر انگشت نمی‌گیرد</li>
+        </ul>
+      </div>
+
+      <div class="flex flex-col gap-4 rounded-lg border border-line bg-white p-6">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray800">TECHNICAL SPEC</p>
+        <dl class="m-0 flex flex-col">
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">کد مدل</dt><dd dir="ltr" class="m-0 font-mono text-sm">W4001</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">ابعاد</dt><dd dir="ltr" class="m-0 font-mono text-sm">92 &times; 60 &times; 12 mm</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">وزن</dt><dd dir="ltr" class="m-0 font-mono text-sm">34 g</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">متریال</dt><dd dir="ltr" class="m-0 font-mono text-sm">PLA+ &middot; matte</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">ارتفاع لایه</dt><dd dir="ltr" class="m-0 font-mono text-sm">0.2 mm</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">پرینتر</dt><dd dir="ltr" class="m-0 font-mono text-sm">Bambu Lab P1S</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">زمان چاپ</dt><dd dir="ltr" class="m-0 font-mono text-sm">2 h 40 m</dd></div>
+          <div class="flex justify-between gap-4 border-b border-line py-3"><dt class="text-sm text-gray800">ظرفیت</dt><dd dir="ltr" class="m-0 font-mono text-sm">7 cards</dd></div>
+          <div class="flex justify-between gap-4 py-3"><dt class="text-sm text-gray800">تحمل حرارت</dt><dd dir="ltr" class="m-0 font-mono text-sm">up to 55 &deg;C</dd></div>
+        </dl>
+        <p class="m-0 border-t border-line pt-4 text-sm leading-[1.6] text-gray800">PLA در آفتاب مستقیم داخل خودرو نرم می‌شود. جزئیات نگهداری در <a href="#" class="text-gray800 underline decoration-silver underline-offset-4 hover:decoration-graphite">راهنمای قطعات PLA</a>.</p>
+      </div>
+    </section>
+
+    <section data-screen-label="ساخت" class="mb-14 grid grid-cols-1 gap-8 rounded-xl bg-graphite p-6 text-fog md:mb-20 md:p-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+      <div class="flex h-[280px] items-end rounded-lg border border-edge bg-[repeating-linear-gradient(180deg,#191919_0_3px,#0B0B0C_3px_6px)] p-6">
+        <span dir="ltr" class="font-mono text-micro leading-[1.6] text-titanium">MACRO &middot; LAYER LINES 0.2 MM<br>جای‌نگهدار — عکس ماکرو سطح قطعه</span>
+      </div>
+      <div class="flex flex-col gap-4">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-titanium">HOW IT IS MADE</p>
+        <h2 class="m-0 text-h2 font-semibold">خط لایه را پنهان نمی‌کنیم</h2>
+        <p class="m-0 text-bodylg leading-[1.7] text-silver [text-wrap:pretty]">هر قطعه در کارگاه خودمان چاپ، پخ‌زنی و بازرسی می‌شود. رد ساخت روی سطح می‌ماند؛ این بخشی از شکل محصول است، نه نقص آن.</p>
+        <a href="#" class="self-start border-b border-titanium pb-1 text-body font-medium text-fog no-underline transition-fast hover:border-cyan">فرایند تولید</a>
+      </div>
+    </section>
+
+    <section id="reviews" data-screen-label="دیدگاه‌ها" class="grid grid-cols-1 gap-10 border-t border-line py-14 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-16 md:py-20">
+      <div class="flex flex-col gap-4 lg:sticky lg:top-[104px] lg:self-start">
+        <h2 class="m-0 text-h2 font-semibold">دیدگاه‌ها</h2>
+        <div class="flex items-baseline gap-3">
+          <span dir="ltr" class="font-mono text-display font-medium leading-none">4.6</span>
+          <span class="text-sm text-gray800">از ۲۳ دیدگاه</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-3"><span dir="ltr" class="w-4 font-mono text-cap text-gray800">5</span><span class="h-1.5 flex-1 rounded-full bg-line"><span class="block h-1.5 w-[65%] rounded-full bg-graphite"></span></span><span dir="ltr" class="w-6 font-mono text-cap text-gray800">15</span></div>
+          <div class="flex items-center gap-3"><span dir="ltr" class="w-4 font-mono text-cap text-gray800">4</span><span class="h-1.5 flex-1 rounded-full bg-line"><span class="block h-1.5 w-[26%] rounded-full bg-graphite"></span></span><span dir="ltr" class="w-6 font-mono text-cap text-gray800">6</span></div>
+          <div class="flex items-center gap-3"><span dir="ltr" class="w-4 font-mono text-cap text-gray800">3</span><span class="h-1.5 flex-1 rounded-full bg-line"><span class="block h-1.5 w-[9%] rounded-full bg-graphite"></span></span><span dir="ltr" class="w-6 font-mono text-cap text-gray800">2</span></div>
+          <div class="flex items-center gap-3"><span dir="ltr" class="w-4 font-mono text-cap text-gray800">2</span><span class="h-1.5 flex-1 rounded-full bg-line"></span><span dir="ltr" class="w-6 font-mono text-cap text-gray800">0</span></div>
+          <div class="flex items-center gap-3"><span dir="ltr" class="w-4 font-mono text-cap text-gray800">1</span><span class="h-1.5 flex-1 rounded-full bg-line"></span><span dir="ltr" class="w-6 font-mono text-cap text-gray800">0</span></div>
+        </div>
+        <button type="button" class="mt-2 h-12 rounded-md border border-silver bg-white px-5 text-body font-medium transition-fast hover:border-titanium">نوشتن دیدگاه</button>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <article class="flex flex-col gap-3 rounded-lg border border-line bg-white p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <span class="text-body font-semibold">سارا م.</span>
+            <span dir="ltr" class="font-mono text-micro tracking-[0.06em] text-gray800">1404/03/11 &middot; خرید تأییدشده</span>
+          </div>
+          <span dir="ltr" aria-label="۵ از ۵" class="font-mono text-sm tracking-[0.1em] text-graphite">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <p class="m-0 text-body leading-[1.7] text-gray800">اندازه‌اش دقیقاً همان چیزی است که در مشخصات نوشته. هفت کارت را می‌گیرد و شل نمی‌شود.</p>
+        </article>
+        <article class="flex flex-col gap-3 rounded-lg border border-line bg-white p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <span class="text-body font-semibold">امیر ک.</span>
+            <span dir="ltr" class="font-mono text-micro tracking-[0.06em] text-gray800">1404/02/28 &middot; خرید تأییدشده</span>
+          </div>
+          <span dir="ltr" aria-label="۴ از ۵" class="font-mono text-sm tracking-[0.1em] text-graphite">&#9733;&#9733;&#9733;&#9733;<span class="text-silver">&#9733;</span></span>
+          <p class="m-0 text-body leading-[1.7] text-gray800">سطح مات خوب است ولی رنگ گرافیت کمی روشن‌تر از عکس سایت به نظر می‌رسد.</p>
+        </article>
+        <article class="flex flex-col gap-3 rounded-lg border border-line bg-white p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <span class="text-body font-semibold">نگار ر.</span>
+            <span dir="ltr" class="font-mono text-micro tracking-[0.06em] text-gray800">1404/02/09 &middot; خرید تأییدشده</span>
+          </div>
+          <span dir="ltr" aria-label="۵ از ۵" class="font-mono text-sm tracking-[0.1em] text-graphite">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <p class="m-0 text-body leading-[1.7] text-gray800">دو ماه در جیب پشتی استفاده کردم، نه ترک خورد نه لق شد.</p>
+        </article>
+        <button type="button" class="h-12 self-start rounded-md border border-silver bg-white px-6 text-body font-medium transition-fast hover:border-titanium">نمایش ۲۰ دیدگاه دیگر</button>
+      </div>
+    </section>
+
+    <section data-screen-label="مرتبط" class="flex flex-col gap-8 border-t border-line py-14 md:py-20">
+      <div class="flex flex-wrap items-baseline justify-between gap-4">
+        <h2 class="m-0 text-h2 font-semibold">در همین دسته</h2>
+        <a href="#" class="text-body font-medium text-graphite no-underline underline-offset-4 hover:underline">همه محصولات میز کار</a>
+      </div>
+      <div class="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
+        <a href="#" class="overflow-hidden rounded-lg border border-line bg-white no-underline transition-base hover:border-titanium">
+          <span class="flex aspect-[4/5] items-end border-b border-line bg-[repeating-linear-gradient(135deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-3"><span dir="ltr" class="font-mono text-micro text-gray800">W4004</span></span>
+          <span class="flex flex-col gap-2 p-4">
+            <span class="text-[18px] font-bold leading-[1.35] text-graphite [text-wrap:pretty]">پایه مونیتور مدل W4004</span>
+            <span class="text-sm text-gray800">دو ارتفاع، بدون ابزار</span>
+            <span dir="ltr" class="self-start font-mono text-sm text-gray800">1,690,000 تومان</span>
+          </span>
+        </a>
+        <a href="#" class="overflow-hidden rounded-lg border border-line bg-white no-underline transition-base hover:border-titanium">
+          <span class="flex aspect-[4/5] items-end border-b border-line bg-[repeating-linear-gradient(45deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-3"><span dir="ltr" class="font-mono text-micro text-gray800">W4002</span></span>
+          <span class="flex flex-col gap-2 p-4">
+            <span class="text-[18px] font-bold leading-[1.35] text-graphite [text-wrap:pretty]">جامدادی زاویه‌دار مدل W4002</span>
+            <span class="text-sm text-gray800">شیب ۱۵ درجه، کف وزنه‌دار</span>
+            <span dir="ltr" class="self-start font-mono text-sm text-gray800">742,000 تومان</span>
+          </span>
+        </a>
+        <a href="#" class="overflow-hidden rounded-lg border border-line bg-white no-underline transition-base hover:border-titanium">
+          <span class="flex aspect-[4/5] items-end border-b border-line bg-[repeating-linear-gradient(180deg,#ECECEC_0_6px,#F5F5F3_6px_12px)] p-3"><span dir="ltr" class="font-mono text-micro text-gray800">W4006</span></span>
+          <span class="flex flex-col gap-2 p-4">
+            <span class="text-[18px] font-bold leading-[1.35] text-graphite [text-wrap:pretty]">نگهدارنده کابل مدل W4006</span>
+            <span class="text-sm text-gray800">سه شیار، چسب صنعتی</span>
+            <span dir="ltr" class="self-start font-mono text-sm text-gray800">198,000 تومان</span>
+          </span>
+        </a>
+        <a href="#" class="overflow-hidden rounded-lg border border-line bg-white no-underline transition-base hover:border-titanium">
+          <span class="flex aspect-[4/5] items-end border-b border-line bg-[repeating-linear-gradient(135deg,#E4E4E2_0_8px,#F5F5F3_8px_16px)] p-3"><span dir="ltr" class="font-mono text-micro text-gray800">J4002</span></span>
+          <span class="flex flex-col gap-2 p-4">
+            <span class="text-[18px] font-bold leading-[1.35] text-graphite [text-wrap:pretty]">جاکلیدی وایب مدل کلت کمری J4002</span>
+            <span class="text-sm text-gray800">حلقه فولادی، لبه گرد</span>
+            <span dir="ltr" class="self-start font-mono text-sm text-gray800">433,000 تومان</span>
+          </span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div id="stickyBuy" class="sticky bottom-0 z-40 flex items-center gap-4 border-t border-line bg-white px-5 py-3 lg:hidden">
+    <div class="flex min-w-0 flex-col">
+      <span class="truncate text-sm font-semibold">جاکارتی مینیمال W4001</span>
+      <span dir="ltr" class="font-mono text-sm text-gray800">1,057,000 تومان</span>
+    </div>
+    <button type="button" class="ms-auto h-12 shrink-0 rounded-md border-0 bg-graphite px-6 text-body font-medium text-fog transition-fast hover:bg-ink">افزودن به سبد</button>
+  </div>
+
+  <footer class="bg-graphite px-5 py-14 text-fog md:py-20 xl:px-10">
+    <div class="mx-auto max-w-page">
+      <div class="flex flex-col gap-2 border-b border-edge pb-12">
+        <div dir="ltr" class="grid h-7 w-[140px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+        <p class="mt-2 text-bodylg text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-8 border-b border-edge py-12 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-4">
+          <span class="text-sm font-semibold text-white">دسته‌بندی‌ها</span>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">میز کار</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">خانه</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">آشپزخانه</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">خودرو</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">سازمان‌دهی</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">سفر</a>
+        </div>
+        <div class="flex flex-col gap-4">
+          <span class="text-sm font-semibold text-white">لینک‌های سریع</span>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">محصولات</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">کاتالوگ</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">تازه‌ها</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">بلاگ</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">درباره ما</a>
+        </div>
+        <div class="flex flex-col gap-4">
+          <span class="text-sm font-semibold text-white">پشتیبانی و راهنما</span>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">پیگیری سفارش</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">ارسال و تحویل</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">مرجوعی</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">نگهداری قطعات PLA</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">سؤالات متداول</a>
+        </div>
+        <div class="flex flex-col gap-4">
+          <span class="text-sm font-semibold text-white">درباره VYBE</span>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">کارگاه</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">فرایند تولید</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">همکاری با ما</a>
+          <a href="#" class="text-sm text-silver no-underline hover:text-white">تماس با ما</a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-8 pt-12">
+        <div class="flex max-w-[420px] flex-col gap-3">
+          <span class="text-sm font-semibold">خبرنامه</span>
+          <p class="m-0 text-sm leading-[1.6] text-titanium">ماهی یک ایمیل. محصول تازه و یادداشت‌های کارگاه.</p>
+          <form class="flex gap-2">
+            <input type="email" placeholder="ایمیل شما" class="h-12 flex-1 rounded-md border border-edge bg-surface px-4 text-sm text-fog outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" class="h-12 rounded-md border-0 bg-white px-6 text-sm font-medium text-graphite hover:bg-line">عضویت</button>
+          </form>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div dir="ltr" class="flex gap-4 font-mono text-micro text-silver"><span>INSTAGRAM</span><span>TELEGRAM</span><span>PINTEREST</span><span>YOUTUBE</span></div>
+          <div class="flex gap-3">
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">نماد<br>اعتماد</div>
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">درگاه<br>پرداخت</div>
+          </div>
+        </div>
+      </div>
+      <p dir="ltr" class="m-0 mt-12 font-mono text-micro tracking-[0.06em] text-titanium">&copy; 1404 VYBE &middot; ALL RIGHTS RESERVED</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var menu=document.getElementById('mobileMenu');
+  function open(){menu.classList.remove('hidden');menu.classList.add('flex');document.body.style.overflow='hidden';}
+  function close(){menu.classList.add('hidden');menu.classList.remove('flex');document.body.style.overflow='';}
+  document.querySelectorAll('[data-menu-open]').forEach(function(b){b.addEventListener('click',open)});
+  document.querySelectorAll('[data-menu-close]').forEach(function(b){b.addEventListener('click',close)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+
+  var main=document.getElementById('galleryMain');
+  document.querySelectorAll('[data-thumb]').forEach(function(t){
+    t.addEventListener('click',function(){
+      document.querySelectorAll('[data-thumb]').forEach(function(o){
+        o.setAttribute('aria-pressed','false');
+        o.classList.remove('border-2','border-graphite');
+        o.classList.add('border','border-line');
+      });
+      t.setAttribute('aria-pressed','true');
+      t.classList.remove('border','border-line');
+      t.classList.add('border-2','border-graphite');
+      main.style.backgroundImage=getComputedStyle(t).backgroundImage;
+    });
+  });
+
+  document.querySelectorAll('[data-swatch]').forEach(function(s){
+    if(s.disabled)return;
+    s.addEventListener('click',function(){
+      document.querySelectorAll('[data-swatch]').forEach(function(o){
+        if(o.disabled)return;
+        o.setAttribute('aria-pressed','false');
+        o.classList.remove('border-2','border-graphite');
+        o.classList.add('border','border-silver');
+      });
+      s.setAttribute('aria-pressed','true');
+      s.classList.remove('border','border-silver');
+      s.classList.add('border-2','border-graphite');
+    });
+  });
+
+  var qty=document.getElementById('qty');
+  document.querySelectorAll('[data-qty]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var n=parseInt(qty.textContent,10)+parseInt(b.dataset.qty,10);
+      if(n<1)n=1; if(n>9)n=9;
+      qty.textContent=n;
+    });
+  });
+})();
+</script>
+</body>
+</html>
