@@ -5,6 +5,7 @@ export interface ContactMessage {
   phone?: string;
   subject: string;
   message: string;
+  newsletter?: boolean;
   submittedAt: string;
 }
 

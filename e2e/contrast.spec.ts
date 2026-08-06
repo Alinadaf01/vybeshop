@@ -24,6 +24,7 @@ const pagesToCheck = [
   { path: "/blog", label: "/blog" },
   { path: "/blog/why-minimal-design-matters", label: "/blog/:slug" },
   { path: "/about", label: "/about" },
+  { path: "/contact", label: "/contact" },
 ];
 
 async function findContrastFailures(page: Page): Promise<ContrastFailure[]> {
