@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDialog } from "@/lib/useDialog";
 import { IconButton } from "@/components/ui/IconButton";
+import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 
 export interface LightboxProps {
   open: boolean;
@@ -14,9 +15,14 @@ export interface LightboxProps {
 
 export function Lightbox({ open, onClose, images, index, onIndexChange, title }: LightboxProps) {
   const containerRef = useDialog(open, onClose);
+  const [failed, setFailed] = useState(false);
 
   const goPrevious = () => onIndexChange((index - 1 + images.length) % images.length);
   const goNext = () => onIndexChange((index + 1) % images.length);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [index]);
 
   useEffect(() => {
     if (!open) return;
@@ -47,11 +53,20 @@ export function Lightbox({ open, onClose, images, index, onIndexChange, title }:
           </IconButton>
         </div>
         <div className="grid flex-1 place-items-center overflow-hidden rounded-md border border-edge">
-          <img
-            src={images[index]}
-            alt={`${title} — تصویر ${index + 1} از ${images.length}`}
-            className="max-h-full max-w-full object-contain"
-          />
+          {failed ? (
+            <ImagePlaceholder
+              caption={`${title} — تصویر ${index + 1} از ${images.length}`}
+              dark
+              className="size-full"
+            />
+          ) : (
+            <img
+              src={images[index]}
+              alt={`${title} — تصویر ${index + 1} از ${images.length}`}
+              onError={() => setFailed(true)}
+              className="max-h-full max-w-full object-contain"
+            />
+          )}
         </div>
         <div className="flex items-center justify-between font-mono text-micro text-silver">
           <button type="button" onClick={goPrevious} className="text-silver hover:text-fog-white">

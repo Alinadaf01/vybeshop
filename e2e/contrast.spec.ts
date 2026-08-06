@@ -20,6 +20,7 @@ const pagesToCheck = [
   { path: "/products/vybe-stand-pro", label: "/products/:slug" },
   { path: "/products", label: "/products" },
   { path: "/categories", label: "/categories" },
+  { path: "/catalog", label: "/catalog" },
 ];
 
 async function findContrastFailures(page: Page): Promise<ContrastFailure[]> {

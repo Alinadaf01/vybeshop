@@ -1,17 +1,53 @@
+export interface CatalogSpread {
+  id: string;
+  image: string;
+  caption: string;
+}
+
+export interface CatalogEdition {
+  label: string;
+  isCurrent: boolean;
+  pageCount: number;
+  fileSizeMb: number;
+  fileUrl: string;
+}
+
 export interface CatalogFile {
   title: string;
   description: string;
+  format: string;
   fileUrl: string;
   fileSizeMb: number;
   pageCount: number;
   updatedAt: string;
+  edition: string;
+  coverImage: string;
+  spreads: CatalogSpread[];
+  editions: CatalogEdition[];
 }
 
 export const catalog: CatalogFile = {
-  title: "کاتالوگ محصولات VYBE",
-  description: "کاتالوگ کامل محصولات VYBE با مشخصات فنی، ابعاد و رنگ‌بندی هر مدل.",
+  title: "کاتالوگ کامل محصولات",
+  description:
+    "۵۳ قطعه با ابعاد، متریال، ارتفاع لایه و زمان چاپ. همان اطلاعاتی که در کارگاه روی برگه کار هر قطعه نوشته می‌شود.",
+  format: "PDF",
   fileUrl: "/catalog/vybe-catalog.pdf",
-  fileSizeMb: 8.4,
-  pageCount: 32,
+  fileSizeMb: 12.4,
+  pageCount: 48,
   updatedAt: "2026-06-01",
+  edition: "1404/02",
+  coverImage: "/images/catalog/cover.jpg",
+  spreads: [
+    { id: "01", image: "/images/catalog/spread-01.jpg", caption: "جلد و فهرست" },
+    { id: "02", image: "/images/catalog/spread-02.jpg", caption: "میز کار — ۱۴ قطعه" },
+    { id: "03", image: "/images/catalog/spread-03.jpg", caption: "ماکرو خط لایه" },
+    { id: "04", image: "/images/catalog/spread-04.jpg", caption: "جدول متریال" },
+    { id: "05", image: "/images/catalog/spread-05.jpg", caption: "خانه و آشپزخانه" },
+    { id: "06", image: "/images/catalog/spread-06.jpg", caption: "راهنمای ابعاد" },
+  ],
+  editions: [
+    { label: "۱۴۰۴/۰۲", isCurrent: true, pageCount: 48, fileSizeMb: 12.4, fileUrl: "/catalog/vybe-catalog.pdf" },
+    { label: "۱۴۰۳/۰۹", isCurrent: false, pageCount: 44, fileSizeMb: 11.1, fileUrl: "/catalog/vybe-catalog.pdf" },
+    { label: "۱۴۰۳/۰۴", isCurrent: false, pageCount: 36, fileSizeMb: 9.6, fileUrl: "/catalog/vybe-catalog.pdf" },
+  ],
 };
