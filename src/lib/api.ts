@@ -34,6 +34,7 @@ export interface GetProductsParams {
   ordering?: ProductOrdering;
   minPrice?: number;
   maxPrice?: number;
+  inStock?: boolean;
   page?: number;
   pageSize?: number;
 }
@@ -62,6 +63,10 @@ export async function getProducts(
 
   if (typeof params.maxPrice === "number") {
     items = items.filter((product) => product.price <= params.maxPrice!);
+  }
+
+  if (params.inStock) {
+    items = items.filter((product) => product.inStock);
   }
 
   if (params.ordering) {
