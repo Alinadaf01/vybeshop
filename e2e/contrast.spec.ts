@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 // WCAG AA requires 4.5:1 for text at or below 16px (large/bold text gets a
 // lower threshold, but design/tokens.json's $textNote pins body text to the
@@ -15,10 +15,15 @@ interface ContrastFailure {
   ratio: number;
 }
 
-test("no low-contrast text ≤16px on /dev/components", async ({ page }) => {
-  await page.goto("/dev/components");
+const pagesToCheck = [
+  { path: "/dev/components", label: "/dev/components" },
+  { path: "/products/vybe-stand-pro", label: "/products/:slug" },
+  { path: "/products", label: "/products" },
+  { path: "/categories", label: "/categories" },
+];
 
-  const failures = await page.evaluate(
+async function findContrastFailures(page: Page): Promise<ContrastFailure[]> {
+  return page.evaluate(
     ({ minContrast, maxFontSize }) => {
       function parseColor(value: string): [number, number, number, number] | null {
         const match = value.match(/rgba?\(([^)]+)\)/);
@@ -114,6 +119,12 @@ test("no low-contrast text ≤16px on /dev/components", async ({ page }) => {
     },
     { minContrast: MIN_CONTRAST, maxFontSize: MAX_FONT_SIZE_PX },
   );
+}
 
-  expect(failures, JSON.stringify(failures, null, 2)).toEqual([]);
-});
+for (const { path, label } of pagesToCheck) {
+  test(`no low-contrast text ≤16px on ${label}`, async ({ page }) => {
+    await page.goto(path);
+    const failures = await findContrastFailures(page);
+    expect(failures, JSON.stringify(failures, null, 2)).toEqual([]);
+  });
+}
