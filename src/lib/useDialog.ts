@@ -13,7 +13,13 @@ export function useDialog(open: boolean, onClose: () => void) {
   useEffect(() => {
     if (!open) return;
 
-    const previousOverflow = document.body.style.overflow;
+    // Lock both html and body: whichever one is the actual scrolling box
+    // depends on content height, and leaving the other's scrollbar in place
+    // keeps its gutter reserved, which visibly offsets fixed-position
+    // overlays in RTL layouts (scrollbar sits on the inline-start side).
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -44,7 +50,8 @@ export function useDialog(open: boolean, onClose: () => void) {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
       document.removeEventListener("keydown", handleKeyDown);
       previouslyFocused?.focus();
     };

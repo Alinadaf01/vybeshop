@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "tokens:build": "node scripts/build-tokens.mjs",
+    "check:classes": "node scripts/check-classes.mjs",
     "predev": "npm run tokens:build",
     "prebuild": "npm run tokens:build",
     "dev": "vite",

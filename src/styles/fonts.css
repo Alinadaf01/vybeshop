@@ -1,14 +1,7 @@
-/*
-  Peyda: not on Google Fonts, must be self-hosted.
-  Waiting on woff2 files from design (see design/ handoff). Drop them in
-  public/fonts/peyda/ with the filenames below and this block goes live —
-  do not substitute a lookalike font in the meantime.
-*/
+/* Peyda: not on Google Fonts, self-hosted from public/fonts/peyda/. Subset delivered as woff2 only. */
 @font-face {
   font-family: "Peyda";
-  src:
-    url("/fonts/peyda/Peyda-Regular.woff2") format("woff2"),
-    url("/fonts/peyda/Peyda-Regular.woff") format("woff");
+  src: url("/fonts/peyda/Peyda-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -16,9 +9,7 @@
 
 @font-face {
   font-family: "Peyda";
-  src:
-    url("/fonts/peyda/Peyda-Medium.woff2") format("woff2"),
-    url("/fonts/peyda/Peyda-Medium.woff") format("woff");
+  src: url("/fonts/peyda/Peyda-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -26,9 +17,7 @@
 
 @font-face {
   font-family: "Peyda";
-  src:
-    url("/fonts/peyda/Peyda-SemiBold.woff2") format("woff2"),
-    url("/fonts/peyda/Peyda-SemiBold.woff") format("woff");
+  src: url("/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -36,9 +25,7 @@
 
 @font-face {
   font-family: "Peyda";
-  src:
-    url("/fonts/peyda/Peyda-Bold.woff2") format("woff2"),
-    url("/fonts/peyda/Peyda-Bold.woff") format("woff");
+  src: url("/fonts/peyda/Peyda-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -46,9 +33,7 @@
 
 @font-face {
   font-family: "Peyda";
-  src:
-    url("/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2"),
-    url("/fonts/peyda/Peyda-ExtraBold.woff") format("woff");
+  src: url("/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");
   font-weight: 800;
   font-style: normal;
   font-display: swap;

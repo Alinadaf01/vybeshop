@@ -11,6 +11,16 @@ body {
   color: var(--color-graphite);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 /*
   Dual-thumb range inputs (PriceRangeSlider) need the thumb hit-area to stay
   clickable while the track underneath is pointer-events:none — this can only
