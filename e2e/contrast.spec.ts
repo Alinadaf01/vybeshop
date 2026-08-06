@@ -21,6 +21,7 @@ const pagesToCheck = [
   { path: "/products", label: "/products" },
   { path: "/categories", label: "/categories" },
   { path: "/catalog", label: "/catalog" },
+  { path: "/blog", label: "/blog" },
 ];
 
 async function findContrastFailures(page: Page): Promise<ContrastFailure[]> {

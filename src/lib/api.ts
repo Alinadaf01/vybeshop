@@ -3,7 +3,7 @@ import { categories } from "@/data/categories";
 import { blogPosts } from "@/data/blog";
 import type { Product } from "@/types/product";
 import type { Category } from "@/types/category";
-import type { BlogPost } from "@/types/blog";
+import type { BlogPost, BlogCategory } from "@/types/blog";
 import type { ContactMessage, ContactMessageInput } from "@/types/contact";
 import type { PaginatedResponse } from "@/types/api";
 
@@ -100,6 +100,7 @@ export async function getCategory(slug: string): Promise<Category> {
 export interface GetBlogPostsParams {
   search?: string;
   tag?: string;
+  category?: BlogCategory;
   page?: number;
   pageSize?: number;
 }
@@ -122,6 +123,10 @@ export async function getBlogPosts(
 
   if (params.tag) {
     items = items.filter((post) => post.tags.includes(params.tag!));
+  }
+
+  if (params.category) {
+    items = items.filter((post) => post.category === params.category);
   }
 
   return delay(paginate(items, params.page, params.pageSize));
