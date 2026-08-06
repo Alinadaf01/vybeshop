@@ -1,6 +1,7 @@
 export interface ColorOption {
   name: string;
   hex: string;
+  inStock: boolean;
 }
 
 export interface ProductDimensions {

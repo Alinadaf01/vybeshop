@@ -5,34 +5,9 @@ import { getProductsByCategory } from "@/data/products";
 import { formatPrice, formatJalaliDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/home/Reveal";
-import { cn } from "@/lib/cn";
-
-function ImagePlaceholder({
-  caption,
-  dark,
-  className,
-}: {
-  caption: string;
-  dark?: boolean;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-end p-4",
-        dark
-          ? "bg-[repeating-linear-gradient(135deg,#141416_0_10px,#0B0B0C_10px_20px)]"
-          : "bg-[repeating-linear-gradient(135deg,#ECECEC_0_10px,#F5F5F3_10px_20px)]",
-        className,
-      )}
-    >
-      <span dir="ltr" className={cn("font-mono text-micro leading-[1.6]", dark ? "text-silver" : "text-gray-800")}>
-        {caption}
-      </span>
-    </div>
-  );
-}
 
 export default function HomePage() {
   const { data: productsPage } = useQuery({
@@ -271,21 +246,7 @@ export default function HomePage() {
           {featured.map((product, index) =>
             product ? (
               <Reveal key={product.slug}>
-                <Link
-                  to={`/products/${product.slug}`}
-                  className="block overflow-hidden rounded-lg border border-gray-100 bg-white no-underline transition-colors duration-base hover:border-titanium"
-                >
-                  <ImagePlaceholder caption={product.sku} className="aspect-[4/5] p-3" />
-                  <span className="flex flex-col gap-2 p-4">
-                    <span className="text-[18px] font-bold leading-[1.35] text-graphite [text-wrap:pretty]">
-                      {product.name}
-                    </span>
-                    <span className="text-small text-gray-800">{product.shortDescription}</span>
-                    <span dir="ltr" className="self-start font-mono text-small text-gray-800">
-                      {formatPrice(product.price)}
-                    </span>
-                  </span>
-                </Link>
+                <ProductCard product={product} />
               </Reveal>
             ) : (
               <Skeleton key={index} className="aspect-[4/5] rounded-lg" />

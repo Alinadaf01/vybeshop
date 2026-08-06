@@ -1,10 +1,11 @@
 import type { Product } from "@/types/product";
 
-const graphite = { name: "گرافیت", hex: "#2B2B2E" };
-const iceWhite = { name: "سفید یخی", hex: "#F2F2F0" };
-const titaniumGrey = { name: "خاکستری تیتانیوم", hex: "#8A8D92" };
-const matteBlack = { name: "مشکی مات", hex: "#101012" };
-const silver = { name: "نقره‌ای", hex: "#C4C8CD" };
+const graphite = { name: "گرافیت", hex: "#2B2B2E", inStock: true };
+const iceWhite = { name: "سفید یخی", hex: "#F2F2F0", inStock: true };
+const titaniumGrey = { name: "خاکستری تیتانیوم", hex: "#8A8D92", inStock: true };
+const matteBlack = { name: "مشکی مات", hex: "#101012", inStock: true };
+const silver = { name: "نقره‌ای", hex: "#C4C8CD", inStock: true };
+const silverOutOfStock = { name: "نقره‌ای", hex: "#C4C8CD", inStock: false };
 
 export const products: Product[] = [
   // پایه رومیزی
@@ -46,7 +47,7 @@ export const products: Product[] = [
       "/images/products/vybe-stand-pro/3.jpg",
     ],
     category: "desktop-stands",
-    colors: [graphite, silver],
+    colors: [graphite, silverOutOfStock],
     material: "آلومینیوم CNC شده",
     dimensions: { w: 110, h: 95, d: 80 },
     weight: 245,
