@@ -17,7 +17,9 @@ export function RootLayout() {
       </a>
       <Header onMenuOpen={() => setMenuOpen(true)} />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <main id="main-content" className="flex-1">
+      {/* tabIndex=-1: not in tab order, but makes the skip link above actually
+          move keyboard/screen-reader focus here (not just scroll position). */}
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         <Outlet />
       </main>
       <Footer />

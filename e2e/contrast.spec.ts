@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { pagesToCheck as productionRoutes } from "./routes";
 
 // WCAG AA requires 4.5:1 for text at or below 16px (large/bold text gets a
 // lower threshold, but design/tokens.json's $textNote pins body text to the
@@ -15,17 +16,9 @@ interface ContrastFailure {
   ratio: number;
 }
 
-const pagesToCheck = [
-  { path: "/dev/components", label: "/dev/components" },
-  { path: "/products/vybe-stand-pro", label: "/products/:slug" },
-  { path: "/products", label: "/products" },
-  { path: "/categories", label: "/categories" },
-  { path: "/catalog", label: "/catalog" },
-  { path: "/blog", label: "/blog" },
-  { path: "/blog/why-minimal-design-matters", label: "/blog/:slug" },
-  { path: "/about", label: "/about" },
-  { path: "/contact", label: "/contact" },
-];
+// The 9 production routes, plus the component showcase (internal tool, but
+// still worth guarding against contrast regressions at the component level).
+const pagesToCheck = [...productionRoutes, { path: "/dev/components", label: "/dev/components" }];
 
 async function findContrastFailures(page: Page): Promise<ContrastFailure[]> {
   return page.evaluate(

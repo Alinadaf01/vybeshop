@@ -180,7 +180,7 @@ export default function ProductDetailPage() {
             <ul className="m-0 flex list-none flex-col gap-3 p-0">
               {c.whyThisShape.highlights.map((item, index) => (
                 <li key={item} className="flex gap-3 border-t border-gray-100 pt-3 text-body text-gray-800">
-                  <span aria-hidden="true" className="font-mono text-micro text-titanium">
+                  <span aria-hidden="true" className="font-mono text-micro text-gray-800">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   {item}

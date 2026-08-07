@@ -134,7 +134,7 @@ export default function CatalogPage() {
         <ul className="m-0 flex list-none flex-col p-0">
           {c.whatsInside.items.map((item, index) => (
             <li key={item} className="flex gap-4 border-t border-gray-100 py-3 text-body text-gray-800">
-              <span aria-hidden="true" dir="ltr" className="font-mono text-micro text-titanium">
+              <span aria-hidden="true" dir="ltr" className="font-mono text-micro text-gray-800">
                 {String(index + 1).padStart(2, "0")}
               </span>
               {item}

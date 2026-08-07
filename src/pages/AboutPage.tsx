@@ -78,7 +78,7 @@ export default function AboutPage() {
                 key={item.title}
                 className="flex flex-col gap-2 border-t border-gray-100 py-6 md:flex-row md:gap-8"
               >
-                <span aria-hidden="true" dir="ltr" className="font-mono text-caption text-titanium md:w-16">
+                <span aria-hidden="true" dir="ltr" className="font-mono text-caption text-gray-800 md:w-16">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="text-h3 font-semibold md:w-[240px]">{item.title}</span>
