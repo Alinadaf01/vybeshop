@@ -12,6 +12,7 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { formatJalaliDate } from "@/lib/formatters";
+import { Seo } from "@/components/seo/Seo";
 import { blogListContent as c, blogCategories } from "@/content/blog";
 
 const PAGE_SIZE = 9;
@@ -48,6 +49,7 @@ export default function BlogListPage() {
 
   return (
     <div className="mx-auto max-w-page px-5 xl:px-10">
+      <Seo title={c.seo.title} description={c.seo.description} path="/blog" />
       <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: c.heading }]} />
 
       <div className="flex flex-col gap-4 pb-12">

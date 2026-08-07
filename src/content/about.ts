@@ -1,4 +1,9 @@
 export const aboutContent = {
+  seo: {
+    title: "درباره ما",
+    description:
+      "VYBE یک کارگاه پرینت سه‌بعدی در تهران است، نه یک برند واردکننده. طراحی، چاپ، بازرسی و بسته‌بندی هر قطعه در یک اتاق انجام می‌شود.",
+  },
   mission: {
     kicker: "ABOUT VYBE · WORKSHOP, TEHRAN",
     heading: "ما قطعه‌های کوچکی می‌سازیم که روز را کمی مرتب‌تر می‌کنند.",

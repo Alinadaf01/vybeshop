@@ -3,6 +3,10 @@ import type { BlogCategory } from "@/types/blog";
 export const blogCategories: BlogCategory[] = ["محصول", "طراحی", "آموزش", "سبک زندگی", "جامعه"];
 
 export const blogListContent = {
+  seo: {
+    title: "بلاگ",
+    description: "یادداشت‌های کارگاه VYBE: تصمیم‌های طراحی، پارامترهای چاپ و چیزهایی که در تولید یاد گرفتیم.",
+  },
   heading: "یادداشت‌های کارگاه",
   subtitle: "تصمیم‌های طراحی، پارامترهای چاپ و چیزهایی که در تولید یاد گرفتیم. بدون تبلیغ.",
   featured: {

@@ -9,6 +9,7 @@ import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { Image } from "@/components/ui/Image";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/home/Reveal";
+import { Seo } from "@/components/seo/Seo";
 import { homeContent } from "@/content/home";
 
 export default function HomePage() {
@@ -33,6 +34,7 @@ export default function HomePage() {
 
   return (
     <div>
+      <Seo title="VYBE" description={homeContent.seo.description} path="/" />
       {/* هیرو */}
       <section className="relative flex min-h-[calc(100vh-72px)] flex-col items-center justify-center gap-10 bg-graphite px-5 py-14 text-center text-fog-white md:py-20 xl:px-10">
         <div className="flex aspect-square w-full max-w-[520px] items-end rounded-xl border border-edge">

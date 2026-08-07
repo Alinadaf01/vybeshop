@@ -18,6 +18,7 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { ProductCard } from "@/components/product/ProductCard";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { formatPrice } from "@/lib/formatters";
+import { Seo } from "@/components/seo/Seo";
 import { productsContent as c } from "@/content/products";
 
 const PAGE_SIZE = 12;
@@ -177,6 +178,7 @@ export default function ProductsPage() {
 
   return (
     <div className="mx-auto max-w-page px-5 xl:px-10">
+      <Seo title={c.seo.title} description={c.seo.description} path="/products" />
       <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: c.heading }]} />
 
       <div className="flex flex-col gap-4 pb-10">

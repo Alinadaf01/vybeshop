@@ -1,4 +1,8 @@
 export const categoriesContent = {
+  seo: {
+    title: "دسته‌بندی‌ها",
+    description: "دسته‌بندی محصولات VYBE بر اساس جایی که قطعه استفاده می‌شود — میز کار، خانه، آشپزخانه، خودرو و سفر.",
+  },
   heading: "دسته‌بندی‌ها",
   subtitleTemplate: (categoryCount: number, productCount: number) =>
     `${categoryCount} دسته، ${productCount} قطعه. تقسیم‌بندی بر اساس جایی است که قطعه استفاده می‌شود، نه شکل آن.`,

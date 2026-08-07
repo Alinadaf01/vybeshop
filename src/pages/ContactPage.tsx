@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { submitContactMessage } from "@/lib/api";
 import { contactFormSchema, type ContactFormValues } from "@/lib/contactSchema";
+import { Seo } from "@/components/seo/Seo";
 import { contactContent as c } from "@/content/contact";
 
 type SubmitState = { status: "idle" | "success" | "error"; trackingId?: string };
@@ -45,6 +46,7 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-page px-5 xl:px-10">
+      <Seo title={c.seo.title} description={c.seo.description} path="/contact" />
       <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: c.heading }]} />
 
       <div className="flex flex-col gap-3 pb-12">

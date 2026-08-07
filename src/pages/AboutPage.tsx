@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { products } from "@/data/products";
 import { Image } from "@/components/ui/Image";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { Seo } from "@/components/seo/Seo";
 import { aboutContent as c } from "@/content/about";
 
 export default function AboutPage() {
@@ -9,6 +10,7 @@ export default function AboutPage() {
 
   return (
     <div>
+      <Seo title={c.seo.title} description={c.seo.description} path="/about" />
       <section className="bg-graphite px-5 py-14 text-fog-white md:py-20 xl:px-10">
         <div className="mx-auto flex max-w-page flex-col gap-6">
           <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">

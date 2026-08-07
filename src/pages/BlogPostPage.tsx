@@ -9,6 +9,8 @@ import { Image } from "@/components/ui/Image";
 import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { formatJalaliDate } from "@/lib/formatters";
+import { Seo } from "@/components/seo/Seo";
+import { absoluteUrl, buildArticleJsonLd } from "@/lib/seo";
 import { blogPostContent as c } from "@/content/blogPost";
 
 function authorInitials(author: string) {
@@ -50,16 +52,26 @@ export default function BlogPostPage() {
           .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
           .slice(0, 3);
 
+  const postUrl = absoluteUrl(`/blog/${post.slug}`);
+
   async function handleCopyLink() {
-    await navigator.clipboard.writeText(window.location.href);
+    await navigator.clipboard.writeText(postUrl);
     setLinkCopied(true);
     setTimeout(() => setLinkCopied(false), 2000);
   }
 
-  const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`;
+  const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}`;
 
   return (
     <div>
+      <Seo
+        title={post.title}
+        description={post.excerpt}
+        path={`/blog/${post.slug}`}
+        image={post.coverImage}
+        type="article"
+        jsonLd={buildArticleJsonLd(post)}
+      />
       <div className="mx-auto max-w-page px-5 xl:px-10">
         <Breadcrumb
           items={[

@@ -1,4 +1,9 @@
 export const catalogContent = {
+  seo: {
+    title: "کاتالوگ",
+    description:
+      "کاتالوگ کامل محصولات VYBE با ابعاد، متریال، ارتفاع لایه و زمان چاپ هر قطعه — دانلود آزاد، بدون فرم.",
+  },
   hero: {
     kickerTemplate: (edition: string) => `CATALOG · EDITION ${edition}`,
     subtitle:

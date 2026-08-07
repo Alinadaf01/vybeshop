@@ -6,6 +6,7 @@ import { Image } from "@/components/ui/Image";
 import { DownloadButton, type DownloadStatus } from "@/components/ui/DownloadButton";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { Badge } from "@/components/ui/Badge";
+import { Seo } from "@/components/seo/Seo";
 import { catalogContent as c } from "@/content/catalog";
 
 export default function CatalogPage() {
@@ -22,6 +23,7 @@ export default function CatalogPage() {
 
   return (
     <div className="mx-auto max-w-page px-5 xl:px-10">
+      <Seo title={c.seo.title} description={c.seo.description} path="/catalog" />
       <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "کاتالوگ" }]} />
 
       <section className="grid grid-cols-1 items-center gap-8 pb-14 md:pb-20 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-16">

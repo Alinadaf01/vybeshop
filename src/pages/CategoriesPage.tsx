@@ -4,6 +4,7 @@ import { getProductsByCategory, products as allProducts } from "@/data/products"
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Image } from "@/components/ui/Image";
 import { ProductCard } from "@/components/product/ProductCard";
+import { Seo } from "@/components/seo/Seo";
 import { categoriesContent as c } from "@/content/categories";
 
 const categoriesWithCounts = categories
@@ -16,6 +17,7 @@ const featuredProducts = getProductsByCategory(featuredCategory.category.slug).s
 export default function CategoriesPage() {
   return (
     <div className="mx-auto max-w-page px-5 xl:px-10">
+      <Seo title={c.seo.title} description={c.seo.description} path="/categories" />
       <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: c.heading }]} />
 
       <div className="flex flex-col gap-4 pb-10">
