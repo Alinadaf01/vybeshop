@@ -198,7 +198,7 @@ export default function HomePage() {
                     className="aspect-[16/11] w-full object-cover"
                   />
                   <span className="flex items-baseline justify-between gap-2 p-4">
-                    <span className="text-h4 font-semibold text-graphite">{category.name}</span>
+                    <span className="text-h4 font-h4 text-graphite">{category.name}</span>
                     <span dir="ltr" className="font-mono text-caption text-gray-800">
                       {getProductsByCategory(category.slug).length} محصول
                     </span>
@@ -235,7 +235,7 @@ export default function HomePage() {
                 <span dir="ltr" className="font-mono text-micro text-titanium">
                   {item.step}
                 </span>
-                <span className="text-h4 font-medium">{item.title}</span>
+                <span className="text-h4 font-h4">{item.title}</span>
                 <p className="m-0 text-body leading-[1.6] text-silver">{item.body}</p>
               </Reveal>
             ))}
@@ -303,7 +303,7 @@ export default function HomePage() {
                       <span dir="ltr" className="font-mono text-micro tracking-[0.06em] text-gray-800">
                         {post.tags[0]} &middot; {formatJalaliDate(post.publishedAt)} &middot; {post.readingTime} دقیقه
                       </span>
-                      <span className="text-h4 font-semibold text-graphite [text-wrap:pretty]">{post.title}</span>
+                      <span className="text-h4 font-h4 text-graphite [text-wrap:pretty]">{post.title}</span>
                       <span className="text-small leading-[1.6] text-gray-800">{post.excerpt}</span>
                     </span>
                   </Link>

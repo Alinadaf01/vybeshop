@@ -1,6 +1,6 @@
 /*
  * GENERATED FILE — do not hand-edit.
- * Source: design/tokens.json (v1.1.0)
+ * Source: design/tokens.json (v1.2.0)
  * Regenerate with: npm run tokens:build
  */
 
@@ -101,6 +101,18 @@
   --fs-micro: 10px;
   --lh-micro: 1.4;
   --ls-micro: 0.01em;
+
+  /* typeScale font weight — explicit per level (tokens.json $weightNote: do not infer from font.role) */
+  --fw-display: 800;
+  --fw-h1: 700;
+  --fw-h2: 600;
+  --fw-h3: 600;
+  --fw-h4: 500;
+  --fw-body-large: 400;
+  --fw-body: 400;
+  --fw-small: 400;
+  --fw-caption: 400;
+  --fw-micro: 400;
 
   /* space */
   --space-1: 4px;

@@ -20,6 +20,14 @@ const fontSize = Object.fromEntries(
     ]),
 );
 
+// Keyed identically to fontSize so text-h4 pairs predictably with font-h4 —
+// weight comes from typeScale.$weightNote (explicit per level), not font.role.
+const typeScaleFontWeight = Object.fromEntries(
+  Object.entries(tokens.typeScale)
+    .filter(([key]) => !key.startsWith("$"))
+    .map(([key]) => [kebab(key), `var(--fw-${kebab(key)})`]),
+);
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
@@ -96,6 +104,9 @@ export default {
         text: `${tokens.layout.maxTextWidth}px`,
         page: `${tokens.layout.maxContentWidth}px`,
       },
+      // Additive alongside Tailwind's default font-medium/semibold/bold/etc —
+      // font-h4 etc. are for type-scale levels specifically, sourced from tokens.json.
+      fontWeight: typeScaleFontWeight,
       keyframes: {
         shimmer: {
           "0%": { backgroundPosition: "100% 0" },

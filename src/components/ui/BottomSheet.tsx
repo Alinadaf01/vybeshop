@@ -24,7 +24,7 @@ export function BottomSheet({ open, onClose, title, children }: BottomSheetProps
         className="flex max-h-[85vh] w-full flex-col gap-4 rounded-t-xl bg-white p-6"
       >
         <div className="flex items-center justify-between">
-          <span className="text-h4 font-semibold">{title}</span>
+          <span className="text-h4 font-h4">{title}</span>
           <IconButton variant="ghost" aria-label="بستن" onClick={onClose}>
             &#10005;
           </IconButton>

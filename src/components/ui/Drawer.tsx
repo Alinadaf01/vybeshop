@@ -24,7 +24,7 @@ export function Drawer({ open, onClose, title, children }: DrawerProps) {
         className="flex h-full w-3/4 max-w-sm flex-col gap-4 bg-white p-6 transition-transform duration-base"
       >
         <div className="flex items-center justify-between">
-          <span className="text-h4 font-semibold">{title}</span>
+          <span className="text-h4 font-h4">{title}</span>
           <IconButton variant="ghost" aria-label="بستن" onClick={onClose}>
             &#10005;
           </IconButton>

@@ -208,7 +208,7 @@ export default function BlogPostPage() {
                       {formatJalaliDate(item.publishedAt)} &middot; {c.readingTimeTemplate(item.readingTime)}
                     </span>
                   </span>
-                  <span className="text-h4 font-bold leading-[1.35] text-graphite [text-wrap:pretty]">
+                  <span className="text-h4 font-h4 leading-[1.35] text-graphite [text-wrap:pretty]">
                     {item.title}
                   </span>
                   <span className="text-small leading-[1.6] text-gray-800">{item.excerpt}</span>

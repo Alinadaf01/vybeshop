@@ -352,7 +352,7 @@ export function DevComponentsPage() {
         <Section kicker="CARD" title="کارت پایه">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <Card interactive className="p-4">
-              <span className="text-h4 font-semibold">DEFAULT · INTERACTIVE</span>
+              <span className="text-h4 font-h4">DEFAULT · INTERACTIVE</span>
             </Card>
             <Card className="p-4">
               <Skeleton className="mb-2 h-4 w-4/5" />
@@ -395,7 +395,7 @@ export function DevComponentsPage() {
             <Cell label="MODAL">
               <Button onClick={() => setModalOpen(true)}>باز کردن مودال</Button>
               <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="حذف از سبد؟">
-                <span className="text-h4 font-medium">حذف از سبد؟</span>
+                <span className="text-h4 font-h4">حذف از سبد؟</span>
                 <p className="m-0 text-body leading-normal text-gray-800">VYBE Stand Air از سبد شما حذف می‌شود.</p>
                 <div className="flex gap-2">
                   <Button variant="primary" className="flex-1" onClick={() => setModalOpen(false)}>

@@ -111,6 +111,15 @@ function main() {
   }
 
   lines.push("");
+  lines.push(
+    "  /* typeScale font weight — explicit per level (tokens.json $weightNote: do not infer from font.role) */",
+  );
+  for (const [key, scale] of Object.entries(tokens.typeScale)) {
+    if (key.startsWith("$")) continue;
+    lines.push(`  --fw-${kebab(key)}: ${scale.fontWeight};`);
+  }
+
+  lines.push("");
   lines.push("  /* space */");
   for (const [key, value] of Object.entries(tokens.space)) {
     if (key.startsWith("$")) continue;

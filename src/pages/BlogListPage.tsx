@@ -76,7 +76,7 @@ export default function BlogListPage() {
                 {formatJalaliDate(featuredPost.publishedAt)} &middot; {readingTimeTemplate(featuredPost.readingTime)}
               </span>
             </span>
-            <span className="text-h2 font-bold leading-tight text-graphite [text-wrap:pretty]">
+            <span className="text-h2 font-h2 leading-tight text-graphite [text-wrap:pretty]">
               {featuredPost.title}
             </span>
             <span className="text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">{featuredPost.excerpt}</span>
@@ -161,7 +161,7 @@ export default function BlogListPage() {
                         {formatJalaliDate(post.publishedAt)} &middot; {readingTimeTemplate(post.readingTime)}
                       </span>
                     </span>
-                    <span className="text-h4 font-bold leading-[1.35] text-graphite [text-wrap:pretty]">
+                    <span className="text-h4 font-h4 leading-[1.35] text-graphite [text-wrap:pretty]">
                       {post.title}
                     </span>
                     <span className="text-small leading-[1.6] text-gray-800">{post.excerpt}</span>

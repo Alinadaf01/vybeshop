@@ -129,7 +129,7 @@ export default function AboutPage() {
                 <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-titanium">
                   {step.tag}
                 </span>
-                <span className="text-h4 font-semibold text-white">{step.title}</span>
+                <span className="text-h4 font-h4 text-white">{step.title}</span>
                 <span className="text-small leading-[1.7] text-silver [text-wrap:pretty]">{step.body}</span>
               </div>
             ))}
@@ -148,7 +148,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {c.values.items.map((item) => (
               <div key={item.title} className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-white p-6">
-                <span className="text-h4 font-semibold">{item.title}</span>
+                <span className="text-h4 font-h4">{item.title}</span>
                 <p className="m-0 text-body leading-[1.7] text-gray-800 [text-wrap:pretty]">{item.body}</p>
               </div>
             ))}
