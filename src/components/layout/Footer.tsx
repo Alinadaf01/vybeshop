@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { toJalaali } from "jalaali-js";
 import { categories } from "@/data/categories";
+import { getSiteSettings } from "@/lib/api";
 import { VybeWordmark } from "@/components/brand/VybeWordmark";
 
 const quickLinks = [
@@ -26,7 +28,6 @@ const aboutLinks: { label: string; href?: string }[] = [
   { label: "تماس با ما", href: "/contact" },
 ];
 
-const socialLinks = ["INSTAGRAM", "TELEGRAM", "PINTEREST", "YOUTUBE"];
 const jalaliYear = toJalaali(new Date()).jy;
 
 function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
@@ -40,6 +41,7 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
 
 export function Footer() {
   const [subscribed, setSubscribed] = useState(false);
+  const { data: settings } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings });
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -128,31 +130,31 @@ export function Footer() {
             )}
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div dir="ltr" className="flex gap-4 font-mono text-micro text-silver">
-              {socialLinks.map((label) => (
-                <span key={label}>{label}</span>
-              ))}
-            </div>
-            <div className="flex gap-3">
-              <div
-                dir="ltr"
-                className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium"
-              >
-                نماد
-                <br />
-                اعتماد
+          {settings && (
+            <div className="flex flex-col gap-4">
+              <div dir="ltr" className="flex gap-4 font-mono text-micro text-silver">
+                {settings.socialLinks.map((link) => (
+                  <a key={link.platform} href={link.url} className="text-silver no-underline hover:text-white">
+                    {link.platform}
+                  </a>
+                ))}
               </div>
-              <div
-                dir="ltr"
-                className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium"
-              >
-                درگاه
-                <br />
-                پرداخت
+              <div className="flex gap-3">
+                <div
+                  dir="ltr"
+                  className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge px-1 text-center font-mono text-micro leading-[1.4] text-titanium"
+                >
+                  {settings.trustBadgeLabel}
+                </div>
+                <div
+                  dir="ltr"
+                  className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge px-1 text-center font-mono text-micro leading-[1.4] text-titanium"
+                >
+                  {settings.paymentGatewayLabel}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <p dir="ltr" className="m-0 mt-12 font-mono text-micro tracking-[0.06em] text-titanium">

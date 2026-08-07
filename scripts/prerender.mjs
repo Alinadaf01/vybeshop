@@ -67,7 +67,7 @@ async function main() {
   let skipped = 0;
 
   for (const routePath of routes) {
-    const { head, body } = renderRoute(routePath);
+    const { head, body } = await renderRoute(routePath);
     if (!head) {
       skipped++;
       continue;

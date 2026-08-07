@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
-import { submitContactMessage } from "@/lib/api";
+import { submitContactMessage, getSiteSettings } from "@/lib/api";
 import { contactFormSchema, type ContactFormValues } from "@/lib/contactSchema";
 import { Seo } from "@/components/seo/Seo";
 import { contactContent as c } from "@/content/contact";
@@ -17,6 +18,7 @@ type SubmitState = { status: "idle" | "success" | "error"; trackingId?: string }
 
 export default function ContactPage() {
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
+  const { data: settings } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings });
 
   const {
     register,
@@ -137,67 +139,69 @@ export default function ContactPage() {
         )}
 
         <aside className="flex flex-col gap-4">
-          <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-4">
-            <div className="flex flex-col gap-1 border-b border-gray-100 pb-3">
-              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                {c.info.address.label}
-              </span>
-              <p className="m-0 text-body leading-[1.7] text-graphite">{c.info.address.value}</p>
-            </div>
-            <div className="flex flex-col gap-1 border-b border-gray-100 py-3">
-              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                {c.info.email.label}
-              </span>
-              <a
-                href={`mailto:${c.info.email.value}`}
-                dir="ltr"
-                className="font-mono text-body text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite"
-              >
-                {c.info.email.value}
-              </a>
-            </div>
-            <div className="flex flex-col gap-1 border-b border-gray-100 py-3">
-              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                {c.info.phone.label}
-              </span>
-              <a
-                href={`tel:${c.info.phone.href}`}
-                dir="ltr"
-                className="font-mono text-body text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite"
-              >
-                {c.info.phone.value}
-              </a>
-            </div>
-            <div className="flex flex-col gap-2 border-b border-gray-100 py-3">
-              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                {c.info.hours.label}
-              </span>
-              {c.info.hours.rows.map((row) => (
-                <div key={row.day} className="flex justify-between gap-3 text-small">
-                  <span className="text-gray-800">{row.day}</span>
-                  <span dir="ltr" className="font-mono">
-                    {row.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-2 pt-3">
-              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                {c.info.social.label}
-              </span>
-              <div dir="ltr" className="flex flex-wrap gap-2">
-                {c.info.social.items.map((item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="rounded-sm border border-silver px-2 py-1 font-mono text-micro text-gray-800 no-underline transition-colors duration-fast hover:border-titanium"
-                  >
-                    {item}
-                  </a>
+          {settings && (
+            <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-4">
+              <div className="flex flex-col gap-1 border-b border-gray-100 pb-3">
+                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
+                  {c.info.addressLabel}
+                </span>
+                <p className="m-0 text-body leading-[1.7] text-graphite">{settings.address}</p>
+              </div>
+              <div className="flex flex-col gap-1 border-b border-gray-100 py-3">
+                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
+                  {c.info.emailLabel}
+                </span>
+                <a
+                  href={`mailto:${settings.email}`}
+                  dir="ltr"
+                  className="font-mono text-body text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite"
+                >
+                  {settings.email}
+                </a>
+              </div>
+              <div className="flex flex-col gap-1 border-b border-gray-100 py-3">
+                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
+                  {c.info.phoneLabel}
+                </span>
+                <a
+                  href={`tel:${settings.phone.href}`}
+                  dir="ltr"
+                  className="font-mono text-body text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite"
+                >
+                  {settings.phone.display}
+                </a>
+              </div>
+              <div className="flex flex-col gap-2 border-b border-gray-100 py-3">
+                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
+                  {c.info.hoursLabel}
+                </span>
+                {settings.businessHours.map((row) => (
+                  <div key={row.day} className="flex justify-between gap-3 text-small">
+                    <span className="text-gray-800">{row.day}</span>
+                    <span dir="ltr" className="font-mono">
+                      {row.time}
+                    </span>
+                  </div>
                 ))}
               </div>
+              <div className="flex flex-col gap-2 pt-3">
+                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
+                  {c.info.socialLabel}
+                </span>
+                <div dir="ltr" className="flex flex-wrap gap-2">
+                  {settings.socialLinks.map((link) => (
+                    <a
+                      key={link.platform}
+                      href={link.url}
+                      className="rounded-sm border border-silver px-2 py-1 font-mono text-micro text-gray-800 no-underline transition-colors duration-fast hover:border-titanium"
+                    >
+                      {link.platform}
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex flex-col gap-2">
             <ImagePlaceholder caption={c.map.caption} className="aspect-[4/3] w-full rounded-xl" />

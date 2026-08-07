@@ -33,19 +33,14 @@ export const contactContent = {
       retry: "تلاش مجدد",
     },
   },
+  // Values (phone/email/address/hours/social) come from getSiteSettings() in
+  // src/lib/api.ts — these are just the static field captions.
   info: {
-    address: { label: "ADDRESS", value: "تهران، خیابان شریعتی، کوچه بهار، پلاک ۱۲، واحد ۴" },
-    email: { label: "EMAIL", value: "hello@vybe.ir" },
-    phone: { label: "PHONE", value: "021 1234 5678", href: "+982112345678" },
-    hours: {
-      label: "HOURS",
-      rows: [
-        { day: "شنبه تا چهارشنبه", time: "9:00 — 18:00" },
-        { day: "پنجشنبه", time: "9:00 — 13:00" },
-        { day: "جمعه", time: "تعطیل" },
-      ],
-    },
-    social: { label: "SOCIAL", items: ["INSTAGRAM", "TELEGRAM", "PINTEREST", "YOUTUBE"] },
+    addressLabel: "ADDRESS",
+    emailLabel: "EMAIL",
+    phoneLabel: "PHONE",
+    hoursLabel: "HOURS",
+    socialLabel: "SOCIAL",
   },
   map: {
     caption: "MAP · GRAYSCALE STYLE — جای‌نگهدار نقشه",

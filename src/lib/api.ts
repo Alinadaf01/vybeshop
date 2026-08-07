@@ -1,11 +1,15 @@
 import { products } from "@/data/products";
 import { categories } from "@/data/categories";
 import { blogPosts } from "@/data/blog";
+import { siteSettings } from "@/data/siteSettings";
+import { catalog } from "@/data/catalog";
 import type { Product } from "@/types/product";
 import type { Category } from "@/types/category";
 import type { BlogPost, BlogCategory } from "@/types/blog";
 import type { ContactMessage, ContactMessageInput } from "@/types/contact";
 import type { PaginatedResponse } from "@/types/api";
+import type { SiteSettings } from "@/data/siteSettings";
+import type { CatalogFile } from "@/data/catalog";
 
 const NETWORK_DELAY_MS = 350;
 
@@ -136,6 +140,14 @@ export async function getBlogPost(slug: string): Promise<BlogPost> {
   const post = blogPosts.find((item) => item.slug === slug);
   if (!post) throw new Error(`Blog post not found: ${slug}`);
   return delay(post);
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  return delay(siteSettings);
+}
+
+export async function getCatalog(): Promise<CatalogFile> {
+  return delay(catalog);
 }
 
 export async function submitContactMessage(

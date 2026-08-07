@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { catalog } from "@/data/catalog";
+import { useQuery } from "@tanstack/react-query";
+import { getCatalog } from "@/lib/api";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Image } from "@/components/ui/Image";
 import { DownloadButton, type DownloadStatus } from "@/components/ui/DownloadButton";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { Badge } from "@/components/ui/Badge";
 import { Seo } from "@/components/seo/Seo";
+import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 import { catalogContent as c } from "@/content/catalog";
 
 export default function CatalogPage() {
@@ -14,12 +16,16 @@ export default function CatalogPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [spreadIndex, setSpreadIndex] = useState(0);
 
-  const fileName = catalog.fileUrl.split("/").pop() ?? "vybe-catalog.pdf";
+  const { data: catalog } = useQuery({ queryKey: ["catalog"], queryFn: getCatalog });
 
   function handleDownloadStart() {
     setDownloadStatus("preparing");
     setTimeout(() => setDownloadStatus("done"), 1400);
   }
+
+  if (!catalog) return <PageLoadingFallback />;
+
+  const fileName = catalog.fileUrl.split("/").pop() ?? "vybe-catalog.pdf";
 
   return (
     <div className="mx-auto max-w-page px-5 xl:px-10">
