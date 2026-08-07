@@ -342,10 +342,14 @@ export default function HomePage() {
           </form>
         </Reveal>
         <Reveal className="grid grid-cols-3 gap-2">
-          {Array.from({ length: 6 }, (_, i) => (
-            <span
-              key={i}
-              className="aspect-square rounded-md bg-[repeating-linear-gradient(135deg,#ECECEC_0_6px,#F5F5F3_6px_12px)]"
+          {homeContent.community.images.map((image) => (
+            <Image
+              key={image.src}
+              src={image.src}
+              alt={image.alt}
+              width={400}
+              height={400}
+              className="aspect-square w-full rounded-md object-cover"
             />
           ))}
         </Reveal>

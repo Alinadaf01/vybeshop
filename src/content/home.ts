@@ -48,5 +48,13 @@ export const homeContent = {
     body: "ماهی یک ایمیل: محصول تازه و یادداشت‌های کارگاه. عکس‌های شما را با برچسب VYBE می‌بینیم.",
     emailPlaceholder: "ایمیل شما",
     submitLabel: "عضویت",
+    images: [
+      { src: "/images/community/1.jpg", alt: "پایه رومیزی VYBE روی میز کار یک مشتری" },
+      { src: "/images/community/2.jpg", alt: "نگهدارنده موبایل VYBE نصب‌شده در خودرو" },
+      { src: "/images/community/3.jpg", alt: "داک شارژ VYBE کنار لپ‌تاپ در محیط کار" },
+      { src: "/images/community/4.jpg", alt: "قلاب دیواری VYBE در آشپزخانه یک مشتری" },
+      { src: "/images/community/5.jpg", alt: "سیستم مدولار گرید VYBE چیده‌شده روی میز" },
+      { src: "/images/community/6.jpg", alt: "لوازم تاشوی سفر VYBE در کیف مسافرتی" },
+    ],
   },
 } as const;
