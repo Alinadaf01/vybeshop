@@ -4,6 +4,8 @@
 // it drags the entire catalog into the client bundle. Pages build their own
 // <Seo> props directly from data they already have loaded (see AboutPage,
 // ProductDetailPage, etc.) using the pure helpers in src/lib/seo.ts instead.
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { products } from "@/data/products";
 import { categories } from "@/data/categories";
 import { blogPosts } from "@/data/blog";
@@ -14,9 +16,24 @@ import { categoriesContent } from "@/content/categories";
 import { catalogContent } from "@/content/catalog";
 import { blogListContent } from "@/content/blog";
 import { productsContent } from "@/content/products";
-import { SITE_NAME, buildProductJsonLd, buildArticleJsonLd } from "@/lib/seo";
+import { SITE_NAME, absoluteUrl, buildProductJsonLd, buildArticleJsonLd } from "@/lib/seo";
 
 const DEFAULT_OG_IMAGE = "/images/og/default.jpg";
+// npm scripts (build/postbuild/prerender) always run with cwd = repo root,
+// so this is reliable regardless of whether this file executes from source
+// or from the Vite SSR bundle in dist-ssr/ (import.meta.url would point at
+// the bundle's location instead, which is the wrong base for this path).
+const PUBLIC_DIR = path.resolve(process.cwd(), "public");
+
+/** og:image / JSON-LD image must exist on disk at build time — link-preview
+ * bots (Telegram, Instagram, etc.) don't execute JS, so a client-side
+ * <Image>-style onError fallback never runs for them. Real product/blog
+ * photos haven't been delivered yet, so every one of them falls back to the
+ * default OG image today; this starts resolving correctly the moment real
+ * files land in public/, no code change needed. */
+function resolveOgImage(imagePath: string): string {
+  return existsSync(path.join(PUBLIC_DIR, imagePath)) ? imagePath : DEFAULT_OG_IMAGE;
+}
 
 export interface RouteHead {
   title: string;
@@ -65,26 +82,28 @@ export function getRouteHead(path: string): RouteHead | null {
     const product = products.find((p) => p.slug === slug);
     if (!product) return null;
     const category = categories.find((c) => c.slug === product.category);
+    const image = resolveOgImage(product.images[0]);
     return {
       title: product.name,
       description: product.shortDescription,
       path,
-      image: product.images[0],
+      image,
       type: "product",
-      jsonLd: buildProductJsonLd(product, category?.name),
+      jsonLd: buildProductJsonLd(product, category?.name, absoluteUrl(image)),
     };
   }
   if (path.startsWith("/blog/")) {
     const slug = path.slice("/blog/".length);
     const post = blogPosts.find((p) => p.slug === slug);
     if (!post) return null;
+    const image = resolveOgImage(post.coverImage);
     return {
       title: post.title,
       description: post.excerpt,
       path,
-      image: post.coverImage,
+      image,
       type: "article",
-      jsonLd: buildArticleJsonLd(post),
+      jsonLd: buildArticleJsonLd(post, absoluteUrl(image)),
     };
   }
   return null;

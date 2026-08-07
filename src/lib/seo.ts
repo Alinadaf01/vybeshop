@@ -19,12 +19,16 @@ export function pageTitle(title: string): string {
   return title === SITE_NAME ? SITE_NAME : `${title} · ${SITE_NAME}`;
 }
 
-export function buildProductJsonLd(product: Product, categoryName: string | undefined) {
+/** imageUrl must be an absolute URL the caller has already resolved (client
+ * pages pass absoluteUrl(product.images[0]) directly; the build-time
+ * prerender path in seoRoutes.ts resolves it through resolveOgImage() first
+ * so JSON-LD never points at a file that doesn't exist on disk). */
+export function buildProductJsonLd(product: Product, categoryName: string | undefined, imageUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: [absoluteUrl(product.images[0])],
+    image: [imageUrl],
     description: product.shortDescription,
     sku: product.sku,
     category: categoryName,
@@ -40,12 +44,13 @@ export function buildProductJsonLd(product: Product, categoryName: string | unde
   };
 }
 
-export function buildArticleJsonLd(post: BlogPost) {
+/** See buildProductJsonLd's imageUrl note — same reasoning here. */
+export function buildArticleJsonLd(post: BlogPost, imageUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
-    image: [absoluteUrl(post.coverImage)],
+    image: [imageUrl],
     datePublished: post.publishedAt,
     author: { "@type": "Organization", name: post.author },
     description: post.excerpt,

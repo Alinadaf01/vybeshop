@@ -17,7 +17,7 @@ import { Image } from "@/components/ui/Image";
 import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { Seo } from "@/components/seo/Seo";
-import { buildProductJsonLd } from "@/lib/seo";
+import { buildProductJsonLd, absoluteUrl } from "@/lib/seo";
 import { productDetailContent as c } from "@/content/productDetail";
 
 const LOW_STOCK_THRESHOLD = 10;
@@ -64,7 +64,7 @@ export default function ProductDetailPage() {
         path={`/products/${product.slug}`}
         image={product.images[0]}
         type="product"
-        jsonLd={buildProductJsonLd(product, category?.name)}
+        jsonLd={buildProductJsonLd(product, category?.name, absoluteUrl(product.images[0]))}
       />
       <div className="mx-auto max-w-page px-5 xl:px-10">
         <Breadcrumb

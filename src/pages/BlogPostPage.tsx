@@ -70,7 +70,7 @@ export default function BlogPostPage() {
         path={`/blog/${post.slug}`}
         image={post.coverImage}
         type="article"
-        jsonLd={buildArticleJsonLd(post)}
+        jsonLd={buildArticleJsonLd(post, absoluteUrl(post.coverImage))}
       />
       <div className="mx-auto max-w-page px-5 xl:px-10">
         <Breadcrumb
