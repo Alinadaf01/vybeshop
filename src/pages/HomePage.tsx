@@ -34,7 +34,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <Seo title="VYBE" description={homeContent.seo.description} path="/" />
+      <Seo raw title={`VYBE — ${homeContent.seo.title}`} description={homeContent.seo.description} path="/" />
       {/* هیرو */}
       <section className="relative flex min-h-[calc(100vh-72px)] flex-col items-center justify-center gap-10 bg-graphite px-5 py-14 text-center text-fog-white md:py-20 xl:px-10">
         <div className="flex aspect-square w-full max-w-[520px] items-end rounded-xl border border-edge">

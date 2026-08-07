@@ -2,9 +2,11 @@ import type { Product } from "@/types/product";
 import type { BlogPost } from "@/types/blog";
 
 export const SITE_NAME = "VYBE";
-// Placeholder until the site is deployed — set VITE_SITE_URL to the real production
-// domain at deploy time (see F6 deploy task); everything below reads from this constant.
-export const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, "") ?? "https://vybe.ir";
+// vybeshop.ir is the real production domain (canonical, no www — the www
+// variant redirects at the DNS/Vercel level). Override via VITE_SITE_URL for
+// local/preview builds if ever needed; everything below reads from this
+// single constant so the domain only has to change in one place.
+export const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, "") ?? "https://vybeshop.ir";
 
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;

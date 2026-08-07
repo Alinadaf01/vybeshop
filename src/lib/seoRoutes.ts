@@ -25,13 +25,22 @@ export interface RouteHead {
   image: string;
   type: "website" | "article" | "product";
   jsonLd?: object;
+  /** true only for "/" — title is already "VYBE — <tagline>", don't append " · VYBE" again. */
+  titleIsRaw?: boolean;
 }
 
 /** Resolves title/description/OG/JSON-LD for any concrete route path. Returns
  * null for paths with no defined metadata (e.g. 404s) — caller should skip those. */
 export function getRouteHead(path: string): RouteHead | null {
   if (path === "/") {
-    return { title: SITE_NAME, description: homeContent.seo.description, path, image: DEFAULT_OG_IMAGE, type: "website" };
+    return {
+      title: `${SITE_NAME} — ${homeContent.seo.title}`,
+      description: homeContent.seo.description,
+      path,
+      image: DEFAULT_OG_IMAGE,
+      type: "website",
+      titleIsRaw: true,
+    };
   }
   if (path === "/about") {
     return { title: aboutContent.seo.title, description: aboutContent.seo.description, path, image: DEFAULT_OG_IMAGE, type: "website" };

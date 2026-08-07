@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/cn";
 import { navLinks } from "@/app/navigation";
 import { useDialog } from "@/lib/useDialog";
-import vybeWordmark from "../../../assets/brand/vybe-wordmark.svg";
+import { VybeWordmark } from "@/components/brand/VybeWordmark";
 
 export interface MobileMenuProps {
   open: boolean;
@@ -54,7 +54,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
         >
           &#10005;
         </button>
-        <img src={vybeWordmark} alt="VYBE" className="h-20 w-auto" />
+        <VybeWordmark aria-hidden="true" className="h-8 w-auto p-1" />
       </div>
 
       <nav className="flex flex-1 flex-col items-start gap-6 overflow-y-auto px-5 py-6">

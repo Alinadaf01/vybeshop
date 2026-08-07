@@ -15,15 +15,15 @@ const DIST_DIR = path.join(ROOT, "dist");
 const TEMPLATE_PATH = path.join(DIST_DIR, "index.html");
 // Must match the fallback in src/lib/seo.ts — set VITE_SITE_URL before
 // building (client build reads it via import.meta.env, this script via
-// process.env) once the real production domain exists.
-const SITE_URL = (process.env.VITE_SITE_URL ?? "https://vybe.ir").replace(/\/$/, "");
+// process.env) if it ever needs to differ from the production domain.
+const SITE_URL = (process.env.VITE_SITE_URL ?? "https://vybeshop.ir").replace(/\/$/, "");
 
 function escapeJsonForScriptTag(value) {
   return JSON.stringify(value).replace(/</g, "\\u003c");
 }
 
 function buildHead(head) {
-  const fullTitle = head.title === "VYBE" ? "VYBE" : `${head.title} · VYBE`;
+  const fullTitle = head.titleIsRaw || head.title === "VYBE" ? head.title : `${head.title} · VYBE`;
   const url = `${SITE_URL}${head.path}`;
   const imageUrl = head.image.startsWith("http") ? head.image : `${SITE_URL}${head.image}`;
 

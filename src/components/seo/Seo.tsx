@@ -8,15 +8,18 @@ export interface SeoProps {
   image?: string;
   type?: "website" | "article" | "product";
   jsonLd?: object;
+  /** Use title exactly as given, skipping the "<page> · VYBE" suffix — for
+   * the home page's "VYBE — <tagline>" format, brand name first. */
+  raw?: boolean;
 }
 
 /** Renders <title>/<meta>/<link> anywhere in the tree — React 19 hoists them
  * into <head> automatically and cleans them up on unmount, so this just needs
  * to be rendered once per page. Keeps the client-side title/OG tags correct
  * across route navigation, independent of the build-time prerendered HTML. */
-export function Seo({ title, description, path, image = "/images/og/default.jpg", type = "website", jsonLd }: SeoProps) {
+export function Seo({ title, description, path, image = "/images/og/default.jpg", type = "website", jsonLd, raw = false }: SeoProps) {
   const skip = useSkipSeo();
-  const fullTitle = pageTitle(title);
+  const fullTitle = raw ? title : pageTitle(title);
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
 

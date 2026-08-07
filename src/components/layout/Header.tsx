@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/cn";
 import { navLinks } from "@/app/navigation";
-import vybeWordmark from "../../../assets/brand/vybe-wordmark.svg";
+import { VybeWordmark } from "@/components/brand/VybeWordmark";
 
 export interface HeaderProps {
   onMenuOpen: () => void;
@@ -63,8 +63,8 @@ export function Header({ onMenuOpen, cartCount = 0 }: HeaderProps) {
         opaque ? "bg-graphite" : "bg-transparent",
       )}
     >
-      <Link to="/" aria-label="VYBE — صفحه اصلی" className="shrink-0">
-        <img src={vybeWordmark} alt="VYBE" className="h-24 w-auto" />
+      <Link to="/" aria-label="VYBE — صفحه اصلی" className="shrink-0 p-1">
+        <VybeWordmark aria-hidden="true" className="h-8 w-auto text-fog-white" />
       </Link>
 
       <nav className="hidden flex-1 items-center gap-6 overflow-hidden whitespace-nowrap lg:flex">

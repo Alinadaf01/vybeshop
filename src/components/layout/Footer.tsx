@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { toJalaali } from "jalaali-js";
 import { categories } from "@/data/categories";
-import vybeWordmark from "../../../assets/brand/vybe-wordmark.svg";
+import { VybeWordmark } from "@/components/brand/VybeWordmark";
 
 const quickLinks = [
   { label: "محصولات", href: "/products" },
@@ -50,7 +50,7 @@ export function Footer() {
     <footer className="bg-graphite px-5 py-14 text-fog-white md:py-20 xl:px-10">
       <div className="mx-auto max-w-page">
         <div className="flex flex-col gap-2 border-b border-edge pb-12">
-          <img src={vybeWordmark} alt="VYBE" className="h-28 w-auto" />
+          <VybeWordmark className="h-8 w-auto p-1" />
           <p className="mt-2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
         </div>
 

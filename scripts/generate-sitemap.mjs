@@ -6,7 +6,7 @@ import path from "node:path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const SITE_URL = (process.env.VITE_SITE_URL ?? "https://vybe.ir").replace(/\/$/, "");
+const SITE_URL = (process.env.VITE_SITE_URL ?? "https://vybeshop.ir").replace(/\/$/, "");
 
 async function main() {
   const { listAllRoutes } = await import(pathToFileURL(path.join(ROOT, "dist-ssr", "entry-server.js")));
