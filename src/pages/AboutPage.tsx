@@ -78,7 +78,7 @@ export default function AboutPage() {
                 key={item.title}
                 className="flex flex-col gap-2 border-t border-gray-100 py-6 md:flex-row md:gap-8"
               >
-                <span dir="ltr" className="font-mono text-caption text-titanium md:w-16">
+                <span aria-hidden="true" dir="ltr" className="font-mono text-caption text-titanium md:w-16">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="text-h3 font-semibold md:w-[240px]">{item.title}</span>
@@ -128,7 +128,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
             {c.process.steps.map((step) => (
               <div key={step.tag} className="flex flex-col gap-2 rounded-lg border border-edge bg-surface p-4">
-                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-titanium">
+                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-silver">
                   {step.tag}
                 </span>
                 <span className="text-h4 font-h4 text-white">{step.title}</span>
