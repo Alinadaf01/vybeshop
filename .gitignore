@@ -30,3 +30,5 @@ Thumbs.db
 /playwright-report/
 /blob-report/
 .claude/settings.local.json 
+.vercel
+.env*
