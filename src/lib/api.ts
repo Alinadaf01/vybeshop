@@ -3,6 +3,7 @@ import { categories } from "@/data/categories";
 import { blogPosts } from "@/data/blog";
 import { siteSettings } from "@/data/siteSettings";
 import { catalog } from "@/data/catalog";
+import { loadStoredAuth, saveStoredAuth, clearStoredAuth } from "@/lib/authStorage";
 import type { Product } from "@/types/product";
 import type { Category } from "@/types/category";
 import type { BlogPost, BlogCategory } from "@/types/blog";
@@ -10,6 +11,8 @@ import type { ContactMessage, ContactMessageInput } from "@/types/contact";
 import type { PaginatedResponse } from "@/types/api";
 import type { SiteSettings } from "@/data/siteSettings";
 import type { CatalogFile } from "@/data/catalog";
+import type { AuthUser, OtpVerifyResponse } from "@/types/auth";
+import type { Address, AddressInput } from "@/types/address";
 
 const NETWORK_DELAY_MS = 350;
 
@@ -293,4 +296,120 @@ export async function submitContactMessage(
       return delay(message);
     },
   );
+}
+
+// Auth (phone + OTP) and addresses have no meaningful fake-data fallback —
+// faking a logged-in session would be actively misleading, not a demo
+// convenience. These always hit the real backend and surface a real error
+// (in Persian) when it's unreachable, instead of silently degrading.
+
+async function readErrorDetail(response: Response, fallback: string): Promise<string> {
+  const body = await response.json().catch(() => null);
+  return (body && typeof body === "object" && "detail" in body && typeof body.detail === "string")
+    ? body.detail
+    : fallback;
+}
+
+export async function requestOtp(phone: string): Promise<{ expiresInSeconds: number }> {
+  let res: Response;
+  try {
+    res = await apiFetch("/auth/otp/request/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone }),
+    });
+  } catch {
+    throw new Error("ارسال کد ممکن نشد. اتصال اینترنت را بررسی کنید.");
+  }
+  if (!res.ok) throw new Error(await readErrorDetail(res, "ارسال کد ناموفق بود."));
+  return res.json();
+}
+
+export async function verifyOtp(phone: string, code: string): Promise<OtpVerifyResponse> {
+  let res: Response;
+  try {
+    res = await apiFetch("/auth/otp/verify/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, code }),
+    });
+  } catch {
+    throw new Error("تأیید کد ممکن نشد. اتصال اینترنت را بررسی کنید.");
+  }
+  if (!res.ok) throw new Error(await readErrorDetail(res, "کد وارد‌شده اشتباه یا منقضی است."));
+  return res.json();
+}
+
+async function refreshAccessToken(refreshToken: string): Promise<string> {
+  const res = await apiFetch("/auth/refresh/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh: refreshToken }),
+  });
+  if (!res.ok) throw new Error("refresh failed");
+  const data = (await res.json()) as { access: string };
+  return data.access;
+}
+
+/** Attaches the current access token; on a 401 it refreshes once via the
+ * stored refresh token and retries, and clears the session if that fails too. */
+async function authorizedFetch(path: string, init: RequestInit = {}): Promise<Response> {
+  const stored = loadStoredAuth();
+  if (!stored) throw new Error("ابتدا وارد حساب کاربری شوید.");
+
+  const doFetch = (accessToken: string) =>
+    apiFetch(path, {
+      ...init,
+      headers: { "Content-Type": "application/json", ...init.headers, Authorization: `Bearer ${accessToken}` },
+    });
+
+  let response = await doFetch(stored.tokens.access);
+  if (response.status === 401) {
+    try {
+      const access = await refreshAccessToken(stored.tokens.refresh);
+      saveStoredAuth({ tokens: { access, refresh: stored.tokens.refresh }, user: stored.user });
+      response = await doFetch(access);
+    } catch {
+      clearStoredAuth();
+      throw new Error("نشست شما منقضی شده است. دوباره وارد شوید.");
+    }
+  }
+  return response;
+}
+
+export async function getMe(): Promise<AuthUser> {
+  const res = await authorizedFetch("/auth/me/");
+  if (!res.ok) throw new Error("دریافت اطلاعات حساب ناموفق بود.");
+  return res.json();
+}
+
+export async function updateMe(
+  input: Partial<Pick<AuthUser, "firstName" | "lastName" | "email">>,
+): Promise<AuthUser> {
+  const res = await authorizedFetch("/auth/me/", { method: "PATCH", body: JSON.stringify(input) });
+  if (!res.ok) throw new Error(await readErrorDetail(res, "ذخیره تغییرات ناموفق بود."));
+  return res.json();
+}
+
+export async function getAddresses(): Promise<Address[]> {
+  const res = await authorizedFetch("/addresses/");
+  if (!res.ok) throw new Error("دریافت آدرس‌ها ناموفق بود.");
+  return res.json();
+}
+
+export async function createAddress(input: AddressInput): Promise<Address> {
+  const res = await authorizedFetch("/addresses/", { method: "POST", body: JSON.stringify(input) });
+  if (!res.ok) throw new Error(await readErrorDetail(res, "ذخیره آدرس ناموفق بود."));
+  return res.json();
+}
+
+export async function updateAddress(id: string, input: Partial<AddressInput>): Promise<Address> {
+  const res = await authorizedFetch(`/addresses/${id}/`, { method: "PATCH", body: JSON.stringify(input) });
+  if (!res.ok) throw new Error(await readErrorDetail(res, "ذخیره آدرس ناموفق بود."));
+  return res.json();
+}
+
+export async function deleteAddress(id: string): Promise<void> {
+  const res = await authorizedFetch(`/addresses/${id}/`, { method: "DELETE" });
+  if (!res.ok) throw new Error("حذف آدرس ناموفق بود.");
 }

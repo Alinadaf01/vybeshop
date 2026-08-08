@@ -79,6 +79,7 @@ class MeView(RetrieveUpdateAPIView):
 class AddressListCreateView(ListCreateAPIView):
     serializer_class = AddressSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = None  # a user's address count is always small — plain array, not paginated
 
     def get_queryset(self):
         return Address.objects.filter(user=self.request.user)

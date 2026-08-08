@@ -3,6 +3,7 @@ import { Link, NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/cn";
 import { navLinks } from "@/app/navigation";
 import { VybeWordmark } from "@/components/brand/VybeWordmark";
+import { useAuth } from "@/lib/AuthContext";
 
 export interface HeaderProps {
   onMenuOpen: () => void;
@@ -12,6 +13,7 @@ export interface HeaderProps {
 export function Header({ onMenuOpen, cartCount = 0 }: HeaderProps) {
   const [opaque, setOpaque] = useState(true);
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     let intersectionObserver: IntersectionObserver | null = null;
@@ -108,12 +110,12 @@ export function Header({ onMenuOpen, cartCount = 0 }: HeaderProps) {
             </span>
           )}
         </div>
-        <button
-          type="button"
-          className="hidden rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver hover:text-white sm:block"
+        <Link
+          to={isAuthenticated ? "/account" : "/auth"}
+          className="hidden rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver no-underline hover:text-white sm:block"
         >
           ACCOUNT
-        </button>
+        </Link>
       </div>
 
       <button

@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "@/app/RootLayout";
+import { RequireAuth } from "@/app/RequireAuth";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 // Bundled directly (not React.lazy): each of these chunks is small (a few KB
@@ -22,6 +23,8 @@ import AboutPage from "@/pages/AboutPage";
 
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
+const AuthPage = lazy(() => import("@/pages/AuthPage"));
+const AccountPage = lazy(() => import("@/pages/AccountPage"));
 
 function withSuspense(node: ReactNode) {
   return <Suspense fallback={<PageLoadingFallback />}>{node}</Suspense>;
@@ -43,6 +46,15 @@ export const router = createBrowserRouter([
       { path: "about", element: <AboutPage /> },
       { path: "contact", element: withSuspense(<ContactPage />) },
       { path: "search", element: withSuspense(<SearchPage />) },
+      { path: "auth", element: withSuspense(<AuthPage />) },
+      {
+        path: "account",
+        element: withSuspense(
+          <RequireAuth>
+            <AccountPage />
+          </RequireAuth>,
+        ),
+      },
       { path: "dev/components", lazy: () => import("@/pages/dev/DevComponentsPage").then((m) => ({ Component: m.DevComponentsPage })) },
       { path: "*", element: <NotFoundPage /> },
     ],

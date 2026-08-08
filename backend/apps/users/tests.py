@@ -59,6 +59,15 @@ class AddressTests(APITestCase):
         self.other_user = User.objects.create_user(phone="09121110006", is_verified=True)
         self.client.force_authenticate(user=self.user)
 
+    def test_list_is_a_plain_array_not_a_paginated_envelope(self):
+        Address.objects.create(
+            user=self.user, province="تهران", city="تهران", line="...", postal_code="1111111111",
+            receiver_name="A", receiver_phone="09121110005",
+        )
+        response = self.client.get(reverse("address-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.data, list)
+
     def test_creating_second_default_unsets_first(self):
         first = Address.objects.create(
             user=self.user, province="تهران", city="تهران", line="...", postal_code="1111111111",

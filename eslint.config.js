@@ -8,7 +8,7 @@ import prettierConfig from "eslint-config-prettier";
 import logicalProps from "./eslint-rules/no-physical-direction-classes.js";
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  { ignores: ["dist", "dist-ssr", "backend", "admin-template"] },
   {
     extends: [
       js.configs.recommended,
