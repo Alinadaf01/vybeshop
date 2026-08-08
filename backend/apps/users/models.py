@@ -86,6 +86,11 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.title or self.city} — {self.user.phone}"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.is_default:
+            Address.objects.filter(user_id=self.user_id).exclude(pk=self.pk).update(is_default=False)
+
 
 class OTPCode(models.Model):
     EXPIRY_MINUTES = 2

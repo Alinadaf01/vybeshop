@@ -282,9 +282,83 @@ Error response: any non-2xx status causes the frontend to show a generic "پیا
 
 ---
 
+## Auth (phone + OTP)
+
+No password login — phone number is the identity, a 6-digit OTP is the credential. JWT (access + refresh) issued on successful verification.
+
+### `POST /api/auth/otp/request/`
+
+Request: `{ phone: string }` — Iranian mobile format `09xxxxxxxxx`.
+
+Response `200`: `{ expiresInSeconds: number }` (currently `120`).
+Response `429`: `{ detail: string }` — rate-limited at 3 requests / 10 minutes / phone. The frontend should disable the submit button and show the returned message; do not retry automatically.
+
+### `POST /api/auth/otp/verify/`
+
+Request: `{ phone: string; code: string }`
+
+Response `200`:
+```ts
+interface OtpVerifyResponse {
+  access: string;
+  refresh: string;
+  user: { id: string; phone: string; firstName: string; lastName: string; email: string | null; isVerified: boolean; createdAt: string };
+  isNewUser: boolean; // true if this call created the account — use it to route to a "complete your profile" step vs. straight to /account
+}
+```
+Response `400`: `{ detail: string }` — wrong or expired code, or the max-5-attempts guard tripped. Same generic message either way; do not reveal which.
+
+A code is single-use — verifying successfully consumes it immediately, a replay of the same code fails.
+
+### `POST /api/auth/refresh/`
+
+Request: `{ refresh: string }` → Response: `{ access: string }`. Call this when a request 401s with an expired access token; if refresh itself fails, send the user back through OTP login.
+
+### `GET /api/auth/me/`, `PATCH /api/auth/me/`
+
+Requires `Authorization: Bearer <access>`. `GET` returns the same `user` shape as above. `PATCH` accepts a partial `{ firstName?, lastName?, email? }` — `phone` and `isVerified` are read-only here.
+
+`401` for missing/invalid/expired token on any authenticated endpoint in this contract.
+
+---
+
+## Addresses
+
+All endpoints below require `Authorization: Bearer <access>` and are implicitly scoped to the logged-in user — there is no way to address another user's rows (a mismatched id returns `404`, not `403`, to avoid confirming it exists).
+
+### `GET /api/addresses/`
+
+Not paginated — a user's address count is always small. Response: `Address[]`, sorted default-first then newest-first.
+
+```ts
+interface Address {
+  id: string;
+  title: string;          // e.g. "خانه", "محل کار" — optional label
+  province: string;
+  city: string;
+  line: string;           // street address
+  postalCode: string;
+  receiverName: string;
+  receiverPhone: string;
+  isDefault: boolean;
+  createdAt: string;
+}
+```
+
+### `POST /api/addresses/`
+
+Request: `Address` minus `id`/`createdAt`. Setting `isDefault: true` automatically unsets it on every other address the user owns — at most one default at a time, enforced server-side, not something the frontend needs to manage.
+
+### `GET/PATCH/DELETE /api/addresses/{id}/`
+
+Standard CRUD, same ownership scoping. `404` if the id doesn't belong to the caller.
+
+---
+
 ## Things explicitly out of scope for this contract
 
 - **Product data itself** (names, descriptions, prices, images, dimensions) — the current 24 fake products stay as placeholder content until a separate content-authoring pass with the client.
-- **Cart / checkout / auth** — the header shows static `CART`/`ACCOUNT` buttons with no behavior; not part of this phase.
+- **Cart / checkout** — the header shows a static `CART` button with no behavior; not part of this phase. (Auth is no longer out of scope — see above.)
 - **Newsletter subscription** (footer form) — currently a local-only success state (`setSubscribed(true)`), no endpoint wired.
 - **Search** (`/search` route) — page exists as a stub, not built out yet.
+- **Invoice PDF** (`GET /api/orders/{orderNumber}/invoice.pdf`) — documented in `BACKEND-TASK.md` §3.6, lands with the PDF-export phase, not this one. The account page's "دانلود فاکتور" button exists but stays disabled until then.
