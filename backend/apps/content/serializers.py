@@ -67,6 +67,8 @@ class CatalogSpreadSerializer(serializers.ModelSerializer):
 
 
 class CatalogEditionSerializer(serializers.ModelSerializer):
+    file_size_mb = serializers.DecimalField(max_digits=6, decimal_places=1, coerce_to_string=False)
+
     class Meta:
         model = CatalogEdition
         fields = ["label", "is_current", "page_count", "file_size_mb", "file_url"]
@@ -75,6 +77,7 @@ class CatalogEditionSerializer(serializers.ModelSerializer):
 class CatalogFileSerializer(serializers.ModelSerializer):
     spreads = CatalogSpreadSerializer(many=True, read_only=True)
     editions = CatalogEditionSerializer(many=True, read_only=True)
+    file_size_mb = serializers.DecimalField(max_digits=6, decimal_places=1, coerce_to_string=False)
 
     class Meta:
         model = CatalogFile

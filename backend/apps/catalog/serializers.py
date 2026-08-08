@@ -30,7 +30,9 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field="slug", read_only=True)
     colors = ColorOptionSerializer(many=True, read_only=True)
     dimensions = serializers.SerializerMethodField()
-    layer_height = serializers.DecimalField(source="layer_height_mm", max_digits=4, decimal_places=2)
+    layer_height = serializers.DecimalField(
+        source="layer_height_mm", max_digits=4, decimal_places=2, coerce_to_string=False
+    )
     weight = serializers.IntegerField(source="weight_g")
     in_stock = serializers.BooleanField(read_only=True)
     stock_count = serializers.IntegerField(read_only=True)

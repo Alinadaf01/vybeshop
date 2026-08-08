@@ -179,9 +179,12 @@ class Command(BaseCommand):
         settings_obj.trust_badge_label = row["trustBadgeLabel"]
         settings_obj.payment_gateway_label = row["paymentGatewayLabel"]
 
+        # Preserve exact parity with src/data/siteSettings.ts, including "#"
+        # placeholder URLs — a filtered subset would defeat the point of
+        # diffing frontend fake data against seeded backend data.
         for social in row["socialLinks"]:
             field_name = _SOCIAL_FIELD_BY_PLATFORM.get(social["platform"])
-            if field_name and social["url"] and social["url"] != "#":
+            if field_name:
                 setattr(settings_obj, field_name, social["url"])
 
         settings_obj.save()
