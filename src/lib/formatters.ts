@@ -29,3 +29,10 @@ export function formatJalaliDate(input: string | Date): string {
   const { jy, jm, jd } = toJalaali(date);
   return `${jd} ${persianMonths[jm - 1]} ${jy}`;
 }
+
+export function formatJalaliDateTime(input: string | Date): string {
+  const date = typeof input === "string" ? new Date(input) : input;
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${formatJalaliDate(date)} · ${hours}:${minutes}`;
+}

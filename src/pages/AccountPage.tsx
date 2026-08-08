@@ -10,30 +10,37 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Seo } from "@/components/seo/Seo";
-import { getMe, updateMe, getAddresses, createAddress, updateAddress, deleteAddress } from "@/lib/api";
+import { getMe, updateMe, getAddresses, createAddress, updateAddress, deleteAddress, getOrders, getOrder } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { profileFormSchema, addressFormSchema, type ProfileFormValues, type AddressFormValues } from "@/lib/authSchema";
-import { accountContent as c, demoOrders, orderStatusLabel, type DemoOrder, type DemoOrderStatus } from "@/content/account";
-import { formatPrice } from "@/lib/formatters";
+import { accountContent as c, orderStatusLabel } from "@/content/account";
+import { formatPrice, formatJalaliDateTime } from "@/lib/formatters";
 import type { Address } from "@/types/address";
+import type { OrderStatus, OrderSummary } from "@/types/order";
 
 type Tab = "orders" | "detail" | "addresses" | "profile";
 
-const STATUS_BADGE: Record<DemoOrderStatus, string> = {
+const STATUS_BADGE: Record<OrderStatus, string> = {
+  pending: "border border-silver text-gray-800",
+  paid: "border border-cyan text-graphite",
   processing: "border border-silver text-warning-ink",
   shipped: "bg-graphite text-fog-white",
   delivered: "border border-success-ink text-success-ink",
   canceled: "border border-danger-ink text-danger-ink",
+  returned: "border border-danger-ink text-danger-ink",
 };
 
-const STATUS_DOT: Record<DemoOrderStatus, string> = {
+const STATUS_DOT: Record<OrderStatus, string> = {
+  pending: "bg-silver",
+  paid: "bg-cyan",
   processing: "bg-warning",
   shipped: "bg-cyan",
   delivered: "bg-success",
   canceled: "bg-danger",
+  returned: "bg-danger",
 };
 
-function OrderStatusBadge({ status }: { status: DemoOrderStatus }) {
+function OrderStatusBadge({ status }: { status: OrderStatus }) {
   return (
     <span className={`flex items-center gap-2 rounded-full px-2 py-0.5 text-caption ${STATUS_BADGE[status]}`}>
       <span aria-hidden="true" className={`size-1.5 rounded-full ${STATUS_DOT[status]}`} />
@@ -59,15 +66,34 @@ export default function AccountPage() {
   const queryClient = useQueryClient();
 
   const [tab, setTab] = useState<Tab>("orders");
-  const [statusFilter, setStatusFilter] = useState<"all" | DemoOrderStatus>("all");
-  const [selectedOrder, setSelectedOrder] = useState<DemoOrder | null>(null);
+  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>("all");
+  const [selectedOrderNumber, setSelectedOrderNumber] = useState<string | null>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
 
-  const visibleOrders = statusFilter === "all" ? demoOrders : demoOrders.filter((o) => o.status === statusFilter);
+  // --- Orders ---
+  const {
+    data: ordersPage,
+    isLoading: ordersLoading,
+    isError: ordersLoadError,
+    refetch: refetchOrders,
+  } = useQuery({ queryKey: ["orders"], queryFn: getOrders });
+  const orders = ordersPage?.results ?? [];
+  const visibleOrders = statusFilter === "all" ? orders : orders.filter((o) => o.status === statusFilter);
 
-  function openOrderDetail(order: DemoOrder) {
-    setSelectedOrder(order);
+  const {
+    data: selectedOrder,
+    isLoading: orderDetailLoading,
+    isError: orderDetailLoadError,
+    refetch: refetchOrderDetail,
+  } = useQuery({
+    queryKey: ["order", selectedOrderNumber],
+    queryFn: () => getOrder(selectedOrderNumber!),
+    enabled: !!selectedOrderNumber,
+  });
+
+  function openOrderDetail(order: OrderSummary) {
+    setSelectedOrderNumber(order.number);
     setTab("detail");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -200,16 +226,16 @@ export default function AccountPage() {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-3">
               <h2 className="m-0 text-h3 font-semibold">{c.orders.heading}</h2>
-              <span className="text-small text-gray-800">{c.orders.countTemplate(demoOrders.length)}</span>
+              <span className="text-small text-gray-800">{c.orders.countTemplate(orders.length)}</span>
               <label className="ms-auto flex items-center gap-2 text-small text-gray-800">
                 وضعیت
                 <Select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as "all" | DemoOrderStatus)}
+                  onChange={(e) => setStatusFilter(e.target.value as "all" | OrderStatus)}
                   className="h-11 w-auto"
                 >
                   <option value="all">همه</option>
-                  {(Object.keys(orderStatusLabel) as DemoOrderStatus[]).map((status) => (
+                  {(Object.keys(orderStatusLabel) as OrderStatus[]).map((status) => (
                     <option key={status} value={status}>
                       {orderStatusLabel[status]}
                     </option>
@@ -218,7 +244,18 @@ export default function AccountPage() {
               </label>
             </div>
 
-            {visibleOrders.length === 0 ? (
+            {ordersLoading && <p className="m-0 text-body text-gray-800">{c.orders.loading}</p>}
+
+            {ordersLoadError && (
+              <div className="flex flex-col items-start gap-3 rounded-xl border border-gray-100 bg-white p-12">
+                <p className="m-0 text-body text-danger-ink">{c.orders.loadError}</p>
+                <Button variant="secondary" onClick={() => refetchOrders()}>
+                  {c.orders.retry}
+                </Button>
+              </div>
+            )}
+
+            {!ordersLoading && !ordersLoadError && visibleOrders.length === 0 && (
               <div className="flex flex-col items-start gap-3 rounded-xl border border-gray-100 bg-white p-12">
                 <h3 className="m-0 text-h3 font-semibold">{c.orders.empty.heading}</h3>
                 <p className="m-0 text-body leading-[1.7] text-gray-800">{c.orders.empty.body}</p>
@@ -226,7 +263,9 @@ export default function AccountPage() {
                   {c.orders.empty.cta}
                 </Link>
               </div>
-            ) : (
+            )}
+
+            {!ordersLoading && !ordersLoadError && visibleOrders.length > 0 && (
               <div className="flex flex-col rounded-xl border border-gray-100 bg-white px-4 md:px-12">
                 {visibleOrders.map((order, index) => (
                   <div
@@ -241,7 +280,7 @@ export default function AccountPage() {
                         {order.number}
                       </span>
                       <span dir="ltr" className="font-mono text-micro text-gray-800">
-                        {order.date} · {order.items.length} قلم · {order.gateway}
+                        {formatJalaliDateTime(order.createdAt)} · {order.itemCount} قلم
                       </span>
                     </div>
                     <OrderStatusBadge status={order.status} />
@@ -258,155 +297,184 @@ export default function AccountPage() {
           </div>
         )}
 
-        {tab === "detail" &&
-          (selectedOrder ? (
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <Button variant="secondary" className="h-11 px-4 text-small" onClick={() => setTab("orders")}>
-                  &#8594; {c.detail.back}
-                </Button>
-                <h2 className="m-0 text-h3 font-semibold">
-                  {c.detail.orderTitle(selectedOrder.number)}
-                </h2>
-                <OrderStatusBadge status={selectedOrder.status} />
-              </div>
+        {tab === "detail" && !selectedOrderNumber && (
+          <p className="m-0 text-body text-gray-800">{c.detail.selectPrompt(c.tabs.orders)}</p>
+        )}
 
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 md:p-12">
-                    <h3 className="m-0 text-h4 font-semibold">{c.detail.statusHeading}</h3>
-                    <ol className="m-0 flex list-none flex-col p-0">
-                      {selectedOrder.timeline.map((step, index) => (
-                        <li key={step.label} className="flex gap-3">
-                          <span className="flex flex-col items-center">
-                            <span
-                              aria-hidden="true"
-                              className={
-                                "grid size-6 shrink-0 place-items-center rounded-full font-mono text-micro " +
-                                (step.done ? "bg-graphite text-fog-white" : "border border-silver text-silver")
-                              }
-                            >
-                              {step.done ? "✓" : index + 1}
-                            </span>
-                            {index < selectedOrder.timeline.length - 1 && (
-                              <span aria-hidden="true" className={"w-px flex-1 " + (step.done ? "bg-graphite" : "bg-gray-100")} />
-                            )}
-                          </span>
-                          <span className="flex flex-col gap-1 pb-4">
-                            <span className={"text-body " + (step.done ? "font-medium text-graphite" : "text-gray-800")}>
-                              {step.label}
-                            </span>
-                            <span dir="ltr" className="font-mono text-micro text-gray-800">
-                              {step.timestamp ?? "—"}
-                            </span>
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
-                    <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 pt-3">
-                      <span dir="ltr" className="font-mono text-small text-gray-800">
-                        {c.detail.trackingLabel}
-                      </span>
-                      <span dir="ltr" className="font-mono text-small text-graphite">
-                        {selectedOrder.trackingCode ?? `— ${c.detail.trackingPending}`}
-                      </span>
-                    </div>
-                  </div>
+        {tab === "detail" && selectedOrderNumber && orderDetailLoading && (
+          <p className="m-0 text-body text-gray-800">{c.detail.loading}</p>
+        )}
 
-                  <div className="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 md:p-12">
-                    <h3 className="m-0 text-h4 font-semibold">{c.detail.itemsHeading}</h3>
-                    {selectedOrder.items.map((item, index) => (
-                      <div
-                        key={item.code}
-                        className={"flex gap-3" + (index < selectedOrder.items.length - 1 ? " border-b border-gray-100 pb-3" : "")}
-                      >
-                        <span className="flex aspect-square w-[72px] shrink-0 items-end rounded-md border border-gray-100 bg-[repeating-linear-gradient(135deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-1">
-                          <span dir="ltr" className="font-mono text-micro text-gray-800">
-                            {item.code}
-                          </span>
-                        </span>
-                        <span className="flex flex-1 flex-col gap-1">
-                          <span className="text-body font-medium">{item.name}</span>
-                          <span className="text-small text-gray-800">{item.variant}</span>
-                        </span>
-                        <span dir="ltr" className="font-mono text-small">
-                          {item.price.toLocaleString("en-US")}
-                        </span>
-                      </div>
-                    ))}
+        {tab === "detail" && selectedOrderNumber && orderDetailLoadError && (
+          <div className="flex flex-col items-start gap-3 rounded-xl border border-gray-100 bg-white p-12">
+            <p className="m-0 text-body text-danger-ink">{c.detail.loadError}</p>
+            <Button variant="secondary" onClick={() => refetchOrderDetail()}>
+              {c.detail.retry}
+            </Button>
+          </div>
+        )}
+
+        {tab === "detail" && selectedOrder && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="secondary" className="h-11 px-4 text-small" onClick={() => setTab("orders")}>
+                &#8594; {c.detail.back}
+              </Button>
+              <h2 className="m-0 text-h3 font-semibold">{c.detail.orderTitle(selectedOrder.number)}</h2>
+              <OrderStatusBadge status={selectedOrder.status} />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 md:p-12">
+                  <h3 className="m-0 text-h4 font-semibold">{c.detail.statusHeading}</h3>
+                  {(() => {
+                    const steps = [
+                      { label: c.detail.orderCreated, timestamp: selectedOrder.createdAt },
+                      ...selectedOrder.statusLogs.map((log) => ({
+                        label: orderStatusLabel[log.toStatus as OrderStatus] ?? log.toStatus,
+                        timestamp: log.createdAt,
+                      })),
+                    ];
+                    return (
+                      <ol className="m-0 flex list-none flex-col p-0">
+                        {steps.map((step, index) => (
+                          <li key={`${step.label}-${step.timestamp}`} className="flex gap-3">
+                            <span className="flex flex-col items-center">
+                              <span
+                                aria-hidden="true"
+                                className="grid size-6 shrink-0 place-items-center rounded-full bg-graphite font-mono text-micro text-fog-white"
+                              >
+                                ✓
+                              </span>
+                              {index < steps.length - 1 && <span aria-hidden="true" className="w-px flex-1 bg-graphite" />}
+                            </span>
+                            <span className="flex flex-col gap-1 pb-4">
+                              <span className="text-body font-medium text-graphite">{step.label}</span>
+                              <span dir="ltr" className="font-mono text-micro text-gray-800">
+                                {formatJalaliDateTime(step.timestamp)}
+                              </span>
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
+                    );
+                  })()}
+                  <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 pt-3">
+                    <span dir="ltr" className="font-mono text-small text-gray-800">
+                      {c.detail.trackingLabel}
+                    </span>
+                    <span dir="ltr" className="font-mono text-small text-graphite">
+                      {selectedOrder.trackingCode || `— ${c.detail.trackingPending}`}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4">
-                    <h3 className="m-0 text-h4 font-semibold">{c.detail.paymentHeading}</h3>
-                    <dl className="m-0 flex flex-col">
-                      <div className="flex justify-between gap-3 border-b border-gray-100 py-2">
-                        <dt className="text-small text-gray-800">{c.detail.subtotalLabel}</dt>
-                        <dd dir="ltr" className="m-0 font-mono text-small">
-                          {selectedOrder.subtotal.toLocaleString("en-US")}
-                        </dd>
-                      </div>
-                      <div className="flex justify-between gap-3 border-b border-gray-100 py-2">
-                        <dt className="text-small text-gray-800">{c.detail.discountLabel}</dt>
-                        <dd dir="ltr" className="m-0 font-mono text-small text-success-ink">
-                          {selectedOrder.discount > 0 ? `−${selectedOrder.discount.toLocaleString("en-US")}` : "0"}
-                        </dd>
-                      </div>
-                      <div className="flex justify-between gap-3 border-b border-gray-100 py-2">
-                        <dt className="text-small text-gray-800">{c.detail.shippingLabel}</dt>
-                        <dd dir="ltr" className="m-0 font-mono text-small">
-                          {selectedOrder.shipping.toLocaleString("en-US")}
-                        </dd>
-                      </div>
-                      <div className="flex justify-between gap-3 py-2">
-                        <dt className="text-body font-semibold">{c.detail.totalLabel}</dt>
-                        <dd dir="ltr" className="m-0 font-mono text-body font-semibold">
-                          {selectedOrder.total.toLocaleString("en-US")}
-                        </dd>
-                      </div>
-                    </dl>
-                    <div className="flex flex-col gap-2 border-t border-gray-100 pt-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-small text-gray-800">{c.detail.gatewayLabel}</span>
-                        <span dir="ltr" className="rounded-sm border border-gray-100 bg-fog-white px-2 py-0.5 font-mono text-micro text-gray-800">
-                          {selectedOrder.gateway}
+                <div className="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 md:p-12">
+                  <h3 className="m-0 text-h4 font-semibold">{c.detail.itemsHeading}</h3>
+                  {selectedOrder.items.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className={"flex gap-3" + (index < selectedOrder.items.length - 1 ? " border-b border-gray-100 pb-3" : "")}
+                    >
+                      <span className="flex aspect-square w-[72px] shrink-0 items-end rounded-md border border-gray-100 bg-[repeating-linear-gradient(135deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-1">
+                        <span dir="ltr" className="font-mono text-micro text-gray-800">
+                          {item.sku}
                         </span>
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-small text-gray-800">{c.detail.refIdLabel}</span>
-                        <span dir="ltr" className="font-mono text-small text-graphite">
-                          {selectedOrder.refId}
+                      </span>
+                      <span className="flex flex-1 flex-col gap-1">
+                        <span className="text-body font-medium">{item.productName}</span>
+                        <span className="text-small text-gray-800">
+                          {item.colorName ? `${item.colorName} · ` : ""}
+                          {item.quantity} عدد
                         </span>
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-small text-gray-800">{c.detail.paidAtLabel}</span>
-                        <span dir="ltr" className="font-mono text-small text-gray-800">
-                          {selectedOrder.paidAt}
-                        </span>
-                      </div>
+                      </span>
+                      <span dir="ltr" className="font-mono text-small">
+                        {formatPrice(item.subtotal)}
+                      </span>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded-xl border border-gray-100 bg-white p-4">
-                    <h3 className="m-0 text-h4 font-semibold">{c.detail.addressHeading}</h3>
-                    <p className="m-0 text-small leading-[1.7] text-gray-800">{selectedOrder.deliveryAddress}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button variant="secondary" className="h-11 px-4 text-small" disabled title={c.detail.invoiceUnavailable}>
-                      {c.detail.invoiceButton}
-                    </Button>
-                    <Button variant="secondary" className="h-11 px-4 text-small text-danger-ink">
-                      {c.detail.cancelButton}
-                    </Button>
-                  </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4">
+                  <h3 className="m-0 text-h4 font-semibold">{c.detail.paymentHeading}</h3>
+                  <dl className="m-0 flex flex-col">
+                    <div className="flex justify-between gap-3 border-b border-gray-100 py-2">
+                      <dt className="text-small text-gray-800">{c.detail.subtotalLabel}</dt>
+                      <dd dir="ltr" className="m-0 font-mono text-small">
+                        {formatPrice(selectedOrder.subtotal)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-3 border-b border-gray-100 py-2">
+                      <dt className="text-small text-gray-800">{c.detail.discountLabel}</dt>
+                      <dd dir="ltr" className="m-0 font-mono text-small text-success-ink">
+                        {selectedOrder.discount > 0 ? `−${formatPrice(selectedOrder.discount)}` : "0"}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-3 border-b border-gray-100 py-2">
+                      <dt className="text-small text-gray-800">{c.detail.shippingLabel}</dt>
+                      <dd dir="ltr" className="m-0 font-mono text-small">
+                        {formatPrice(selectedOrder.shippingCost)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-3 py-2">
+                      <dt className="text-body font-semibold">{c.detail.totalLabel}</dt>
+                      <dd dir="ltr" className="m-0 font-mono text-body font-semibold">
+                        {formatPrice(selectedOrder.total)}
+                      </dd>
+                    </div>
+                  </dl>
+                  {selectedOrder.payments.length > 0 ? (
+                    (() => {
+                      const payment = selectedOrder.payments[selectedOrder.payments.length - 1];
+                      return (
+                        <div className="flex flex-col gap-2 border-t border-gray-100 pt-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-small text-gray-800">{c.detail.gatewayLabel}</span>
+                            <span dir="ltr" className="rounded-sm border border-gray-100 bg-fog-white px-2 py-0.5 font-mono text-micro text-gray-800">
+                              {payment.gateway}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-small text-gray-800">{c.detail.refIdLabel}</span>
+                            <span dir="ltr" className="font-mono text-small text-graphite">
+                              {payment.refId || "—"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-small text-gray-800">{c.detail.paidAtLabel}</span>
+                            <span dir="ltr" className="font-mono text-small text-gray-800">
+                              {payment.verifiedAt ? formatJalaliDateTime(payment.verifiedAt) : "—"}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()
+                  ) : (
+                    <p className="m-0 border-t border-gray-100 pt-3 text-small text-gray-800">{c.detail.noPayments}</p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-2 rounded-xl border border-gray-100 bg-white p-4">
+                  <h3 className="m-0 text-h4 font-semibold">{c.detail.addressHeading}</h3>
+                  <p className="m-0 text-small leading-[1.7] text-gray-800">
+                    {selectedOrder.shippingAddress.receiverName} — {selectedOrder.shippingAddress.province}،{" "}
+                    {selectedOrder.shippingAddress.city}، {selectedOrder.shippingAddress.line}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="secondary" className="h-11 px-4 text-small" disabled title={c.detail.invoiceUnavailable}>
+                    {c.detail.invoiceButton}
+                  </Button>
+                  <Button variant="secondary" className="h-11 px-4 text-small text-danger-ink" disabled title={c.detail.cancelUnavailable}>
+                    {c.detail.cancelButton}
+                  </Button>
                 </div>
               </div>
             </div>
-          ) : (
-            <p className="m-0 text-body text-gray-800">
-              یک سفارش را از تب «{c.tabs.orders}» انتخاب کنید.
-            </p>
-          ))}
+          </div>
+        )}
 
         {tab === "addresses" && (
           <div className="flex flex-col gap-4">
