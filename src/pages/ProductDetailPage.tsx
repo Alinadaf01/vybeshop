@@ -201,6 +201,10 @@ export default function ProductDetailPage() {
                 { label: c.specTable.labels.material, value: product.material },
                 { label: c.specTable.labels.layerHeight, value: `${product.layerHeight} mm` },
                 { label: c.specTable.labels.category, value: category?.name ?? product.category },
+                ...product.specs.map((spec) => ({
+                  label: spec.label,
+                  value: spec.unit ? `${spec.value} ${spec.unit}` : spec.value,
+                })),
               ]}
             />
             <p className="m-0 border-t border-gray-100 pt-4 text-small leading-[1.6] text-gray-800">

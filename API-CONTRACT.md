@@ -64,6 +64,13 @@ interface Product {
   layerHeight: number;      // mm
   inStock: boolean;
   stockCount: number;
+  specs: ProductSpec[];     // additive — dynamic per-category fields, see below
+}
+
+interface ProductSpec {
+  label: string;   // Attribute.name, e.g. "رنگ سطح"
+  value: string;
+  unit?: string;    // Attribute.unit, e.g. "mm" — omitted when the attribute has none
 }
 
 interface ColorOption {
@@ -77,6 +84,8 @@ interface ColorOption {
 
 Response: single `Product` (shape above).
 **404** if slug doesn't exist — the frontend renders its own not-found page on any non-2xx.
+
+**`specs` is additive, not a replacement.** `material`, `dimensions`, `weight`, `layerHeight` stay fixed top-level fields — they have dedicated UI treatment on the product page. `specs` carries whatever dynamic, per-category attributes the backend's EAV system (`Attribute`/`AttributeValue`/`ProductAttribute`) attaches to a given product (e.g. a "کیف پول" product might have a `specs` entry for `{label: "تعداد جیب", value: "3"}` that a "پایه گوشی" product wouldn't have). Render it as a plain label/value list below the fixed spec block; an empty array is valid and renders nothing extra.
 
 ---
 

@@ -31,6 +31,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 132,
+    specs: [],
   },
   {
     id: "prod-02",
@@ -54,6 +55,7 @@ export const products: Product[] = [
     layerHeight: 0.12,
     inStock: true,
     stockCount: 54,
+    specs: [],
   },
   {
     id: "prod-03",
@@ -76,6 +78,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 88,
+    specs: [],
   },
 
   // داک شارژ
@@ -100,6 +103,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 76,
+    specs: [],
   },
   {
     id: "prod-05",
@@ -123,6 +127,7 @@ export const products: Product[] = [
     layerHeight: 0.12,
     inStock: true,
     stockCount: 29,
+    specs: [],
   },
   {
     id: "prod-06",
@@ -145,6 +150,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: false,
     stockCount: 0,
+    specs: [],
   },
 
   // نگهدارنده موبایل
@@ -169,6 +175,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 143,
+    specs: [],
   },
   {
     id: "prod-08",
@@ -191,6 +198,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 61,
+    specs: [],
   },
   {
     id: "prod-09",
@@ -214,6 +222,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 37,
+    specs: [],
   },
 
   // قلاب و آویز دیواری
@@ -238,6 +247,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 210,
+    specs: [],
   },
   {
     id: "prod-11",
@@ -260,6 +270,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 95,
+    specs: [],
   },
   {
     id: "prod-12",
@@ -282,6 +293,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 47,
+    specs: [],
   },
 
   // سیستم مدولار گرید
@@ -306,6 +318,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 40,
+    specs: [],
   },
   {
     id: "prod-14",
@@ -328,6 +341,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 63,
+    specs: [],
   },
   {
     id: "prod-15",
@@ -350,6 +364,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 118,
+    specs: [],
   },
 
   // لوازم سفر و تاشو
@@ -374,6 +389,7 @@ export const products: Product[] = [
     layerHeight: 0.12,
     inStock: true,
     stockCount: 174,
+    specs: [],
   },
   {
     id: "prod-17",
@@ -396,6 +412,7 @@ export const products: Product[] = [
     layerHeight: 0.12,
     inStock: true,
     stockCount: 0,
+    specs: [],
   },
   {
     id: "prod-18",
@@ -419,6 +436,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 52,
+    specs: [],
   },
 
   // نگهدارنده مغناطیسی
@@ -443,6 +461,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 66,
+    specs: [],
   },
   {
     id: "prod-20",
@@ -465,6 +484,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 84,
+    specs: [],
   },
   {
     id: "prod-21",
@@ -487,6 +507,7 @@ export const products: Product[] = [
     layerHeight: 0.16,
     inStock: true,
     stockCount: 129,
+    specs: [],
   },
 
   // اکسسوری و قطعات
@@ -511,6 +532,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 340,
+    specs: [],
   },
   {
     id: "prod-23",
@@ -533,6 +555,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 412,
+    specs: [],
   },
   {
     id: "prod-24",
@@ -555,6 +578,7 @@ export const products: Product[] = [
     layerHeight: 0.2,
     inStock: true,
     stockCount: 256,
+    specs: [],
   },
 ];
 

@@ -29,6 +29,14 @@ Thumbs.db
 /test-results/
 /playwright-report/
 /blob-report/
-.claude/settings.local.json 
+.claude/settings.local.json
 .vercel
 .env*
+
+# python / django backend
+backend/.venv
+backend/**/__pycache__
+*.pyc
+backend/staticfiles
+backend/media
+backend/db.sqlite3

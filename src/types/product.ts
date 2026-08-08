@@ -10,6 +10,12 @@ export interface ProductDimensions {
   d: number;
 }
 
+export interface ProductSpec {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
 export interface ProductVariant {
   id: string;
   productId: string;
@@ -38,4 +44,5 @@ export interface Product {
   layerHeight: number;
   inStock: boolean;
   stockCount: number;
+  specs: ProductSpec[];
 }
