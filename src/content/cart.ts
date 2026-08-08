@@ -10,7 +10,6 @@ export const cartContent = {
     heading: "خلاصه سفارش",
     subtotalLabel: "جمع کالاها",
     checkoutCta: "ادامه و تسویه",
-    checkoutComingSoon: "تسویه در فاز بعدی فعال می‌شود.",
   },
   shippingNote: {
     kicker: "SHIPPING · RETURNS",

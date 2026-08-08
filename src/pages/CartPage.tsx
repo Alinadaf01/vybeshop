@@ -124,10 +124,12 @@ export default function CartPage() {
                   </dd>
                 </div>
               </dl>
-              <Button disabled title={c.summary.checkoutComingSoon}>
+              <Link
+                to="/checkout"
+                className="flex h-12 items-center justify-center rounded-md bg-graphite px-6 text-body font-medium text-fog-white no-underline hover:bg-ink"
+              >
                 {c.summary.checkoutCta}
-              </Button>
-              <p className="m-0 text-caption text-gray-800">{c.summary.checkoutComingSoon}</p>
+              </Link>
             </div>
             <div className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-white p-4">
               <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">

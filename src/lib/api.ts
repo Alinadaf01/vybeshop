@@ -15,7 +15,9 @@ import type { CatalogFile } from "@/data/catalog";
 import type { AuthUser, OtpVerifyResponse } from "@/types/auth";
 import type { Address, AddressInput } from "@/types/address";
 import type { Cart } from "@/types/cart";
-import type { Order, OrderSummary } from "@/types/order";
+import type { Order, OrderSummary, PaymentGatewayCode } from "@/types/order";
+import type { PaymentGateway } from "@/types/payment";
+import type { ShippingMethod } from "@/types/shipping";
 
 const NETWORK_DELAY_MS = 350;
 
@@ -491,5 +493,62 @@ export async function getOrders(): Promise<PaginatedResponse<OrderSummary>> {
 export async function getOrder(number: string): Promise<Order> {
   const res = await authorizedFetch(`/orders/${encodeURIComponent(number)}/`);
   if (!res.ok) throw new Error("دریافت سفارش ناموفق بود.");
+  return res.json();
+}
+
+// Checkout errors are field-keyed (e.g. { addressId: "..." }, { cart: "..." })
+// so the form can point at the exact step that failed, not just show a
+// generic banner — readErrorDetail's single "detail" string isn't enough here.
+export class ApiFieldError extends Error {
+  field: string;
+  constructor(field: string, message: string) {
+    super(message);
+    this.field = field;
+  }
+}
+
+async function readFieldError(response: Response, fallback: string): Promise<ApiFieldError> {
+  const body = await response.json().catch(() => null);
+  if (body && typeof body === "object") {
+    const [field, message] = Object.entries(body)[0] ?? [];
+    if (field && typeof message === "string") return new ApiFieldError(field, message);
+  }
+  return new ApiFieldError("detail", fallback);
+}
+
+export async function getShippingMethods(): Promise<ShippingMethod[]> {
+  const res = await apiFetch("/shipping-methods/");
+  if (!res.ok) throw new Error("دریافت روش‌های ارسال ناموفق بود.");
+  return res.json();
+}
+
+export async function getPaymentGateways(): Promise<PaymentGateway[]> {
+  const res = await apiFetch("/payment-gateways/");
+  if (!res.ok) throw new Error("دریافت درگاه‌های پرداخت ناموفق بود.");
+  return res.json();
+}
+
+export interface CheckoutInput {
+  addressId: string;
+  shippingMethodId: string;
+  couponCode?: string;
+  note?: string;
+}
+
+export async function checkout(input: CheckoutInput): Promise<Order> {
+  const res = await authorizedFetch("/checkout/", { method: "POST", body: JSON.stringify(input) });
+  if (!res.ok) throw await readFieldError(res, "ثبت سفارش ناموفق بود.");
+  return res.json();
+}
+
+export async function initiatePayment(
+  orderNumber: string,
+  gatewayCode: PaymentGatewayCode,
+): Promise<{ redirectUrl: string }> {
+  const res = await authorizedFetch(`/orders/${encodeURIComponent(orderNumber)}/pay/`, {
+    method: "POST",
+    body: JSON.stringify({ gatewayCode }),
+  });
+  if (!res.ok) throw await readFieldError(res, "شروع پرداخت ناموفق بود.");
   return res.json();
 }

@@ -30,9 +30,12 @@ export interface OrderItem {
   subtotal: number;
 }
 
+export type PaymentGatewayCode = "ZARINPAL" | "IDPAY" | "SNAPPPAY" | "DIGIPAY";
+
 export interface OrderPayment {
   id: string;
-  gateway: string;
+  gateway: PaymentGatewayCode;
+  gatewayName: string;
   amount: number;
   refId: string;
   status: "pending" | "success" | "failed";
