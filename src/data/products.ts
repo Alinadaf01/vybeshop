@@ -580,6 +580,29 @@ export const products: Product[] = [
     stockCount: 256,
     specs: [],
   },
+  {
+    // Regression fixture for the Image.tsx crash: a product with no photos
+    // yet, exactly what happens when the owner adds a product before
+    // uploading images (see BACKLOG.md). Not linked from anywhere in the
+    // UI on purpose — reached only by its slug, e.g. in e2e tests.
+    id: "prod-25",
+    sku: "VYBE-TEST-NOIMG",
+    slug: "test-product-no-image",
+    name: "VYBE Test — بدون تصویر",
+    shortDescription: "محصول تستی بدون تصویر برای بازبینی رگرسیون کرش Image.tsx",
+    description: "این محصول عمداً بدون عکس است تا رفتار صفحه محصول در نبود تصویر تست شود.",
+    price: 100000,
+    images: [],
+    category: "accessories",
+    colors: [],
+    material: "پلی‌کربنات مقاوم",
+    dimensions: { w: 10, h: 10, d: 10 },
+    weight: 10,
+    layerHeight: 0.2,
+    inStock: true,
+    stockCount: 1,
+    specs: [],
+  },
 ];
 
 export function getProductBySlug(slug: string): Product | undefined {

@@ -16,9 +16,8 @@ import { categoriesContent } from "@/content/categories";
 import { catalogContent } from "@/content/catalog";
 import { blogListContent } from "@/content/blog";
 import { productsContent } from "@/content/products";
-import { SITE_NAME, absoluteUrl, buildProductJsonLd, buildArticleJsonLd } from "@/lib/seo";
+import { SITE_NAME, DEFAULT_OG_IMAGE, absoluteUrl, buildProductJsonLd, buildArticleJsonLd } from "@/lib/seo";
 
-const DEFAULT_OG_IMAGE = "/images/og/default.jpg";
 // npm scripts (build/postbuild/prerender) always run with cwd = repo root,
 // so this is reliable regardless of whether this file executes from source
 // or from the Vite SSR bundle in dist-ssr/ (import.meta.url would point at
@@ -31,7 +30,8 @@ const PUBLIC_DIR = path.resolve(process.cwd(), "public");
  * photos haven't been delivered yet, so every one of them falls back to the
  * default OG image today; this starts resolving correctly the moment real
  * files land in public/, no code change needed. */
-function resolveOgImage(imagePath: string): string {
+function resolveOgImage(imagePath: string | undefined): string {
+  if (!imagePath) return DEFAULT_OG_IMAGE;
   return existsSync(path.join(PUBLIC_DIR, imagePath)) ? imagePath : DEFAULT_OG_IMAGE;
 }
 

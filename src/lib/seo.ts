@@ -8,6 +8,10 @@ export const SITE_NAME = "VYBE";
 // single constant so the domain only has to change in one place.
 export const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, "") ?? "https://vybeshop.ir";
 
+/** Used whenever a product/post has no usable image yet — e.g. a product
+ * added before its photos were uploaded (see BACKLOG.md). */
+export const DEFAULT_OG_IMAGE = "/images/og/default.jpg";
+
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }

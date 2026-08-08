@@ -4,7 +4,7 @@ import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 const DEFAULT_WIDTHS = [400, 800, 1200];
 
 export interface ImageProps {
-  src: string;
+  src: string | null | undefined;
   alt: string;
   width: number;
   height: number;
@@ -51,7 +51,7 @@ export function Image({
     setFailed(false);
   }, [src]);
 
-  if (failed) {
+  if (failed || !src) {
     return (
       <ImagePlaceholder caption={alt} dark={dark} className={className} style={{ aspectRatio: `${width} / ${height}` }} />
     );
