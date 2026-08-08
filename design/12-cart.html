@@ -1,0 +1,371 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VYBE · 12 سبد خرید</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--color-graphite:#0B0B0C; --color-fog-white:#F5F5F3; --color-titanium:#7A7D82; --color-silver:#B8BCC2; --color-cyan:#00D1FF;
+--color-ink:#1A1A1C; --color-surface:#141416; --color-edge:#26262A; --color-white:#FFFFFF; --color-line:#ECECEC;
+--color-gray-500:#9A9A9A; --color-gray-800:#4A4A4A; --color-black:#000000;
+--color-danger:#D64545; --color-danger-ink:#B23434; --color-danger-dark:#E86A6A;
+--color-success:#2FB66B; --color-success-ink:#1E7A47; --color-warning:#F4B400; --color-warning-ink:#8A6400;
+--font-peyda:"Peyda","Vazirmatn",system-ui,sans-serif; --font-sora:"Sora",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display:40px; --fs-h1:32px; --fs-h2:26px; --fs-h3:22px; --fs-h4:20px;
+--fs-body-large:18px; --fs-body:16px; --fs-small:14px; --fs-caption:12px; --fs-micro:10px;
+--radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+--ease:cubic-bezier(0.4,0,0.2,1); --dur-fast:150ms; --dur-base:300ms; --dur-slow:600ms;
+}
+@media (min-width:768px){:root{
+--fs-display:64px; --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:24px; --fs-body-large:20px;
+}}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");font-weight:800;font-display:swap}
+html,body{margin:0}
+a{color:var(--color-graphite)}
+a:hover{color:var(--color-ink)}
+@keyframes vybeShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.skeleton{background:linear-gradient(90deg,#ECECEC 0%,#F7F7F5 50%,#ECECEC 100%);background-size:200% 100%;animation:vybeShimmer 1.4s linear infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+<script>tailwind.config={theme:{extend:{
+colors:{graphite:'var(--color-graphite)','fog-white':'var(--color-fog-white)',titanium:'var(--color-titanium)',silver:'var(--color-silver)',cyan:'var(--color-cyan)',ink:'var(--color-ink)',surface:'var(--color-surface)',edge:'var(--color-edge)',line:'var(--color-line)','gray-500':'var(--color-gray-500)','gray-800':'var(--color-gray-800)',danger:'var(--color-danger)','danger-ink':'var(--color-danger-ink)','danger-dark':'var(--color-danger-dark)',success:'var(--color-success)','success-ink':'var(--color-success-ink)',warning:'var(--color-warning)','warning-ink':'var(--color-warning-ink)'},
+fontFamily:{peyda:['Peyda','Vazirmatn','system-ui','sans-serif'],sora:['Sora','system-ui','sans-serif'],mono:['JetBrains Mono','ui-monospace','monospace']},
+fontWeight:{display:'800',h1:'700',h2:'600',h3:'600',h4:'500',body:'400',ui:'500'},
+fontSize:{display:['var(--fs-display)',{lineHeight:'1.1',letterSpacing:'-0.02em'}],h1:['var(--fs-h1)',{lineHeight:'1.2'}],h2:['var(--fs-h2)',{lineHeight:'1.2'}],h3:['var(--fs-h3)',{lineHeight:'1.2'}],h4:['var(--fs-h4)',{lineHeight:'1.2'}],'body-large':['var(--fs-body-large)',{lineHeight:'1.5'}],body:['var(--fs-body)',{lineHeight:'1.5'}],small:['var(--fs-small)',{lineHeight:'1.5'}],caption:['var(--fs-caption)',{lineHeight:'1.4',letterSpacing:'0.01em'}],micro:['var(--fs-micro)',{lineHeight:'1.4',letterSpacing:'0.01em'}]},
+spacing:{sp1:'4px',sp2:'8px',sp3:'16px',sp4:'24px',sp5:'32px',sp6:'48px',sp7:'64px',sp8:'80px',sp9:'120px',sp10:'160px',gutter:'20px','gutter-desktop':'40px',section:'80px','section-mobile':'56px',header:'72px',hit:'44px'},
+borderRadius:{none:'0',sm:'var(--radius-sm)',md:'var(--radius-md)',lg:'var(--radius-lg)',xl:'var(--radius-xl)',full:'var(--radius-full)'},
+maxWidth:{text:'720px',page:'1440px'},
+transitionTimingFunction:{DEFAULT:'var(--ease)'},
+transitionDuration:{fast:'150ms',base:'300ms',slow:'600ms'},
+screens:{sm:'375px',md:'768px',lg:'1024px',xl:'1440px'}
+}}}</script>
+</head>
+<body class="bg-fog-white font-peyda text-body font-body text-graphite antialiased">
+
+  <header class="sticky top-0 z-50 flex h-header items-center gap-sp5 bg-graphite px-gutter xl:px-gutter-desktop">
+    <a href="03-home.html" dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver no-underline">VYBE MASTER LOGO</a>
+    <nav class="hidden flex-1 flex-nowrap items-center gap-sp4 overflow-hidden whitespace-nowrap lg:flex">
+      <a href="03-home.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">خانه</a>
+      <a href="04-products.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">تماس با ما</a>
+    </nav>
+    <div class="ms-auto flex shrink-0 items-center gap-sp5">
+      <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">SEARCH</button>
+      <div class="relative flex items-center">
+        <a href="12-cart.html" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver no-underline hover:text-white">CART</a>
+        <span dir="ltr" class="absolute -top-1.5 -left-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite">2</span>
+      </div>
+      <a href="14-auth.html" class="hidden rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver no-underline hover:text-white sm:block">ACCOUNT</a>
+    </div>
+    <button type="button" data-menu-open class="order-last h-hit w-hit rounded-md border border-edge bg-transparent font-mono text-micro text-fog-white lg:hidden">MENU</button>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-[100] hidden flex-col bg-graphite text-fog-white">
+    <div class="flex h-header items-center justify-between px-gutter">
+      <button type="button" data-menu-close class="h-hit w-hit rounded-md border border-edge bg-transparent text-body text-fog-white">&#10005;</button>
+      <div dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+    </div>
+    <nav class="flex flex-1 flex-col items-start gap-sp4 px-gutter py-sp4">
+      <a href="03-home.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">خانه</a>
+      <a href="04-products.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">تماس با ما</a>
+    </nav>
+  </div>
+
+
+  <main class="mx-auto max-w-page px-gutter xl:px-gutter-desktop">
+
+    <nav aria-label="مسیر" class="flex flex-wrap items-center gap-sp2 py-sp4 text-small text-gray-800">
+      <a href="03-home.html" class="text-gray-800 no-underline hover:text-graphite">خانه</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <span aria-current="page" class="text-graphite">سبد خرید</span>
+    </nav>
+
+    <div class="flex flex-wrap items-baseline justify-between gap-sp3 pb-sp6">
+      <h1 class="m-0 text-h1 font-h1">سبد خرید</h1>
+      <span class="text-small text-gray-800">۳ قلم، ۴ عدد</span>
+    </div>
+
+    <section data-screen-label="سبد" class="grid grid-cols-1 gap-sp6 pb-section-mobile lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-sp7 md:pb-section">
+
+      <div class="flex flex-col gap-sp4">
+        <div class="flex flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+          <div class="flex flex-col gap-sp3 border-b border-line pb-sp4 md:flex-row md:items-start md:gap-sp4">
+            <a href="05-product-detail.html" class="flex aspect-square w-full shrink-0 items-end rounded-md border border-line bg-[repeating-linear-gradient(135deg,#E4E4E2_0_8px,#F5F5F3_8px_16px)] p-sp2 no-underline md:w-[112px]"><span dir="ltr" class="font-mono text-micro text-gray-800">W4001</span></a>
+            <div class="flex flex-1 flex-col gap-sp2">
+              <a href="05-product-detail.html" class="text-body font-h2 text-graphite no-underline hover:underline [text-wrap:pretty]">جاکارتی مینیمال مدل W4001</a>
+              <span class="text-small text-gray-800">رنگ فیلامنت: گرافیت</span>
+              <span dir="ltr" class="font-mono text-micro text-success-ink">IN STOCK &middot; SHIPS IN 2–4 DAYS</span>
+              <div class="mt-sp2 flex flex-wrap items-center gap-sp3">
+                <div class="flex h-11 items-center rounded-md border border-silver bg-white">
+                  <button type="button" data-qty="-1" aria-label="کاهش تعداد" class="h-hit w-hit border-0 bg-transparent text-h4 text-graphite">&minus;</button>
+                  <span dir="ltr" class="grid min-w-11 place-items-center font-mono text-body">2</span>
+                  <button type="button" data-qty="1" aria-label="افزایش تعداد" class="h-hit w-hit border-0 bg-transparent text-h4 text-graphite">+</button>
+                </div>
+                <button type="button" class="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">حذف</button>
+                <button type="button" class="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">انتقال به علاقه‌مندی‌ها</button>
+              </div>
+            </div>
+            <span dir="ltr" class="font-mono text-body text-graphite md:text-end">1,057,000 تومان</span>
+          </div>
+          <div class="flex flex-col gap-sp3 border-b border-line pb-sp4 md:flex-row md:items-start md:gap-sp4">
+            <a href="05-product-detail.html" class="flex aspect-square w-full shrink-0 items-end rounded-md border border-line bg-[repeating-linear-gradient(45deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-sp2 no-underline md:w-[112px]"><span dir="ltr" class="font-mono text-micro text-gray-800">W4002</span></a>
+            <div class="flex flex-1 flex-col gap-sp2">
+              <a href="05-product-detail.html" class="text-body font-h2 text-graphite no-underline hover:underline [text-wrap:pretty]">جامدادی زاویه‌دار مدل W4002</a>
+              <span class="text-small text-gray-800">رنگ فیلامنت: سفید مه</span>
+              <span dir="ltr" class="font-mono text-micro text-success-ink">IN STOCK &middot; SHIPS IN 2–4 DAYS</span>
+              <div class="mt-sp2 flex flex-wrap items-center gap-sp3">
+                <div class="flex h-11 items-center rounded-md border border-silver bg-white">
+                  <button type="button" data-qty="-1" aria-label="کاهش تعداد" class="h-hit w-hit border-0 bg-transparent text-h4 text-graphite">&minus;</button>
+                  <span dir="ltr" class="grid min-w-11 place-items-center font-mono text-body">1</span>
+                  <button type="button" data-qty="1" aria-label="افزایش تعداد" class="h-hit w-hit border-0 bg-transparent text-h4 text-graphite">+</button>
+                </div>
+                <button type="button" class="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">حذف</button>
+                <button type="button" class="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">انتقال به علاقه‌مندی‌ها</button>
+              </div>
+            </div>
+            <span dir="ltr" class="font-mono text-body text-graphite md:text-end">742,000 تومان</span>
+          </div>
+          <div class="flex flex-col gap-sp3  md:flex-row md:items-start md:gap-sp4">
+            <a href="05-product-detail.html" class="flex aspect-square w-full shrink-0 items-end rounded-md border border-line bg-[repeating-linear-gradient(180deg,#E4E4E2_0_8px,#F5F5F3_8px_16px)] p-sp2 no-underline md:w-[112px]"><span dir="ltr" class="font-mono text-micro text-gray-800">C8001</span></a>
+            <div class="flex flex-1 flex-col gap-sp2">
+              <a href="05-product-detail.html" class="text-body font-h2 text-graphite no-underline hover:underline [text-wrap:pretty]">پایه گوشی خودرو مدل C8001</a>
+              <span class="text-small text-gray-800">رنگ فیلامنت: تیتانیوم</span>
+              <span dir="ltr" class="font-mono text-micro text-success-ink">IN STOCK &middot; SHIPS IN 2–4 DAYS</span>
+              <div class="mt-sp2 flex flex-wrap items-center gap-sp3">
+                <div class="flex h-11 items-center rounded-md border border-silver bg-white">
+                  <button type="button" data-qty="-1" aria-label="کاهش تعداد" class="h-hit w-hit border-0 bg-transparent text-h4 text-graphite">&minus;</button>
+                  <span dir="ltr" class="grid min-w-11 place-items-center font-mono text-body">1</span>
+                  <button type="button" data-qty="1" aria-label="افزایش تعداد" class="h-hit w-hit border-0 bg-transparent text-h4 text-graphite">+</button>
+                </div>
+                <button type="button" class="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">حذف</button>
+                <button type="button" class="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">انتقال به علاقه‌مندی‌ها</button>
+              </div>
+            </div>
+            <span dir="ltr" class="font-mono text-body text-graphite md:text-end">389,000 تومان</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-sp3">
+          <a href="04-products.html" class="text-small font-ui text-graphite no-underline underline-offset-4 hover:underline">ادامه خرید</a>
+          <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">خالی کردن سبد</button>
+        </div>
+
+        <form id="couponForm" novalidate class="flex flex-col gap-sp2 rounded-lg border border-line bg-white p-sp4">
+          <label for="coupon" class="text-small font-ui">کد تخفیف</label>
+          <div class="flex flex-wrap gap-sp2">
+            <input id="coupon" name="coupon" type="text" dir="ltr" placeholder="VYBE-XXXX" class="h-12 min-w-[180px] flex-1 rounded-md border border-silver bg-white px-sp3 font-mono text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" id="couponBtn" class="h-12 rounded-md border border-silver bg-white px-sp4 text-body font-ui text-graphite transition-fast hover:border-titanium">اعمال</button>
+          </div>
+          <div id="couponNote" class="hidden"></div>
+        </form>
+      </div>
+
+      <aside class="flex flex-col gap-sp4 lg:sticky lg:top-[104px] lg:self-start">
+        <div class="flex flex-col gap-sp3 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+          <h2 class="m-0 text-h3 font-h3">خلاصه سفارش</h2>
+          <dl class="m-0 flex flex-col">
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">جمع کالاها</dt><dd dir="ltr" class="m-0 font-mono text-small">3,245,000 تومان</dd></div>
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">تخفیف</dt><dd dir="ltr" class="m-0 font-mono text-small text-success-ink">−162,000 تومان</dd></div>
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">ارسال</dt><dd dir="ltr" class="m-0 font-mono text-small">78,000 تومان</dd></div>
+            <div class="flex justify-between gap-sp3 py-sp3"><dt class="text-body font-h2">مبلغ قابل پرداخت</dt><dd dir="ltr" class="m-0 font-mono text-h4 font-h3">3,161,000 تومان</dd></div>
+          </dl>
+          <a href="13-checkout.html" class="h-12 rounded-md bg-graphite text-center text-body font-ui leading-[48px] text-fog-white no-underline transition-fast hover:bg-ink">ادامه و تسویه</a>
+          <p class="m-0 flex items-center gap-sp2 text-small text-warning-ink"><span aria-hidden="true" class="h-2 w-2 shrink-0 rounded-full bg-warning"></span>از جاکارتی گرافیت تنها ۲ عدد باقی مانده است.</p>
+        </div>
+
+        <div class="flex flex-col gap-sp2 rounded-lg border border-line bg-white p-sp4">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">SHIPPING &middot; RETURNS</span>
+          <p class="m-0 text-small leading-[1.7] text-gray-800">ارسال ۲ تا ۴ روز کاری. مرجوعی ۷ روزه بدون قید. قطعه‌های چاپ‌شده به سفارش مشمول مرجوعی نیستند.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section data-screen-label="حالت‌های سبد" class="flex flex-col gap-sp5 border-t border-line py-section-mobile md:py-section">
+      <div class="flex flex-col gap-sp2">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">HANDOFF &middot; CART STATES</p>
+        <h2 class="m-0 text-h2 font-h2">حالت‌های سبد و کد تخفیف</h2>
+        <p class="m-0 max-w-text text-small text-gray-800">حالت پر بالاتر است. این بخش برای تحویل به کد است و در نسخه نهایی رندر نمی‌شود.</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-sp4 lg:grid-cols-2">
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">EMPTY CART</span>
+          <div class="flex flex-col items-start gap-sp3 rounded-xl border border-line bg-white p-sp6">
+            <span dir="ltr" class="grid h-16 w-16 place-items-center rounded-lg border border-line bg-[repeating-linear-gradient(135deg,#ECECEC_0_6px,#F5F5F3_6px_12px)] font-mono text-micro text-gray-800">EMPTY</span>
+            <h3 class="m-0 text-h3 font-h3">سبد خرید خالی است</h3>
+            <p class="m-0 max-w-text text-body leading-[1.7] text-gray-800">هنوز چیزی اضافه نکرده‌اید. ۵۳ قطعه با مشخصات کامل در صفحه محصولات هست.</p>
+            <div class="flex flex-wrap gap-sp2">
+              <a href="04-products.html" class="h-12 rounded-md bg-graphite px-sp5 text-body font-ui leading-[48px] text-fog-white no-underline transition-fast hover:bg-ink">دیدن محصولات</a>
+              <a href="06-categories.html" class="h-12 rounded-md border border-silver bg-white px-sp5 text-body font-ui leading-[46px] text-graphite no-underline transition-fast hover:border-titanium">دسته‌بندی‌ها</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">LOADING &middot; SKELETON</span>
+          <div class="flex flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4">
+            <div class="flex gap-sp3 border-b border-line pb-sp4"><span class="skeleton h-[112px] w-[112px] shrink-0 rounded-md"></span><span class="flex flex-1 flex-col gap-sp2"><span class="skeleton h-4 w-[70%] rounded-sm"></span><span class="skeleton h-3 w-[40%] rounded-sm"></span><span class="skeleton mt-sp2 h-11 w-[140px] rounded-md"></span></span></div>
+            <div class="flex gap-sp3"><span class="skeleton h-[112px] w-[112px] shrink-0 rounded-md"></span><span class="flex flex-1 flex-col gap-sp2"><span class="skeleton h-4 w-[55%] rounded-sm"></span><span class="skeleton h-3 w-[35%] rounded-sm"></span><span class="skeleton mt-sp2 h-11 w-[140px] rounded-md"></span></span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">COUPON &middot; VALID / INVALID / SUBMITTING</span>
+          <div class="flex flex-col gap-sp3 rounded-lg border border-line bg-white p-sp4">
+            <div class="flex flex-col gap-sp2">
+              <input type="text" dir="ltr" value="VYBE-5PCT" class="h-12 w-full rounded-md border-2 border-success-ink bg-white px-sp3 font-mono text-body outline-none">
+              <span class="flex items-center gap-sp2 text-caption text-success-ink"><span aria-hidden="true">&#10003;</span>کد اعمال شد — ۵ درصد، معادل ۱۶۲٬۰۰۰ تومان</span>
+            </div>
+            <div class="flex flex-col gap-sp2">
+              <input type="text" dir="ltr" value="VYBE-OLD" aria-invalid="true" class="h-12 w-full rounded-md border-2 border-danger-ink bg-white px-sp3 font-mono text-body outline-none">
+              <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>این کد منقضی شده است.</span>
+            </div>
+            <button type="button" disabled class="flex h-12 cursor-wait items-center justify-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white"><span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال بررسی کد…</button>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">ERROR &middot; STOCK CHANGED</span>
+          <div class="flex flex-col items-start gap-sp3 rounded-xl border border-danger-ink bg-white p-sp4">
+            <span class="flex items-center gap-sp2 text-body font-ui text-danger-ink"><span aria-hidden="true">&#10005;</span>سبد به‌روزرسانی نشد</span>
+            <p class="m-0 text-small leading-[1.7] text-gray-800">موجودی «جاکارتی مینیمال W4001» هنگام بررسی تغییر کرد. تعداد به ۲ عدد کاهش یافت. برای ادامه سبد را دوباره بررسی کنید.</p>
+            <div class="flex flex-wrap gap-sp2">
+              <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">به‌روزرسانی سبد</button>
+              <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">حذف این قلم</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="sticky bottom-0 z-40 flex items-center gap-sp3 border-t border-line bg-white px-gutter py-sp2 lg:hidden">
+    <div class="flex min-w-0 flex-col">
+      <span class="truncate text-small text-gray-800">مبلغ قابل پرداخت</span>
+      <span dir="ltr" class="font-mono text-body font-h3">3,161,000 تومان</span>
+    </div>
+    <a href="13-checkout.html" class="ms-auto h-12 shrink-0 rounded-md bg-graphite px-sp5 text-body font-ui leading-[48px] text-fog-white no-underline transition-fast hover:bg-ink">تسویه</a>
+  </div>
+
+  <footer class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+    <div class="mx-auto max-w-page">
+      <div class="flex flex-col gap-sp2 border-b border-edge pb-sp6">
+        <div dir="ltr" class="grid h-7 w-[140px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+        <p class="mt-sp2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-sp5 border-b border-edge py-sp6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">دسته‌بندی‌ها</span>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">میز کار</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">آشپزخانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خودرو</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سازمان‌دهی</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سفر</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">لینک‌های سریع</span>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">محصولات</a>
+          <a href="07-catalog.html" class="text-small text-silver no-underline hover:text-white">کاتالوگ</a>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">تازه‌ها</a>
+          <a href="08-blog-list.html" class="text-small text-silver no-underline hover:text-white">بلاگ</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">درباره ما</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">پشتیبانی و راهنما</span>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">پیگیری سفارش</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">ارسال و تحویل</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">مرجوعی</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">نگهداری قطعات PLA</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">سؤالات متداول</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">درباره VYBE</span>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">کارگاه</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">فرایند تولید</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">همکاری با ما</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">تماس با ما</a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-sp5 pt-sp6">
+        <div class="flex max-w-[420px] flex-col gap-sp2">
+          <span class="text-small font-h2">خبرنامه</span>
+          <p class="m-0 text-small leading-[1.6] text-titanium">ماهی یک ایمیل. محصول تازه و یادداشت‌های کارگاه.</p>
+          <form class="flex gap-sp2">
+            <input type="email" placeholder="ایمیل شما" class="h-12 flex-1 rounded-md border border-edge bg-surface px-sp3 text-small text-fog-white outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" class="h-12 rounded-md border-0 bg-white px-sp4 text-small font-ui text-graphite hover:bg-line">عضویت</button>
+          </form>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <div dir="ltr" class="flex gap-sp3 font-mono text-micro text-silver"><span>INSTAGRAM</span><span>TELEGRAM</span><span>PINTEREST</span><span>YOUTUBE</span></div>
+          <div class="flex gap-sp2">
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">نماد<br>اعتماد</div>
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">درگاه<br>پرداخت</div>
+          </div>
+        </div>
+      </div>
+      <p dir="ltr" class="m-0 mt-sp6 font-mono text-micro tracking-[0.06em] text-titanium">&copy; 1404 VYBE &middot; ALL RIGHTS RESERVED</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var menu=document.getElementById('mobileMenu');
+  function openMenu(){menu.classList.remove('hidden');menu.classList.add('flex');document.body.style.overflow='hidden';}
+  function closeMenu(){menu.classList.add('hidden');menu.classList.remove('flex');document.body.style.overflow='';}
+  document.querySelectorAll('[data-menu-open]').forEach(function(b){b.addEventListener('click',openMenu)});
+  document.querySelectorAll('[data-menu-close]').forEach(function(b){b.addEventListener('click',closeMenu)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+
+  document.querySelectorAll('[data-qty]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var s=b.parentElement.querySelector('span');
+      var n=parseInt(s.textContent,10)+parseInt(b.dataset.qty,10);
+      if(n<1)n=1; if(n>9)n=9; s.textContent=n;
+    });
+  });
+  var cf=document.getElementById('couponForm'),cb=document.getElementById('couponBtn'),cn=document.getElementById('couponNote'),ci=document.getElementById('coupon');
+  cf.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!ci.value.trim()){
+      ci.classList.add('border-2','border-danger-ink');
+      cn.className='flex items-center gap-sp2 text-caption text-danger-ink';
+      cn.innerHTML='<span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>کد تخفیف را وارد کنید.';
+      return;
+    }
+    ci.classList.remove('border-2','border-danger-ink');
+    cb.disabled=true;
+    cb.className='flex h-12 cursor-wait items-center gap-sp2 rounded-md border-0 bg-titanium px-sp4 text-body font-ui text-white';
+    cb.innerHTML='<span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>بررسی…';
+    cn.className='hidden';
+    setTimeout(function(){
+      cb.disabled=false;
+      cb.className='h-12 rounded-md border border-silver bg-white px-sp4 text-body font-ui text-graphite transition-fast hover:border-titanium';
+      cb.textContent='اعمال';
+      var ok=/^VYBE-/i.test(ci.value.trim());
+      ci.classList.add('border-2',ok?'border-success-ink':'border-danger-ink');
+      cn.className='flex items-center gap-sp2 text-caption '+(ok?'text-success-ink':'text-danger-ink');
+      cn.innerHTML=ok?'<span aria-hidden="true">&#10003;</span>کد اعمال شد — ۵ درصد، معادل ۱۶۲٬۰۰۰ تومان':'<span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>این کد معتبر نیست.';
+    },1200);
+  });
+})();
+</script>
+</body>
+</html>

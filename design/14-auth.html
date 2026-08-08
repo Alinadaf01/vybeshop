@@ -1,0 +1,433 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VYBE · 14 ورود و ثبت‌نام</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--color-graphite:#0B0B0C; --color-fog-white:#F5F5F3; --color-titanium:#7A7D82; --color-silver:#B8BCC2; --color-cyan:#00D1FF;
+--color-ink:#1A1A1C; --color-surface:#141416; --color-edge:#26262A; --color-white:#FFFFFF; --color-line:#ECECEC;
+--color-gray-500:#9A9A9A; --color-gray-800:#4A4A4A; --color-black:#000000;
+--color-danger:#D64545; --color-danger-ink:#B23434; --color-danger-dark:#E86A6A;
+--color-success:#2FB66B; --color-success-ink:#1E7A47; --color-warning:#F4B400; --color-warning-ink:#8A6400;
+--font-peyda:"Peyda","Vazirmatn",system-ui,sans-serif; --font-sora:"Sora",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display:40px; --fs-h1:32px; --fs-h2:26px; --fs-h3:22px; --fs-h4:20px;
+--fs-body-large:18px; --fs-body:16px; --fs-small:14px; --fs-caption:12px; --fs-micro:10px;
+--radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+--ease:cubic-bezier(0.4,0,0.2,1); --dur-fast:150ms; --dur-base:300ms; --dur-slow:600ms;
+}
+@media (min-width:768px){:root{
+--fs-display:64px; --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:24px; --fs-body-large:20px;
+}}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");font-weight:800;font-display:swap}
+html,body{margin:0}
+a{color:var(--color-graphite)}
+a:hover{color:var(--color-ink)}
+@keyframes vybeShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.skeleton{background:linear-gradient(90deg,#ECECEC 0%,#F7F7F5 50%,#ECECEC 100%);background-size:200% 100%;animation:vybeShimmer 1.4s linear infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+<script>tailwind.config={theme:{extend:{
+colors:{graphite:'var(--color-graphite)','fog-white':'var(--color-fog-white)',titanium:'var(--color-titanium)',silver:'var(--color-silver)',cyan:'var(--color-cyan)',ink:'var(--color-ink)',surface:'var(--color-surface)',edge:'var(--color-edge)',line:'var(--color-line)','gray-500':'var(--color-gray-500)','gray-800':'var(--color-gray-800)',danger:'var(--color-danger)','danger-ink':'var(--color-danger-ink)','danger-dark':'var(--color-danger-dark)',success:'var(--color-success)','success-ink':'var(--color-success-ink)',warning:'var(--color-warning)','warning-ink':'var(--color-warning-ink)'},
+fontFamily:{peyda:['Peyda','Vazirmatn','system-ui','sans-serif'],sora:['Sora','system-ui','sans-serif'],mono:['JetBrains Mono','ui-monospace','monospace']},
+fontWeight:{display:'800',h1:'700',h2:'600',h3:'600',h4:'500',body:'400',ui:'500'},
+fontSize:{display:['var(--fs-display)',{lineHeight:'1.1',letterSpacing:'-0.02em'}],h1:['var(--fs-h1)',{lineHeight:'1.2'}],h2:['var(--fs-h2)',{lineHeight:'1.2'}],h3:['var(--fs-h3)',{lineHeight:'1.2'}],h4:['var(--fs-h4)',{lineHeight:'1.2'}],'body-large':['var(--fs-body-large)',{lineHeight:'1.5'}],body:['var(--fs-body)',{lineHeight:'1.5'}],small:['var(--fs-small)',{lineHeight:'1.5'}],caption:['var(--fs-caption)',{lineHeight:'1.4',letterSpacing:'0.01em'}],micro:['var(--fs-micro)',{lineHeight:'1.4',letterSpacing:'0.01em'}]},
+spacing:{sp1:'4px',sp2:'8px',sp3:'16px',sp4:'24px',sp5:'32px',sp6:'48px',sp7:'64px',sp8:'80px',sp9:'120px',sp10:'160px',gutter:'20px','gutter-desktop':'40px',section:'80px','section-mobile':'56px',header:'72px',hit:'44px'},
+borderRadius:{none:'0',sm:'var(--radius-sm)',md:'var(--radius-md)',lg:'var(--radius-lg)',xl:'var(--radius-xl)',full:'var(--radius-full)'},
+maxWidth:{text:'720px',page:'1440px'},
+transitionTimingFunction:{DEFAULT:'var(--ease)'},
+transitionDuration:{fast:'150ms',base:'300ms',slow:'600ms'},
+screens:{sm:'375px',md:'768px',lg:'1024px',xl:'1440px'}
+}}}</script>
+</head>
+<body class="bg-fog-white font-peyda text-body font-body text-graphite antialiased">
+
+  <header class="sticky top-0 z-50 flex h-header items-center gap-sp5 bg-graphite px-gutter xl:px-gutter-desktop">
+    <a href="03-home.html" dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver no-underline">VYBE MASTER LOGO</a>
+    <nav class="hidden flex-1 flex-nowrap items-center gap-sp4 overflow-hidden whitespace-nowrap lg:flex">
+      <a href="03-home.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">خانه</a>
+      <a href="04-products.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">تماس با ما</a>
+    </nav>
+    <div class="ms-auto flex shrink-0 items-center gap-sp5">
+      <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">SEARCH</button>
+      <div class="relative flex items-center">
+        <a href="12-cart.html" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver no-underline hover:text-white">CART</a>
+        <span dir="ltr" class="absolute -top-1.5 -left-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite">2</span>
+      </div>
+      <a href="14-auth.html" class="hidden rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver no-underline hover:text-white sm:block">ACCOUNT</a>
+    </div>
+    <button type="button" data-menu-open class="order-last h-hit w-hit rounded-md border border-edge bg-transparent font-mono text-micro text-fog-white lg:hidden">MENU</button>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-[100] hidden flex-col bg-graphite text-fog-white">
+    <div class="flex h-header items-center justify-between px-gutter">
+      <button type="button" data-menu-close class="h-hit w-hit rounded-md border border-edge bg-transparent text-body text-fog-white">&#10005;</button>
+      <div dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+    </div>
+    <nav class="flex flex-1 flex-col items-start gap-sp4 px-gutter py-sp4">
+      <a href="03-home.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">خانه</a>
+      <a href="04-products.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">تماس با ما</a>
+    </nav>
+  </div>
+
+
+  <main class="mx-auto max-w-page px-gutter xl:px-gutter-desktop">
+
+    <nav aria-label="مسیر" class="flex flex-wrap items-center gap-sp2 py-sp4 text-small text-gray-800">
+      <a href="03-home.html" class="text-gray-800 no-underline hover:text-graphite">خانه</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <span aria-current="page" class="text-graphite">ورود و ثبت‌نام</span>
+    </nav>
+
+    <section data-screen-label="ورود" class="grid grid-cols-1 gap-sp6 pb-section-mobile lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-sp7 md:pb-section">
+
+      <div class="order-2 flex w-full max-w-[480px] flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4 md:p-sp6 lg:order-1">
+
+        <form id="phoneForm" novalidate data-auth="0" class="flex flex-col gap-sp4">
+          <div class="flex flex-col gap-sp2">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">STEP 1 &middot; MOBILE</span>
+            <h1 class="m-0 text-h2 font-h2">ورود یا ثبت‌نام</h1>
+            <p class="m-0 text-small leading-[1.7] text-gray-800">شماره موبایل خود را وارد کنید. اگر حساب نداشته باشید، همین‌جا ساخته می‌شود.</p>
+          </div>
+          <label for="mobile" class="flex flex-col gap-sp2">
+            <span class="text-small font-ui">شماره موبایل *</span>
+            <input id="mobile" name="mobile" type="tel" dir="ltr" inputmode="numeric" required pattern="09[0-9]{9}" placeholder="09xxxxxxxxx" class="h-12 w-full rounded-md border border-silver bg-white px-sp3 font-mono text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+          </label>
+          <label class="flex items-start gap-sp2 text-small text-gray-800">
+            <input type="checkbox" id="rules" required class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+            <span>شرایط استفاده و سیاست حریم خصوصی را می‌پذیرم. *</span>
+          </label>
+          <button type="submit" id="sendBtn" class="h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">دریافت کد تأیید</button>
+          <div data-note class="hidden"></div>
+        </form>
+
+        <form id="otpForm" novalidate data-auth="1" class="hidden flex-col gap-sp4">
+          <div class="flex flex-col gap-sp2">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">STEP 2 &middot; OTP</span>
+            <h2 class="m-0 text-h2 font-h2">کد تأیید</h2>
+            <p class="m-0 text-small leading-[1.7] text-gray-800">کد پنج رقمی به <span dir="ltr" id="otpTarget" class="font-mono text-graphite">0912 345 6789</span> پیامک شد. <button type="button" data-back class="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">تغییر شماره</button></p>
+          </div>
+          <div dir="ltr" class="flex justify-between gap-sp2" id="otpBoxes">
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="رقم ۱" class="h-14 w-full rounded-md border border-silver bg-white text-center font-mono text-h4 text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="رقم ۲" class="h-14 w-full rounded-md border border-silver bg-white text-center font-mono text-h4 text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="رقم ۳" class="h-14 w-full rounded-md border border-silver bg-white text-center font-mono text-h4 text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="رقم ۴" class="h-14 w-full rounded-md border border-silver bg-white text-center font-mono text-h4 text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="رقم ۵" class="h-14 w-full rounded-md border border-silver bg-white text-center font-mono text-h4 text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-sp2">
+            <span dir="ltr" class="font-mono text-small text-gray-800">ارسال مجدد تا <span id="timer">01:59</span></span>
+            <button type="button" id="resend" disabled class="border-0 bg-transparent p-0 text-small text-silver">ارسال مجدد کد</button>
+          </div>
+          <button type="submit" id="verifyBtn" class="h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink">تأیید و ورود</button>
+          <div data-note class="hidden"></div>
+        </form>
+
+        <form id="profileForm" novalidate data-auth="2" class="hidden flex-col gap-sp4">
+          <div class="flex flex-col gap-sp2">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">STEP 3 &middot; NEW ACCOUNT</span>
+            <h2 class="m-0 text-h2 font-h2">تکمیل ثبت‌نام</h2>
+            <p class="m-0 text-small leading-[1.7] text-gray-800">شماره تأیید شد. برای ساخت حساب فقط نام لازم است؛ بقیه را بعداً می‌توانید کامل کنید.</p>
+          </div>
+          <label for="fullname" class="flex flex-col gap-sp2">
+            <span class="text-small font-ui">نام و نام خانوادگی *</span>
+            <input id="fullname" type="text" required placeholder="مثلاً سارا محمدی" class="h-12 w-full rounded-md border border-silver bg-white px-sp3 text-body outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+          </label>
+          <label for="mail" class="flex flex-col gap-sp2">
+            <span class="text-small font-ui">ایمیل</span>
+            <input id="mail" type="email" dir="ltr" placeholder="name@example.com" class="h-12 w-full rounded-md border border-silver bg-white px-sp3 text-body outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <span class="text-caption text-gray-800">برای رسید سفارش و پیگیری. اختیاری است.</span>
+          </label>
+          <button type="submit" id="finishBtn" class="h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink">ساخت حساب</button>
+          <div data-note class="hidden"></div>
+        </form>
+
+        <div id="authDone" data-auth="3" class="hidden flex-col items-start gap-sp3">
+          <span class="grid h-12 w-12 place-items-center rounded-full bg-success-ink text-h4 text-white" aria-hidden="true">&#10003;</span>
+          <h2 class="m-0 text-h2 font-h2">خوش آمدید</h2>
+          <p class="m-0 text-body leading-[1.7] text-gray-800">حساب شما ساخته شد. سبد خریدتان حفظ شده است.</p>
+          <div class="flex flex-wrap gap-sp2">
+            <a href="15-account.html" class="h-12 rounded-md bg-graphite px-sp5 text-body font-ui leading-[48px] text-fog-white no-underline transition-fast hover:bg-ink">حساب کاربری</a>
+            <a href="12-cart.html" class="h-12 rounded-md border border-silver bg-white px-sp5 text-body font-ui leading-[46px] text-graphite no-underline transition-fast hover:border-titanium">بازگشت به سبد</a>
+          </div>
+        </div>
+
+        <p class="m-0 border-t border-line pt-sp4 text-caption leading-[1.7] text-gray-800">ورود با رمز عبور نداریم. هر بار یک کد یک‌بارمصرف پیامک می‌شود؛ رمزی برای فراموش کردن وجود ندارد.</p>
+      </div>
+
+      <div class="order-1 flex flex-col gap-sp4 lg:order-2">
+        <div class="flex aspect-[4/3] w-full items-end rounded-xl border border-line bg-[repeating-linear-gradient(135deg,#E4E4E2_0_10px,#F5F5F3_10px_20px)] p-sp4">
+          <span dir="ltr" class="font-mono text-micro leading-[1.6] text-gray-800">WORKSHOP DETAIL SHOT<br>جای‌نگهدار — عکس کارگاه</span>
+        </div>
+        <ul class="m-0 flex list-none flex-col p-0">
+          <li class="flex gap-sp3 border-t border-line py-sp3 text-body text-gray-800"><span aria-hidden="true" class="font-mono text-micro text-titanium">01</span>پیگیری سفارش و کد رهگیری در یک صفحه</li>
+          <li class="flex gap-sp3 border-t border-line py-sp3 text-body text-gray-800"><span aria-hidden="true" class="font-mono text-micro text-titanium">02</span>آدرس‌های ذخیره‌شده برای خرید بعدی</li>
+          <li class="flex gap-sp3 border-y border-line py-sp3 text-body text-gray-800"><span aria-hidden="true" class="font-mono text-micro text-titanium">03</span>سابقه قطعه‌هایی که خریده‌اید، برای چاپ دوباره</li>
+        </ul>
+      </div>
+    </section>
+
+    <section data-screen-label="حالت‌های ورود" class="flex flex-col gap-sp5 border-t border-line py-section-mobile md:py-section">
+      <div class="flex flex-col gap-sp2">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">HANDOFF &middot; AUTH STATES</p>
+        <h2 class="m-0 text-h2 font-h2">حالت‌های ورود و OTP</h2>
+        <p class="m-0 max-w-text text-small text-gray-800">فرم بالا زنده است: شماره ← کد ← تکمیل ← خوش‌آمد. این بخش حالت‌های خطا و مرزی را ثابت نشان می‌دهد.</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-sp4 lg:grid-cols-2">
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">VALIDATION &middot; MOBILE</span>
+          <div class="flex flex-col gap-sp4 rounded-lg border border-line bg-white p-sp4">
+            <label class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">شماره موبایل *</span>
+              <input type="tel" dir="ltr" value="0912345" aria-invalid="true" class="h-12 w-full rounded-md border-2 border-danger-ink bg-white px-sp3 font-mono text-body outline-none">
+              <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>شماره موبایل ۱۱ رقمی و با ۰۹ شروع شود.</span>
+            </label>
+            <label class="flex items-start gap-sp2 text-small text-gray-800">
+              <input type="checkbox" class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+              <span class="flex flex-col gap-sp1">
+                شرایط استفاده را می‌پذیرم. *
+                <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>برای ادامه باید شرایط را بپذیرید.</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">OTP &middot; WRONG CODE</span>
+          <div class="flex flex-col gap-sp3 rounded-lg border border-line bg-white p-sp4">
+            <div dir="ltr" class="flex justify-between gap-sp2">
+              <span class="grid h-14 w-full place-items-center rounded-md border-2 border-danger-ink bg-white font-mono text-h4">4</span>
+              <span class="grid h-14 w-full place-items-center rounded-md border-2 border-danger-ink bg-white font-mono text-h4">1</span>
+              <span class="grid h-14 w-full place-items-center rounded-md border-2 border-danger-ink bg-white font-mono text-h4">9</span>
+              <span class="grid h-14 w-full place-items-center rounded-md border-2 border-danger-ink bg-white font-mono text-h4">0</span>
+              <span class="grid h-14 w-full place-items-center rounded-md border-2 border-danger-ink bg-white font-mono text-h4">2</span>
+            </div>
+            <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>کد اشتباه است. ۲ تلاش دیگر باقی مانده.</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">OTP &middot; EXPIRED / RESEND READY</span>
+          <div class="flex flex-col gap-sp3 rounded-lg border border-line bg-white p-sp4">
+            <span class="flex items-center gap-sp2 text-caption text-warning-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-warning"></span>مهلت کد تمام شد. کد جدید بگیرید.</span>
+            <div class="flex flex-wrap items-center justify-between gap-sp2">
+              <span dir="ltr" class="font-mono text-small text-gray-800">00:00</span>
+              <button type="button" class="border-0 bg-transparent p-0 text-small font-ui text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite">ارسال مجدد کد</button>
+            </div>
+            <button type="button" disabled class="flex h-12 cursor-wait items-center justify-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white"><span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال ارسال کد…</button>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">ERROR &middot; RATE LIMIT / SUCCESS</span>
+          <div class="flex flex-col gap-sp3">
+            <div class="flex flex-col items-start gap-sp2 rounded-lg border border-danger-ink bg-white p-sp4">
+              <span class="flex items-center gap-sp2 text-body font-ui text-danger-ink"><span aria-hidden="true">&#10005;</span>تعداد تلاش بیش از حد</span>
+              <p class="m-0 text-small leading-[1.7] text-gray-800">برای این شماره تا ۱۵ دقیقه دیگر کد جدید فرستاده نمی‌شود. اگر عجله دارید با <a href="tel:+982112345678" dir="ltr" class="font-mono text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">021 1234 5678</a> تماس بگیرید.</p>
+            </div>
+            <div class="flex flex-col items-start gap-sp2 rounded-lg border border-success-ink bg-white p-sp4">
+              <span class="flex items-center gap-sp2 text-body font-ui text-success-ink"><span aria-hidden="true">&#10003;</span>ورود موفق</span>
+              <p class="m-0 text-small leading-[1.7] text-gray-800">به حساب <span dir="ltr" class="font-mono text-graphite">0912 345 6789</span> وارد شدید. سبد خرید حفظ شده است.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+    <div class="mx-auto max-w-page">
+      <div class="flex flex-col gap-sp2 border-b border-edge pb-sp6">
+        <div dir="ltr" class="grid h-7 w-[140px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+        <p class="mt-sp2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-sp5 border-b border-edge py-sp6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">دسته‌بندی‌ها</span>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">میز کار</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">آشپزخانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خودرو</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سازمان‌دهی</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سفر</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">لینک‌های سریع</span>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">محصولات</a>
+          <a href="07-catalog.html" class="text-small text-silver no-underline hover:text-white">کاتالوگ</a>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">تازه‌ها</a>
+          <a href="08-blog-list.html" class="text-small text-silver no-underline hover:text-white">بلاگ</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">درباره ما</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">پشتیبانی و راهنما</span>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">پیگیری سفارش</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">ارسال و تحویل</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">مرجوعی</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">نگهداری قطعات PLA</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">سؤالات متداول</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">درباره VYBE</span>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">کارگاه</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">فرایند تولید</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">همکاری با ما</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">تماس با ما</a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-sp5 pt-sp6">
+        <div class="flex max-w-[420px] flex-col gap-sp2">
+          <span class="text-small font-h2">خبرنامه</span>
+          <p class="m-0 text-small leading-[1.6] text-titanium">ماهی یک ایمیل. محصول تازه و یادداشت‌های کارگاه.</p>
+          <form class="flex gap-sp2">
+            <input type="email" placeholder="ایمیل شما" class="h-12 flex-1 rounded-md border border-edge bg-surface px-sp3 text-small text-fog-white outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" class="h-12 rounded-md border-0 bg-white px-sp4 text-small font-ui text-graphite hover:bg-line">عضویت</button>
+          </form>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <div dir="ltr" class="flex gap-sp3 font-mono text-micro text-silver"><span>INSTAGRAM</span><span>TELEGRAM</span><span>PINTEREST</span><span>YOUTUBE</span></div>
+          <div class="flex gap-sp2">
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">نماد<br>اعتماد</div>
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">درگاه<br>پرداخت</div>
+          </div>
+        </div>
+      </div>
+      <p dir="ltr" class="m-0 mt-sp6 font-mono text-micro tracking-[0.06em] text-titanium">&copy; 1404 VYBE &middot; ALL RIGHTS RESERVED</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var menu=document.getElementById('mobileMenu');
+  function openMenu(){menu.classList.remove('hidden');menu.classList.add('flex');document.body.style.overflow='hidden';}
+  function closeMenu(){menu.classList.add('hidden');menu.classList.remove('flex');document.body.style.overflow='';}
+  document.querySelectorAll('[data-menu-open]').forEach(function(b){b.addEventListener('click',openMenu)});
+  document.querySelectorAll('[data-menu-close]').forEach(function(b){b.addEventListener('click',closeMenu)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+
+  var forms=[document.getElementById('phoneForm'),document.getElementById('otpForm'),document.getElementById('profileForm'),document.getElementById('authDone')];
+  function show(i){forms.forEach(function(f,n){f.classList.toggle('hidden',n!==i);f.classList.toggle('flex',n===i);});}
+  document.querySelectorAll('[data-back]').forEach(function(b){b.addEventListener('click',function(){show(0)})});
+
+  function validate(form){
+    var ok=true;
+    form.querySelectorAll('input[required]').forEach(function(el){
+      var wrap=el.closest('label'); if(!wrap)return;
+      var old=wrap.querySelector('[data-err]'); if(old)old.remove();
+      el.classList.remove('border-2','border-danger-ink');
+      if(!el.checkValidity()){
+        ok=false; el.setAttribute('aria-invalid','true');
+        if(el.type!=='checkbox')el.classList.add('border-2','border-danger-ink');
+        var s=document.createElement('span');
+        s.setAttribute('data-err','');
+        s.className='flex items-center gap-sp2 text-caption text-danger-ink';
+        s.innerHTML='<span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>'+(el.type==='checkbox'?'برای ادامه باید شرایط را بپذیرید.':(el.value?'شماره موبایل ۱۱ رقمی و با ۰۹ شروع شود.':'این فیلد الزامی است.'));
+        wrap.appendChild(s);
+      } else el.removeAttribute('aria-invalid');
+    });
+    var note=form.querySelector('[data-note]');
+    if(note){
+      if(!ok){note.className='flex items-center gap-sp2 rounded-md border border-danger-ink bg-white p-sp3 text-small text-danger-ink';note.innerHTML='<span aria-hidden="true">&#10005;</span>موارد مشخص‌شده را بررسی کنید.';}
+      else note.className='hidden';
+    }
+    return ok;
+  }
+
+  var timer=document.getElementById('timer'),resend=document.getElementById('resend'),tick;
+  function startTimer(){
+    var left=119; clearInterval(tick);
+    resend.disabled=true; resend.className='border-0 bg-transparent p-0 text-small text-silver';
+    tick=setInterval(function(){
+      left--;
+      var m=String(Math.floor(left/60)).padStart(2,'0'),s=String(left%60).padStart(2,'0');
+      timer.textContent=m+':'+s;
+      if(left<=0){
+        clearInterval(tick);
+        resend.disabled=false;
+        resend.className='border-0 bg-transparent p-0 text-small font-ui text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite';
+      }
+    },1000);
+  }
+  resend.addEventListener('click',startTimer);
+
+  forms[0].addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!validate(forms[0]))return;
+    var btn=document.getElementById('sendBtn'),val=document.getElementById('mobile').value;
+    btn.disabled=true;
+    btn.className='flex h-12 cursor-wait items-center justify-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white';
+    btn.innerHTML='<span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال ارسال کد…';
+    setTimeout(function(){
+      btn.disabled=false;
+      btn.className='h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink';
+      btn.textContent='دریافت کد تأیید';
+      document.getElementById('otpTarget').textContent=val.replace(/(\d{4})(\d{3})(\d{4})/,'$1 $2 $3');
+      show(1); startTimer();
+      var b=document.querySelectorAll('#otpBoxes input')[0]; if(b)b.focus();
+    },1100);
+  });
+
+  var boxes=document.querySelectorAll('#otpBoxes input');
+  boxes.forEach(function(b,i){
+    b.addEventListener('input',function(){
+      b.value=b.value.replace(/[^0-9]/g,'').slice(0,1);
+      if(b.value&&boxes[i+1])boxes[i+1].focus();
+    });
+    b.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!b.value&&boxes[i-1])boxes[i-1].focus()});
+  });
+
+  forms[1].addEventListener('submit',function(e){
+    e.preventDefault();
+    var code=Array.prototype.map.call(boxes,function(b){return b.value}).join('');
+    var note=forms[1].querySelector('[data-note]');
+    if(code.length<5){
+      boxes.forEach(function(b){if(!b.value)b.classList.add('border-2','border-danger-ink')});
+      note.className='flex items-center gap-sp2 rounded-md border border-danger-ink bg-white p-sp3 text-small text-danger-ink';
+      note.innerHTML='<span aria-hidden="true">&#10005;</span>هر پنج رقم کد را وارد کنید.';
+      return;
+    }
+    boxes.forEach(function(b){b.classList.remove('border-2','border-danger-ink')});
+    note.className='hidden';
+    var btn=document.getElementById('verifyBtn');
+    btn.disabled=true;
+    btn.className='flex h-12 cursor-wait items-center justify-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white';
+    btn.innerHTML='<span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال بررسی…';
+    setTimeout(function(){
+      btn.disabled=false;
+      btn.className='h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink';
+      btn.textContent='تأیید و ورود';
+      clearInterval(tick); show(2);
+    },1200);
+  });
+
+  forms[2].addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!validate(forms[2]))return;
+    var btn=document.getElementById('finishBtn');
+    btn.disabled=true;
+    btn.className='flex h-12 cursor-wait items-center justify-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white';
+    btn.innerHTML='<span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال ساخت حساب…';
+    setTimeout(function(){show(3)},1200);
+  });
+})();
+</script>
+</body>
+</html>

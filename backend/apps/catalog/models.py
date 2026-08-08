@@ -9,6 +9,9 @@ class Category(models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to="categories/", blank=True, null=True)
+    external_image_url = models.CharField(
+        max_length=500, blank=True, help_text="Static asset path, used until a real image is uploaded."
+    )
     parent = models.ForeignKey(
         "self", on_delete=models.CASCADE, related_name="children", blank=True, null=True
     )
@@ -21,6 +24,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def resolved_image_url(self) -> str:
+        return self.image.url if self.image else self.external_image_url
 
     def clean(self):
         # Category tree is capped at 2 levels: top-level -> child. No grandchildren.
@@ -97,7 +104,10 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="products/")
+    image = models.ImageField(upload_to="products/", blank=True, null=True)
+    external_url = models.CharField(
+        max_length=500, blank=True, help_text="Static asset path, used until a real image is uploaded."
+    )
     thumbnail = ImageSpecField(
         source="image",
         processors=[ResizeToFill(600, 600)],
@@ -112,6 +122,10 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} #{self.order}"
+
+    @property
+    def resolved_url(self) -> str:
+        return self.image.url if self.image else self.external_url
 
 
 class ColorOption(models.Model):

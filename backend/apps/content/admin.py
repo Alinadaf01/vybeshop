@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import BlogPost, ContactMessage, Coupon, ProductReview
+from .models import BlogPost, CatalogEdition, CatalogFile, CatalogSpread, ContactMessage, Coupon, ProductReview
 
 
 @admin.register(BlogPost)
@@ -31,3 +31,22 @@ class CouponAdmin(admin.ModelAdmin):
     list_display = ["code", "type", "value", "used_count", "usage_limit", "is_active"]
     list_filter = ["type", "is_active"]
     search_fields = ["code"]
+
+
+class CatalogSpreadInline(admin.TabularInline):
+    model = CatalogSpread
+    extra = 1
+
+
+class CatalogEditionInline(admin.TabularInline):
+    model = CatalogEdition
+    extra = 1
+
+
+@admin.register(CatalogFile)
+class CatalogFileAdmin(admin.ModelAdmin):
+    list_display = ["title", "edition", "page_count", "file_size_mb", "updated_at"]
+    inlines = [CatalogSpreadInline, CatalogEditionInline]
+
+    def has_add_permission(self, request):
+        return not CatalogFile.objects.exists()

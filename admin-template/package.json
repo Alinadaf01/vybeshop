@@ -1,0 +1,12 @@
+{
+  "name": "huma-admin",
+  "version": "1.0.0",
+  "description": "پنل مدیریت هُما",
+  "scripts": {
+    "build": "tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/main.css --minify",
+    "watch": "tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/main.css --watch"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

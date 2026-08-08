@@ -1,0 +1,675 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VYBE · 13 تسویه حساب</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+--color-graphite:#0B0B0C; --color-fog-white:#F5F5F3; --color-titanium:#7A7D82; --color-silver:#B8BCC2; --color-cyan:#00D1FF;
+--color-ink:#1A1A1C; --color-surface:#141416; --color-edge:#26262A; --color-white:#FFFFFF; --color-line:#ECECEC;
+--color-gray-500:#9A9A9A; --color-gray-800:#4A4A4A; --color-black:#000000;
+--color-danger:#D64545; --color-danger-ink:#B23434; --color-danger-dark:#E86A6A;
+--color-success:#2FB66B; --color-success-ink:#1E7A47; --color-warning:#F4B400; --color-warning-ink:#8A6400;
+--font-peyda:"Peyda","Vazirmatn",system-ui,sans-serif; --font-sora:"Sora",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+--fs-display:40px; --fs-h1:32px; --fs-h2:26px; --fs-h3:22px; --fs-h4:20px;
+--fs-body-large:18px; --fs-body:16px; --fs-small:14px; --fs-caption:12px; --fs-micro:10px;
+--radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+--ease:cubic-bezier(0.4,0,0.2,1); --dur-fast:150ms; --dur-base:300ms; --dur-slow:600ms;
+}
+@media (min-width:768px){:root{
+--fs-display:64px; --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:24px; --fs-body-large:20px;
+}}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Peyda";src:url("../public/fonts/peyda/Peyda-ExtraBold.woff2") format("woff2");font-weight:800;font-display:swap}
+html,body{margin:0}
+a{color:var(--color-graphite)}
+a:hover{color:var(--color-ink)}
+@keyframes vybeShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.skeleton{background:linear-gradient(90deg,#ECECEC 0%,#F7F7F5 50%,#ECECEC 100%);background-size:200% 100%;animation:vybeShimmer 1.4s linear infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+<script>tailwind.config={theme:{extend:{
+colors:{graphite:'var(--color-graphite)','fog-white':'var(--color-fog-white)',titanium:'var(--color-titanium)',silver:'var(--color-silver)',cyan:'var(--color-cyan)',ink:'var(--color-ink)',surface:'var(--color-surface)',edge:'var(--color-edge)',line:'var(--color-line)','gray-500':'var(--color-gray-500)','gray-800':'var(--color-gray-800)',danger:'var(--color-danger)','danger-ink':'var(--color-danger-ink)','danger-dark':'var(--color-danger-dark)',success:'var(--color-success)','success-ink':'var(--color-success-ink)',warning:'var(--color-warning)','warning-ink':'var(--color-warning-ink)'},
+fontFamily:{peyda:['Peyda','Vazirmatn','system-ui','sans-serif'],sora:['Sora','system-ui','sans-serif'],mono:['JetBrains Mono','ui-monospace','monospace']},
+fontWeight:{display:'800',h1:'700',h2:'600',h3:'600',h4:'500',body:'400',ui:'500'},
+fontSize:{display:['var(--fs-display)',{lineHeight:'1.1',letterSpacing:'-0.02em'}],h1:['var(--fs-h1)',{lineHeight:'1.2'}],h2:['var(--fs-h2)',{lineHeight:'1.2'}],h3:['var(--fs-h3)',{lineHeight:'1.2'}],h4:['var(--fs-h4)',{lineHeight:'1.2'}],'body-large':['var(--fs-body-large)',{lineHeight:'1.5'}],body:['var(--fs-body)',{lineHeight:'1.5'}],small:['var(--fs-small)',{lineHeight:'1.5'}],caption:['var(--fs-caption)',{lineHeight:'1.4',letterSpacing:'0.01em'}],micro:['var(--fs-micro)',{lineHeight:'1.4',letterSpacing:'0.01em'}]},
+spacing:{sp1:'4px',sp2:'8px',sp3:'16px',sp4:'24px',sp5:'32px',sp6:'48px',sp7:'64px',sp8:'80px',sp9:'120px',sp10:'160px',gutter:'20px','gutter-desktop':'40px',section:'80px','section-mobile':'56px',header:'72px',hit:'44px'},
+borderRadius:{none:'0',sm:'var(--radius-sm)',md:'var(--radius-md)',lg:'var(--radius-lg)',xl:'var(--radius-xl)',full:'var(--radius-full)'},
+maxWidth:{text:'720px',page:'1440px'},
+transitionTimingFunction:{DEFAULT:'var(--ease)'},
+transitionDuration:{fast:'150ms',base:'300ms',slow:'600ms'},
+screens:{sm:'375px',md:'768px',lg:'1024px',xl:'1440px'}
+}}}</script>
+</head>
+<body class="bg-fog-white font-peyda text-body font-body text-graphite antialiased">
+
+  <header class="sticky top-0 z-50 flex h-header items-center gap-sp5 bg-graphite px-gutter xl:px-gutter-desktop">
+    <a href="03-home.html" dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver no-underline">VYBE MASTER LOGO</a>
+    <nav class="hidden flex-1 flex-nowrap items-center gap-sp4 overflow-hidden whitespace-nowrap lg:flex">
+      <a href="03-home.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">خانه</a>
+      <a href="04-products.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="py-sp4 text-body font-ui text-silver no-underline transition-fast hover:text-white">تماس با ما</a>
+    </nav>
+    <div class="ms-auto flex shrink-0 items-center gap-sp5">
+      <button type="button" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver hover:text-white">SEARCH</button>
+      <div class="relative flex items-center">
+        <a href="12-cart.html" class="rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver no-underline hover:text-white">CART</a>
+        <span dir="ltr" class="absolute -top-1.5 -left-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite">2</span>
+      </div>
+      <a href="14-auth.html" class="hidden rounded-sm border border-edge px-sp2 py-sp1 font-mono text-micro text-silver no-underline hover:text-white sm:block">ACCOUNT</a>
+    </div>
+    <button type="button" data-menu-open class="order-last h-hit w-hit rounded-md border border-edge bg-transparent font-mono text-micro text-fog-white lg:hidden">MENU</button>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-[100] hidden flex-col bg-graphite text-fog-white">
+    <div class="flex h-header items-center justify-between px-gutter">
+      <button type="button" data-menu-close class="h-hit w-hit rounded-md border border-edge bg-transparent text-body text-fog-white">&#10005;</button>
+      <div dir="ltr" class="grid h-7 min-w-[120px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+    </div>
+    <nav class="flex flex-1 flex-col items-start gap-sp4 px-gutter py-sp4">
+      <a href="03-home.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">خانه</a>
+      <a href="04-products.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">محصولات</a>
+      <a href="06-categories.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">دسته‌بندی‌ها</a>
+      <a href="07-catalog.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">کاتالوگ</a>
+      <a href="08-blog-list.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">بلاگ</a>
+      <a href="10-about.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">درباره ما</a>
+      <a href="11-contact.html" class="text-h3 font-h3 text-silver no-underline hover:text-white">تماس با ما</a>
+    </nav>
+  </div>
+
+
+  <main class="mx-auto max-w-page px-gutter xl:px-gutter-desktop">
+
+    <nav aria-label="مسیر" class="flex flex-wrap items-center gap-sp2 py-sp4 text-small text-gray-800">
+      <a href="03-home.html" class="text-gray-800 no-underline hover:text-graphite">خانه</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <a href="12-cart.html" class="text-gray-800 no-underline hover:text-graphite">سبد خرید</a>
+      <span aria-hidden="true" class="text-silver">/</span>
+      <span aria-current="page" class="text-graphite">تسویه حساب</span>
+    </nav>
+
+    <div class="flex flex-col gap-sp4 pb-sp6">
+      <h1 class="m-0 text-h1 font-h1">تسویه حساب</h1>
+      <ol class="m-0 flex list-none flex-wrap items-center gap-sp2 p-0 md:gap-sp3">
+        <li class="flex items-center gap-sp2" aria-current="step">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite text-fog-white font-mono text-small">1</span>
+          <span class="text-small font-ui text-graphite">آدرس</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">2</span>
+          <span class="text-small text-gray-800">ارسال</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">3</span>
+          <span class="text-small text-gray-800">پرداخت</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">4</span>
+          <span class="text-small text-gray-800">تأیید</span>
+          
+        </li>
+      </ol>
+    </div>
+
+    <section data-screen-label="تسویه" class="grid grid-cols-1 gap-sp6 pb-section-mobile lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-sp7 md:pb-section">
+
+      <div class="flex flex-col gap-sp4">
+
+        <form id="addressForm" novalidate data-step="0" class="flex flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+          <div class="flex flex-col gap-sp2">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">STEP 1 &middot; ADDRESS</span>
+            <h2 class="m-0 text-h3 font-h3">آدرس تحویل</h2>
+          </div>
+          <div class="flex flex-col gap-sp3">
+            <label class="flex cursor-pointer items-start gap-sp3 rounded-lg border-2 border-graphite bg-white p-sp4">
+              <input type="radio" name="addr" checked class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+              <span class="flex flex-1 flex-col gap-sp1">
+                <span class="text-body font-ui">خانه — سارا محمدی</span>
+                <span class="text-small leading-[1.7] text-gray-800">تهران، خیابان شریعتی، کوچه بهار، پلاک ۱۲، واحد ۴ — کد پستی <span dir="ltr" class="font-mono">1566743511</span></span>
+              </span>
+              <span class="text-small text-gray-800 underline decoration-silver underline-offset-4">ویرایش</span>
+            </label>
+            <button type="button" class="h-12 self-start rounded-md border border-silver bg-white px-sp4 text-body font-ui transition-fast hover:border-titanium">+ افزودن آدرس جدید</button>
+          </div>
+          <div class="grid grid-cols-1 gap-sp4 border-t border-line pt-sp4 md:grid-cols-2">
+            <label for="recv" class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">گیرنده *</span>
+              <input id="recv" name="recv" type="text" required placeholder="مثلاً سارا محمدی" class="h-12 w-full rounded-md border border-silver bg-white px-sp3 text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            </label>
+            <label for="phone" class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">موبایل گیرنده *</span>
+              <input id="phone" name="phone" type="tel" dir="ltr" required pattern="09[0-9]{9}" placeholder="09xxxxxxxxx" class="h-12 w-full rounded-md border border-silver bg-white px-sp3 text-body text-graphite outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            </label>
+          </div>
+          <label for="note" class="flex flex-col gap-sp2">
+            <span class="text-small font-ui">توضیح برای پیک</span>
+            <textarea id="note" rows="3" placeholder="مثلاً زنگ واحد ۴، تحویل به نگهبانی" class="w-full resize-y rounded-md border border-silver bg-white p-sp3 text-body outline-none transition-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"></textarea>
+          </label>
+          <div class="flex flex-wrap items-center gap-sp3 border-t border-line pt-sp4">
+            <button type="submit" class="h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink">ادامه به روش ارسال</button>
+            <a href="12-cart.html" class="text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">بازگشت به سبد</a>
+          </div>
+          <div data-note class="hidden"></div>
+        </form>
+
+        <form id="shipForm" novalidate data-step="1" class="hidden flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+          <div class="flex flex-col gap-sp2">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">STEP 2 &middot; SHIPPING</span>
+            <h2 class="m-0 text-h3 font-h3">روش ارسال</h2>
+          </div>
+          <div class="flex flex-col gap-sp3">
+            <label class="flex cursor-pointer items-start gap-sp3 rounded-lg border border-2 border-graphite bg-white p-sp4 transition-fast hover:border-titanium">
+              <input type="radio" name="shipping" checked class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+              <span class="flex flex-1 flex-col gap-sp1">
+                <span class="flex flex-wrap items-center gap-sp2">
+                  <span class="text-body font-ui">پست پیشتاز</span>
+                  <span dir="ltr" class="font-mono text-micro text-gray-800">POST</span>
+                </span>
+                <span class="text-small text-gray-800">۳ تا ۵ روز کاری، سراسر کشور</span>
+              </span>
+              <span dir="ltr" class="font-mono text-body">78,000</span>
+            </label>
+            <label class="flex cursor-pointer items-start gap-sp3 rounded-lg border border-silver bg-white p-sp4 transition-fast hover:border-titanium">
+              <input type="radio" name="shipping" class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+              <span class="flex flex-1 flex-col gap-sp1">
+                <span class="flex flex-wrap items-center gap-sp2">
+                  <span class="text-body font-ui">تیپاکس</span>
+                  <span dir="ltr" class="font-mono text-micro text-gray-800">TIPAX</span>
+                </span>
+                <span class="text-small text-gray-800">۲ تا ۳ روز کاری، تحویل درب منزل</span>
+              </span>
+              <span dir="ltr" class="font-mono text-body">145,000</span>
+            </label>
+            <label class="flex cursor-pointer items-start gap-sp3 rounded-lg border border-silver bg-white p-sp4 transition-fast hover:border-titanium">
+              <input type="radio" name="shipping" class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+              <span class="flex flex-1 flex-col gap-sp1">
+                <span class="flex flex-wrap items-center gap-sp2">
+                  <span class="text-body font-ui">پیک تهران</span>
+                  <span dir="ltr" class="font-mono text-micro text-gray-800">PEYK</span>
+                </span>
+                <span class="text-small text-gray-800">همان روز برای سفارش‌های قبل از ۱۲</span>
+              </span>
+              <span dir="ltr" class="font-mono text-body">120,000</span>
+            </label>
+          </div>
+          <p class="m-0 flex items-center gap-sp2 rounded-md border border-line bg-fog-white p-sp3 text-small text-warning-ink"><span aria-hidden="true" class="h-2 w-2 shrink-0 rounded-full bg-warning"></span>پیک تهران فقط برای محدوده شهر تهران فعال است.</p>
+          <div class="flex flex-wrap items-center gap-sp3 border-t border-line pt-sp4">
+            <button type="submit" class="h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink">ادامه به پرداخت</button>
+            <button type="button" data-back="0" class="h-12 rounded-md border border-silver bg-white px-sp4 text-body font-ui transition-fast hover:border-titanium">بازگشت</button>
+          </div>
+          <div data-note class="hidden"></div>
+        </form>
+
+        <form id="payForm" novalidate data-step="2" class="hidden flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+          <div class="flex flex-col gap-sp2">
+            <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">STEP 3 &middot; PAYMENT</span>
+            <h2 class="m-0 text-h3 font-h3">روش پرداخت</h2>
+          </div>
+          <div class="flex flex-col gap-sp3">
+                        <div class="flex flex-col gap-sp3 rounded-lg border-2 border-graphite bg-white p-sp4">
+              <label class="flex cursor-pointer items-start gap-sp3">
+                <input type="radio" name="payment" checked class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+                <span class="flex flex-1 flex-col gap-sp1">
+                  <span class="flex flex-wrap items-center gap-sp2"><span class="text-body font-ui">درگاه پرداخت اینترنتی</span><span dir="ltr" class="font-mono text-micro text-gray-800">IPG</span></span>
+                  <span class="text-small text-gray-800">انتقال به صفحه بانک، بازگشت خودکار</span>
+                </span>
+              </label>
+              <fieldset class="m-0 flex flex-col gap-sp2 border-0 border-t border-line p-0 pt-sp3">
+                <legend class="mb-sp2 p-0 text-small font-ui">انتخاب درگاه *</legend>
+                <label class="flex cursor-pointer items-center gap-sp3 rounded-md border border-2 border-graphite bg-white p-sp3 transition-fast hover:border-titanium">
+                  <input type="radio" name="gateway" checked class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                  <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-fog-white font-mono text-micro text-gray-800">ZARINPAL</span>
+                  <span class="flex flex-1 flex-col gap-sp1">
+                    <span class="text-small font-ui text-graphite">زرین‌پال</span>
+                    <span class="text-caption text-gray-800">همه کارت‌های شتاب · بدون هزینه اضافه</span>
+                  </span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-sp3 rounded-md border border-silver bg-white p-sp3 transition-fast hover:border-titanium">
+                  <input type="radio" name="gateway" class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                  <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-fog-white font-mono text-micro text-gray-800">SEP</span>
+                  <span class="flex flex-1 flex-col gap-sp1">
+                    <span class="text-small font-ui text-graphite">درگاه بانک سامان</span>
+                    <span class="text-caption text-gray-800">سپ · پشتیبانی از رمز پویا</span>
+                  </span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-sp3 rounded-md border border-silver bg-white p-sp3 transition-fast hover:border-titanium">
+                  <input type="radio" name="gateway" class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                  <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-fog-white font-mono text-micro text-gray-800">BEHPARDA</span>
+                  <span class="flex flex-1 flex-col gap-sp1">
+                    <span class="text-small font-ui text-graphite">درگاه بانک ملت</span>
+                    <span class="text-caption text-gray-800">به‌پرداخت ملت</span>
+                  </span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-sp3 rounded-md border border-silver bg-white p-sp3 transition-fast hover:border-titanium">
+                  <input type="radio" name="gateway" class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                  <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-fog-white font-mono text-micro text-gray-800">ASANPARD</span>
+                  <span class="flex flex-1 flex-col gap-sp1">
+                    <span class="text-small font-ui text-graphite">آسان‌پرداخت</span>
+                    <span class="text-caption text-gray-800">آپ · پرداخت با اپلیکیشن</span>
+                  </span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-sp3 rounded-md border border-silver bg-white p-sp3 transition-fast hover:border-titanium">
+                  <input type="radio" name="gateway" class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                  <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-fog-white font-mono text-micro text-gray-800">NEXTPAY</span>
+                  <span class="flex flex-1 flex-col gap-sp1">
+                    <span class="text-small font-ui text-graphite">نکست‌پی</span>
+                    <span class="text-caption text-gray-800">واسط چنددرگاهی</span>
+                  </span>
+                </label>
+                <p class="m-0 mt-sp2 text-caption leading-[1.6] text-gray-800">اگر درگاهی موقتاً پاسخ نداد، درگاه دیگری را انتخاب کنید؛ سبد و آدرس حفظ می‌شود.</p>
+                <label class="mt-sp2 flex cursor-not-allowed items-center gap-sp3 rounded-md border border-line bg-fog-white p-sp3">
+                  <input type="radio" name="gateway" disabled class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                  <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-white font-mono text-micro text-silver">PASARGAD</span>
+                  <span class="flex flex-1 flex-col gap-sp1">
+                    <span class="text-small font-ui text-silver">درگاه بانک پاسارگاد</span>
+                    <span class="text-caption text-gray-800">موقتاً در دسترس نیست</span>
+                  </span>
+                </label>
+              </fieldset>
+            </div>
+            <label class="flex cursor-pointer items-start gap-sp3 rounded-lg border border-silver bg-white p-sp4 transition-fast hover:border-titanium">
+              <input type="radio" name="payment" class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+              <span class="flex flex-1 flex-col gap-sp1">
+                <span class="flex flex-wrap items-center gap-sp2"><span class="text-body font-ui">کیف پول VYBE</span><span dir="ltr" class="font-mono text-micro text-gray-800">WALLET</span></span>
+                <span class="text-small text-gray-800">موجودی فعلی ۴۲۰٬۰۰۰ تومان</span>
+              </span>
+            </label>
+            <label class="flex cursor-pointer items-start gap-sp3 rounded-lg border border-silver bg-white p-sp4 transition-fast hover:border-titanium">
+              <input type="radio" name="payment" class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+              <span class="flex flex-1 flex-col gap-sp1">
+                <span class="flex flex-wrap items-center gap-sp2"><span class="text-body font-ui">کارت به کارت</span><span dir="ltr" class="font-mono text-micro text-gray-800">CARD</span></span>
+                <span class="text-small text-gray-800">ثبت شماره پیگیری بعد از واریز</span>
+              </span>
+            </label>
+          </div>
+          <label class="flex items-start gap-sp2 border-t border-line pt-sp4 text-small text-gray-800">
+            <input type="checkbox" id="terms" required class="mt-1 h-[18px] w-[18px] shrink-0 accent-graphite">
+            <span>شرایط خرید و سیاست مرجوعی را خوانده‌ام. *</span>
+          </label>
+          <div class="flex flex-wrap items-center gap-sp3">
+            <button type="submit" id="payBtn" class="h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink">پرداخت ۳٬۱۶۱٬۰۰۰ تومان</button>
+            <button type="button" data-back="1" class="h-12 rounded-md border border-silver bg-white px-sp4 text-body font-ui transition-fast hover:border-titanium">بازگشت</button>
+          </div>
+          <div data-note class="hidden"></div>
+        </form>
+
+        <div id="confirmStep" data-step="3" class="hidden flex-col gap-sp4 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+          <div class="flex flex-col items-start gap-sp3 border-b border-line pb-sp4">
+            <span class="grid h-12 w-12 place-items-center rounded-full bg-success-ink text-h4 text-white" aria-hidden="true">&#10003;</span>
+            <h2 class="m-0 text-h2 font-h2">سفارش ثبت شد</h2>
+            <p class="m-0 max-w-text text-body leading-[1.7] text-gray-800">پیامک تأیید برای شماره <span dir="ltr" class="font-mono text-graphite">0912 345 6789</span> فرستاده شد. وضعیت سفارش را از حساب کاربری دنبال کنید.</p>
+          </div>
+          <dl class="m-0 flex flex-col">
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">شماره سفارش</dt><dd dir="ltr" class="m-0 font-mono text-small text-graphite">VYB-1404-0837</dd></div>
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">درگاه پرداخت</dt><dd data-gw class="m-0 flex items-center gap-sp2 text-small"><span dir="ltr" class="rounded-sm border border-line bg-fog-white px-sp2 py-[2px] font-mono text-micro text-gray-800">ZARINPAL</span>زرین‌پال</dd></div>
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">کد رهگیری پرداخت</dt><dd dir="ltr" class="m-0 font-mono text-small text-graphite">RRN-88421703</dd></div>
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">روش ارسال</dt><dd class="m-0 text-small">پست پیشتاز، ۳ تا ۵ روز کاری</dd></div>
+            <div class="flex justify-between gap-sp3 py-sp2"><dt class="text-small text-gray-800">مبلغ پرداخت‌شده</dt><dd dir="ltr" class="m-0 font-mono text-small">3,161,000 تومان</dd></div>
+          </dl>
+          <div class="flex flex-wrap gap-sp3 border-t border-line pt-sp4">
+            <a href="15-account.html" class="h-12 rounded-md bg-graphite px-sp5 text-body font-ui leading-[48px] text-fog-white no-underline transition-fast hover:bg-ink">پیگیری سفارش</a>
+            <a href="04-products.html" class="h-12 rounded-md border border-silver bg-white px-sp5 text-body font-ui leading-[46px] text-graphite no-underline transition-fast hover:border-titanium">ادامه خرید</a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="flex flex-col gap-sp4 lg:sticky lg:top-[104px] lg:self-start">
+        <div class="flex flex-col gap-sp3 rounded-xl border border-line bg-white p-sp4 md:p-sp6">
+          <h2 class="m-0 text-h3 font-h3">خلاصه سفارش</h2>
+          <div class="flex flex-col gap-sp2 border-b border-line pb-sp3">
+            <div class="flex items-center gap-sp2"><span dir="ltr" class="font-mono text-micro text-gray-800">W4001 &times;2</span><span dir="ltr" class="ms-auto font-mono text-small">2,114,000</span></div>
+            <div class="flex items-center gap-sp2"><span dir="ltr" class="font-mono text-micro text-gray-800">W4002 &times;1</span><span dir="ltr" class="ms-auto font-mono text-small">742,000</span></div>
+            <div class="flex items-center gap-sp2"><span dir="ltr" class="font-mono text-micro text-gray-800">C8001 &times;1</span><span dir="ltr" class="ms-auto font-mono text-small">389,000</span></div>
+          </div>
+          <dl class="m-0 flex flex-col">
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">جمع کالاها</dt><dd dir="ltr" class="m-0 font-mono text-small">3,245,000 تومان</dd></div>
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">تخفیف</dt><dd dir="ltr" class="m-0 font-mono text-small text-success-ink">−162,000 تومان</dd></div>
+            <div class="flex justify-between gap-sp3 border-b border-line py-sp2"><dt class="text-small text-gray-800">ارسال</dt><dd dir="ltr" class="m-0 font-mono text-small">78,000 تومان</dd></div>
+            <div class="flex justify-between gap-sp3 py-sp3"><dt class="text-body font-h2">مبلغ قابل پرداخت</dt><dd dir="ltr" class="m-0 font-mono text-h4 font-h3">3,161,000 تومان</dd></div>
+          </dl>
+          <a href="12-cart.html" class="self-start text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite">ویرایش سبد</a>
+        </div>
+        <div class="flex flex-col gap-sp2 rounded-lg border border-line bg-white p-sp4">
+          <span dir="ltr" class="font-mono text-micro tracking-[0.08em] text-gray-800">SECURE CHECKOUT</span>
+          <p class="m-0 text-small leading-[1.7] text-gray-800">اطلاعات کارت روی سرور ما ذخیره نمی‌شود. پرداخت روی درگاه بانک انجام می‌شود.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section data-screen-label="حالت‌های تسویه" class="flex flex-col gap-sp5 border-t border-line py-section-mobile md:py-section">
+      <div class="flex flex-col gap-sp2">
+        <p dir="ltr" class="m-0 font-mono text-micro tracking-[0.08em] text-gray-800">HANDOFF &middot; CHECKOUT STATES</p>
+        <h2 class="m-0 text-h2 font-h2">حالت‌های چهار مرحله</h2>
+        <p class="m-0 max-w-text text-small text-gray-800">مراحل بالا زنده‌اند؛ دکمه‌ها بین آدرس، ارسال، پرداخت و تأیید حرکت می‌کنند. این بخش حالت‌های باقی‌مانده را ثابت نشان می‌دهد.</p>
+      </div>
+
+      <div class="flex flex-col gap-sp3">
+        <span dir="ltr" class="font-mono text-micro text-gray-800">STEPPER &middot; FOUR POSITIONS</span>
+        <div class="flex flex-col gap-sp4 rounded-lg border border-line bg-white p-sp4">
+      <ol class="m-0 flex list-none flex-wrap items-center gap-sp2 p-0 md:gap-sp3">
+        <li class="flex items-center gap-sp2" aria-current="step">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite text-fog-white font-mono text-small">1</span>
+          <span class="text-small font-ui text-graphite">آدرس</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">2</span>
+          <span class="text-small text-gray-800">ارسال</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">3</span>
+          <span class="text-small text-gray-800">پرداخت</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">4</span>
+          <span class="text-small text-gray-800">تأیید</span>
+          
+        </li>
+      </ol>
+      <ol class="m-0 flex list-none flex-wrap items-center gap-sp2 p-0 md:gap-sp3">
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white">&#10003;</span>
+          <span class="text-small text-gray-800">آدرس</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2" aria-current="step">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite text-fog-white font-mono text-small">2</span>
+          <span class="text-small font-ui text-graphite">ارسال</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">3</span>
+          <span class="text-small text-gray-800">پرداخت</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">4</span>
+          <span class="text-small text-gray-800">تأیید</span>
+          
+        </li>
+      </ol>
+      <ol class="m-0 flex list-none flex-wrap items-center gap-sp2 p-0 md:gap-sp3">
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white">&#10003;</span>
+          <span class="text-small text-gray-800">آدرس</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white">&#10003;</span>
+          <span class="text-small text-gray-800">ارسال</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2" aria-current="step">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite text-fog-white font-mono text-small">3</span>
+          <span class="text-small font-ui text-graphite">پرداخت</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver text-gray-800 font-mono text-small">4</span>
+          <span class="text-small text-gray-800">تأیید</span>
+          
+        </li>
+      </ol>
+      <ol class="m-0 flex list-none flex-wrap items-center gap-sp2 p-0 md:gap-sp3">
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white">&#10003;</span>
+          <span class="text-small text-gray-800">آدرس</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white">&#10003;</span>
+          <span class="text-small text-gray-800">ارسال</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2">
+          <span aria-hidden="true" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white">&#10003;</span>
+          <span class="text-small text-gray-800">پرداخت</span>
+          <span aria-hidden="true" class="mx-sp2 hidden h-px w-8 bg-line md:block"></span>
+        </li>
+        <li class="flex items-center gap-sp2" aria-current="step">
+          <span aria-hidden="true" dir="ltr" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite text-fog-white font-mono text-small">4</span>
+          <span class="text-small font-ui text-graphite">تأیید</span>
+          
+        </li>
+      </ol>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-sp4 lg:grid-cols-2">
+        <div class="flex flex-col gap-sp3">
+          <span dir="ltr" class="font-mono text-micro text-gray-800">VALIDATION &middot; ADDRESS</span>
+          <div class="flex flex-col gap-sp4 rounded-lg border border-line bg-white p-sp4">
+            <label class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">موبایل گیرنده *</span>
+              <input type="tel" dir="ltr" value="0912345" aria-invalid="true" class="h-12 w-full rounded-md border-2 border-danger-ink bg-white px-sp3 text-body outline-none">
+              <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>شماره موبایل ۱۱ رقمی و با ۰۹ شروع شود.</span>
+            </label>
+            <label class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">کد پستی *</span>
+              <input type="text" dir="ltr" value="15667" aria-invalid="true" class="h-12 w-full rounded-md border-2 border-danger-ink bg-white px-sp3 text-body outline-none">
+              <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>کد پستی باید ۱۰ رقم باشد.</span>
+            </label>
+            <label class="flex flex-col gap-sp2">
+              <span class="text-small font-ui">توضیح برای پیک</span>
+              <textarea rows="2" class="w-full rounded-md border border-silver bg-white p-sp3 text-body outline-none">پلاک ۱۲</textarea>
+              <span class="flex items-center gap-sp2 text-caption text-warning-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-warning"></span>آدرس کوتاه است؛ نام خیابان اصلی را هم بنویسید.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-sp4">
+          <div class="flex flex-col gap-sp3">
+            <span dir="ltr" class="font-mono text-micro text-gray-800">GATEWAY &middot; SELECTED / UNAVAILABLE / NOT PICKED</span>
+            <div class="flex flex-col gap-sp2 rounded-lg border border-line bg-white p-sp4">
+              <label class="flex items-center gap-sp3 rounded-md border-2 border-graphite bg-white p-sp3">
+                <input type="radio" checked class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-fog-white font-mono text-micro text-gray-800">ZARINPAL</span>
+                <span class="text-small font-ui">زرین‌پال</span>
+              </label>
+              <label class="flex cursor-not-allowed items-center gap-sp3 rounded-md border border-line bg-fog-white p-sp3">
+                <input type="radio" disabled class="h-[18px] w-[18px] shrink-0 accent-graphite">
+                <span dir="ltr" class="grid h-8 w-[72px] shrink-0 place-items-center rounded-sm border border-line bg-white font-mono text-micro text-silver">PASARGAD</span>
+                <span class="flex flex-col gap-sp1"><span class="text-small font-ui text-silver">بانک پاسارگاد</span><span class="text-caption text-gray-800">موقتاً در دسترس نیست</span></span>
+              </label>
+              <span class="flex items-center gap-sp2 text-caption text-danger-ink"><span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>یک درگاه پرداخت انتخاب کنید.</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-sp3">
+            <span dir="ltr" class="font-mono text-micro text-gray-800">SUBMITTING &middot; REDIRECT TO GATEWAY</span>
+            <div class="flex flex-col gap-sp3 rounded-lg border border-line bg-white p-sp4">
+              <button type="button" disabled class="flex h-12 cursor-wait items-center justify-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white"><span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال انتقال به زرین‌پال…</button>
+              <p class="m-0 text-caption text-gray-800">صفحه را نبندید. انتقال تا ۱۰ ثانیه طول می‌کشد.</p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-sp3">
+            <span dir="ltr" class="font-mono text-micro text-gray-800">SUCCESS &middot; ORDER PLACED</span>
+            <div class="flex flex-col items-start gap-sp2 rounded-lg border border-success-ink bg-white p-sp4">
+              <span class="flex items-center gap-sp2 text-body font-ui text-success-ink"><span aria-hidden="true">&#10003;</span>پرداخت موفق</span>
+              <p class="m-0 text-small leading-[1.7] text-gray-800">شماره سفارش <span dir="ltr" class="font-mono text-graphite">VYB-1404-0837</span> — درگاه زرین‌پال، کد رهگیری <span dir="ltr" class="font-mono text-graphite">RRN-88421703</span></p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-sp3">
+            <span dir="ltr" class="font-mono text-micro text-gray-800">ERROR &middot; PAYMENT FAILED</span>
+            <div class="flex flex-col items-start gap-sp3 rounded-lg border border-danger-ink bg-white p-sp4">
+              <span class="flex items-center gap-sp2 text-body font-ui text-danger-ink"><span aria-hidden="true">&#10005;</span>پرداخت ناموفق بود</span>
+              <p class="m-0 text-small leading-[1.7] text-gray-800">تراکنش در درگاه زرین‌پال لغو شد. مبلغی کسر نشده است؛ اگر کسر شده تا ۷۲ ساعت برمی‌گردد. سبد و آدرس شما حفظ شده است.</p>
+              <div class="flex flex-wrap gap-sp2">
+                <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">تلاش مجدد</button>
+                <button type="button" class="h-hit rounded-md border border-silver bg-white px-sp3 text-small font-ui transition-fast hover:border-titanium">انتخاب درگاه دیگر</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-graphite px-gutter py-section-mobile text-fog-white md:py-section xl:px-gutter-desktop">
+    <div class="mx-auto max-w-page">
+      <div class="flex flex-col gap-sp2 border-b border-edge pb-sp6">
+        <div dir="ltr" class="grid h-7 w-[140px] shrink-0 place-items-center rounded-sm border border-titanium font-mono text-micro text-silver">VYBE MASTER LOGO</div>
+        <p class="mt-sp2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-sp5 border-b border-edge py-sp6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">دسته‌بندی‌ها</span>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">میز کار</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">آشپزخانه</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">خودرو</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سازمان‌دهی</a>
+          <a href="06-categories.html" class="text-small text-silver no-underline hover:text-white">سفر</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">لینک‌های سریع</span>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">محصولات</a>
+          <a href="07-catalog.html" class="text-small text-silver no-underline hover:text-white">کاتالوگ</a>
+          <a href="04-products.html" class="text-small text-silver no-underline hover:text-white">تازه‌ها</a>
+          <a href="08-blog-list.html" class="text-small text-silver no-underline hover:text-white">بلاگ</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">درباره ما</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">پشتیبانی و راهنما</span>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">پیگیری سفارش</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">ارسال و تحویل</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">مرجوعی</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">نگهداری قطعات PLA</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">سؤالات متداول</a>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <span class="text-small font-h2 text-white">درباره VYBE</span>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">کارگاه</a>
+          <a href="10-about.html" class="text-small text-silver no-underline hover:text-white">فرایند تولید</a>
+          <a href="#" class="text-small text-silver no-underline hover:text-white">همکاری با ما</a>
+          <a href="11-contact.html" class="text-small text-silver no-underline hover:text-white">تماس با ما</a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between gap-sp5 pt-sp6">
+        <div class="flex max-w-[420px] flex-col gap-sp2">
+          <span class="text-small font-h2">خبرنامه</span>
+          <p class="m-0 text-small leading-[1.6] text-titanium">ماهی یک ایمیل. محصول تازه و یادداشت‌های کارگاه.</p>
+          <form class="flex gap-sp2">
+            <input type="email" placeholder="ایمیل شما" class="h-12 flex-1 rounded-md border border-edge bg-surface px-sp3 text-small text-fog-white outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan">
+            <button type="submit" class="h-12 rounded-md border-0 bg-white px-sp4 text-small font-ui text-graphite hover:bg-line">عضویت</button>
+          </form>
+        </div>
+        <div class="flex flex-col gap-sp3">
+          <div dir="ltr" class="flex gap-sp3 font-mono text-micro text-silver"><span>INSTAGRAM</span><span>TELEGRAM</span><span>PINTEREST</span><span>YOUTUBE</span></div>
+          <div class="flex gap-sp2">
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">نماد<br>اعتماد</div>
+            <div dir="ltr" class="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge text-center font-mono text-micro leading-[1.4] text-titanium">درگاه<br>پرداخت</div>
+          </div>
+        </div>
+      </div>
+      <p dir="ltr" class="m-0 mt-sp6 font-mono text-micro tracking-[0.06em] text-titanium">&copy; 1404 VYBE &middot; ALL RIGHTS RESERVED</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var menu=document.getElementById('mobileMenu');
+  function openMenu(){menu.classList.remove('hidden');menu.classList.add('flex');document.body.style.overflow='hidden';}
+  function closeMenu(){menu.classList.add('hidden');menu.classList.remove('flex');document.body.style.overflow='';}
+  document.querySelectorAll('[data-menu-open]').forEach(function(b){b.addEventListener('click',openMenu)});
+  document.querySelectorAll('[data-menu-close]').forEach(function(b){b.addEventListener('click',closeMenu)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+
+  var steps=[document.getElementById('addressForm'),document.getElementById('shipForm'),document.getElementById('payForm'),document.getElementById('confirmStep')];
+  var bar=document.querySelector('ol[class*="list-none"]');
+  function render(i){
+    steps.forEach(function(s,n){
+      s.classList.toggle('hidden',n!==i);
+      s.classList.toggle('flex',n===i);
+    });
+    var lis=bar.querySelectorAll('li');
+    lis.forEach(function(li,n){
+      var badge=li.querySelector('span[aria-hidden]'),label=li.querySelectorAll('span')[1];
+      li.removeAttribute('aria-current');
+      if(n<i){badge.className='grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white';badge.innerHTML='&#10003;';}
+      else if(n===i){li.setAttribute('aria-current','step');badge.className='grid h-8 w-8 shrink-0 place-items-center rounded-full bg-graphite font-mono text-small text-fog-white';badge.textContent=String(n+1);}
+      else {badge.className='grid h-8 w-8 shrink-0 place-items-center rounded-full border border-silver font-mono text-small text-gray-800';badge.textContent=String(n+1);}
+      label.className='text-small '+(n===i?'font-ui text-graphite':'text-gray-800');
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('[data-back]').forEach(function(b){b.addEventListener('click',function(){render(parseInt(b.dataset.back,10))})});
+
+  function validate(form){
+    var ok=true;
+    form.querySelectorAll('input[required],textarea[required],select[required]').forEach(function(el){
+      var wrap=el.closest('label'); if(!wrap)return;
+      var old=wrap.querySelector('[data-err]'); if(old)old.remove();
+      el.classList.remove('border-2','border-danger-ink');
+      if(!el.checkValidity()){
+        ok=false; el.setAttribute('aria-invalid','true');
+        if(el.type!=='checkbox')el.classList.add('border-2','border-danger-ink');
+        var s=document.createElement('span');
+        s.setAttribute('data-err','');
+        s.className='flex items-center gap-sp2 text-caption text-danger-ink';
+        s.innerHTML='<span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-danger"></span>'+(el.type==='checkbox'?'برای ادامه باید شرایط را بپذیرید.':(el.value?'مقدار وارد‌شده معتبر نیست.':'این فیلد الزامی است.'));
+        wrap.appendChild(s);
+      } else { el.removeAttribute('aria-invalid'); }
+    });
+    var note=form.querySelector('[data-note]');
+    if(!ok){note.className='flex items-center gap-sp2 rounded-md border border-danger-ink bg-white p-sp3 text-small text-danger-ink';note.innerHTML='<span aria-hidden="true">&#10005;</span>چند فیلد کامل نیست. موارد مشخص‌شده را بررسی کنید.';}
+    else note.className='hidden';
+    return ok;
+  }
+
+  steps[0].addEventListener('submit',function(e){e.preventDefault();if(validate(steps[0]))render(1)});
+  steps[1].addEventListener('submit',function(e){e.preventDefault();render(2)});
+  steps[2].addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!validate(steps[2]))return;
+    var gw=steps[2].querySelector('input[name="gateway"]:checked');
+    var gwNote=steps[2].querySelector('[data-note]');
+    if(!gw){
+      gwNote.className='flex items-center gap-sp2 rounded-md border border-danger-ink bg-white p-sp3 text-small text-danger-ink';
+      gwNote.innerHTML='<span aria-hidden="true">&#10005;</span>یک درگاه پرداخت انتخاب کنید.';
+      return;
+    }
+    var gwName=gw.closest('label').querySelector('.font-ui').textContent.trim();
+    var gwCode=gw.closest('label').querySelector('[dir="ltr"]').textContent.trim();
+    var cd=document.getElementById('confirmStep');
+    cd.querySelector('[data-gw]').innerHTML='<span dir="ltr" class="rounded-sm border border-line bg-fog-white px-sp2 py-[2px] font-mono text-micro text-gray-800">'+gwCode+'</span>'+gwName;
+    var btn=document.getElementById('payBtn');
+    btn.disabled=true;
+    btn.className='flex h-12 cursor-wait items-center gap-sp2 rounded-md border-0 bg-titanium px-sp5 text-body font-ui text-white';
+    btn.innerHTML='<span aria-hidden="true" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>در حال انتقال به '+gwName+'…';
+    setTimeout(function(){
+      btn.disabled=false;
+      btn.className='h-12 rounded-md border-0 bg-graphite px-sp5 text-body font-ui text-fog-white transition-fast hover:bg-ink';
+      btn.textContent='پرداخت ۳٬۱۶۱٬۰۰۰ تومان';
+      render(3);
+    },1600);
+  });
+  document.querySelectorAll('input[type="radio"]').forEach(function(r){
+    r.addEventListener('change',function(){
+      document.getElementsByName(r.name).forEach&&null;
+      Array.prototype.forEach.call(document.getElementsByName(r.name),function(o){
+        var l=o.closest('label'); if(!l)return;
+        l.classList.remove('border-2','border-graphite','border-silver');
+        l.classList.add(o.checked?'border-2':'border','border-'+(o.checked?'graphite':'silver'));
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
