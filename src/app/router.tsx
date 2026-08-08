@@ -25,6 +25,7 @@ const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
 const AuthPage = lazy(() => import("@/pages/AuthPage"));
 const AccountPage = lazy(() => import("@/pages/AccountPage"));
+const CartPage = lazy(() => import("@/pages/CartPage"));
 
 function withSuspense(node: ReactNode) {
   return <Suspense fallback={<PageLoadingFallback />}>{node}</Suspense>;
@@ -47,6 +48,7 @@ export const router = createBrowserRouter([
       { path: "contact", element: withSuspense(<ContactPage />) },
       { path: "search", element: withSuspense(<SearchPage />) },
       { path: "auth", element: withSuspense(<AuthPage />) },
+      { path: "cart", element: withSuspense(<CartPage />) },
       {
         path: "account",
         element: withSuspense(

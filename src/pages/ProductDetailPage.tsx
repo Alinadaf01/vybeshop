@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getProduct } from "@/lib/api";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getProduct, addCartItem } from "@/lib/api";
+import { useToast } from "@/lib/useToast";
 import { categories } from "@/data/categories";
 import { getProductsByCategory } from "@/data/products";
 import { formatPrice, formatDimensions } from "@/lib/formatters";
@@ -27,6 +28,9 @@ export default function ProductDetailPage() {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const {
     data: product,
@@ -37,6 +41,17 @@ export default function ProductDetailPage() {
     queryFn: () => getProduct(slug!),
     enabled: !!slug,
     retry: false,
+  });
+
+  const addToCartMutation = useMutation({
+    mutationFn: addCartItem,
+    onSuccess: (cart) => {
+      queryClient.setQueryData(["cart"], cart);
+      showToast({ variant: "success", message: c.addedToCartToast, action: { label: c.viewCart, onClick: () => navigate("/cart") } });
+    },
+    onError: () => {
+      showToast({ variant: "danger", message: c.addToCartErrorToast });
+    },
   });
 
   if (isError) return <NotFoundPage />;
@@ -50,6 +65,14 @@ export default function ProductDetailPage() {
   function handleColorSelect(index: number) {
     setSelectedColorIndex(index);
     setActiveImageIndex(index % product!.images.length);
+  }
+
+  function handleAddToCart() {
+    addToCartMutation.mutate({
+      productId: product!.id,
+      colorOptionId: selectedColor?.id,
+      quantity,
+    });
   }
 
   const related = getProductsByCategory(product.category)
@@ -133,8 +156,13 @@ export default function ProductDetailPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <QuantityStepper value={quantity} onChange={setQuantity} disabled={isOutOfStock} aria-label="تعداد" />
-              <Button variant="primary" disabled={isOutOfStock} className="min-w-[180px] flex-1">
-                {isOutOfStock ? c.outOfStock : c.addToCart}
+              <Button
+                variant="primary"
+                disabled={isOutOfStock || addToCartMutation.isPending}
+                onClick={handleAddToCart}
+                className="min-w-[180px] flex-1"
+              >
+                {isOutOfStock ? c.outOfStock : addToCartMutation.isPending ? c.addingToCart : c.addToCart}
               </Button>
             </div>
 
@@ -318,8 +346,13 @@ export default function ProductDetailPage() {
             {formatPrice(product.price)}
           </span>
         </div>
-        <Button variant="primary" disabled={isOutOfStock} className="ms-auto shrink-0">
-          {isOutOfStock ? c.outOfStock : c.addToCart}
+        <Button
+          variant="primary"
+          disabled={isOutOfStock || addToCartMutation.isPending}
+          onClick={handleAddToCart}
+          className="ms-auto shrink-0"
+        >
+          {isOutOfStock ? c.outOfStock : addToCartMutation.isPending ? c.addingToCart : c.addToCart}
         </Button>
       </div>
     </div>

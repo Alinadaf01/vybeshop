@@ -1,4 +1,5 @@
 export interface ColorOption {
+  id: string;
   name: string;
   hex: string;
   inStock: boolean;

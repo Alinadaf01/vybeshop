@@ -19,9 +19,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ColorOptionSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+
     class Meta:
         model = ColorOption
-        fields = ["name", "hex", "in_stock"]
+        fields = ["id", "name", "hex", "in_stock"]
+
+    def get_id(self, obj: ColorOption) -> str:
+        return str(obj.pk)
 
 
 class ProductSerializer(serializers.ModelSerializer):

@@ -8,6 +8,7 @@ from pathlib import Path
 
 import dj_database_url
 from celery.schedules import crontab
+from corsheaders.defaults import default_headers
 from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -118,6 +119,14 @@ CORS_ALLOWED_ORIGINS = config(
     default="http://localhost:5173,http://localhost:5174",
     cast=Csv(),
 )
+# Custom response headers are invisible to cross-origin fetch() unless
+# explicitly exposed — without this, the guest cart session key the backend
+# hands out on X-Cart-Session never reaches the storefront's JS, so every
+# request looks like a brand-new guest and the cart never persists.
+CORS_EXPOSE_HEADERS = ["X-Cart-Session"]
+# ...and the storefront also needs to send X-Cart-Session back on later
+# requests, which the CORS preflight blocks unless it's in the allow-list too.
+CORS_ALLOW_HEADERS = [*default_headers, "x-cart-session"]
 
 
 # Django REST Framework

@@ -1,11 +1,11 @@
 import type { Product } from "@/types/product";
 
-const graphite = { name: "گرافیت", hex: "#2B2B2E", inStock: true };
-const iceWhite = { name: "سفید یخی", hex: "#F2F2F0", inStock: true };
-const titaniumGrey = { name: "خاکستری تیتانیوم", hex: "#8A8D92", inStock: true };
-const matteBlack = { name: "مشکی مات", hex: "#101012", inStock: true };
-const silver = { name: "نقره‌ای", hex: "#C4C8CD", inStock: true };
-const silverOutOfStock = { name: "نقره‌ای", hex: "#C4C8CD", inStock: false };
+const graphite = { id: "color-graphite", name: "گرافیت", hex: "#2B2B2E", inStock: true };
+const iceWhite = { id: "color-ice-white", name: "سفید یخی", hex: "#F2F2F0", inStock: true };
+const titaniumGrey = { id: "color-titanium-grey", name: "خاکستری تیتانیوم", hex: "#8A8D92", inStock: true };
+const matteBlack = { id: "color-matte-black", name: "مشکی مات", hex: "#101012", inStock: true };
+const silver = { id: "color-silver", name: "نقره‌ای", hex: "#C4C8CD", inStock: true };
+const silverOutOfStock = { id: "color-silver-oos", name: "نقره‌ای", hex: "#C4C8CD", inStock: false };
 
 export const products: Product[] = [
   // پایه رومیزی

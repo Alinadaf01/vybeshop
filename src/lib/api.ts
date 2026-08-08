@@ -4,6 +4,7 @@ import { blogPosts } from "@/data/blog";
 import { siteSettings } from "@/data/siteSettings";
 import { catalog } from "@/data/catalog";
 import { loadStoredAuth, saveStoredAuth, clearStoredAuth } from "@/lib/authStorage";
+import { getCartSessionKey, setCartSessionKey } from "@/lib/cartSession";
 import type { Product } from "@/types/product";
 import type { Category } from "@/types/category";
 import type { BlogPost, BlogCategory } from "@/types/blog";
@@ -13,6 +14,8 @@ import type { SiteSettings } from "@/data/siteSettings";
 import type { CatalogFile } from "@/data/catalog";
 import type { AuthUser, OtpVerifyResponse } from "@/types/auth";
 import type { Address, AddressInput } from "@/types/address";
+import type { Cart } from "@/types/cart";
+import type { Order, OrderSummary } from "@/types/order";
 
 const NETWORK_DELAY_MS = 350;
 
@@ -331,7 +334,9 @@ export async function verifyOtp(phone: string, code: string): Promise<OtpVerifyR
     res = await apiFetch("/auth/otp/verify/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, code }),
+      // The guest cart session key (if any) merges into the user's cart as
+      // part of logging in — no separate "merge my cart" call needed.
+      body: JSON.stringify({ phone, code, cartSessionKey: getCartSessionKey() ?? undefined }),
     });
   } catch {
     throw new Error("تأیید کد ممکن نشد. اتصال اینترنت را بررسی کنید.");
@@ -424,4 +429,67 @@ export function reportPageView(path: string, productSlug?: string): void {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ path, referrer: document.referrer, productSlug }),
   }).catch(() => undefined);
+}
+
+// Cart — works for both guests (X-Cart-Session header, no login required)
+// and logged-in users (Authorization header). No fake-data fallback, same
+// reasoning as auth/addresses: a fake cart would be actively misleading.
+
+async function cartFetch(path: string, init: RequestInit = {}): Promise<Response> {
+  const stored = loadStoredAuth();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(init.headers as Record<string, string> | undefined),
+  };
+  if (stored) {
+    headers.Authorization = `Bearer ${stored.tokens.access}`;
+  } else {
+    const sessionKey = getCartSessionKey();
+    if (sessionKey) headers["X-Cart-Session"] = sessionKey;
+  }
+
+  const res = await apiFetch(path, { ...init, headers });
+  const newSessionKey = res.headers.get("X-Cart-Session");
+  if (newSessionKey) setCartSessionKey(newSessionKey);
+  return res;
+}
+
+export async function getCart(): Promise<Cart> {
+  const res = await cartFetch("/cart/");
+  if (!res.ok) throw new Error("دریافت سبد خرید ناموفق بود.");
+  return res.json();
+}
+
+export async function addCartItem(input: {
+  productId: string;
+  colorOptionId?: string;
+  quantity?: number;
+}): Promise<Cart> {
+  const res = await cartFetch("/cart/items/", { method: "POST", body: JSON.stringify(input) });
+  if (!res.ok) throw new Error(await readErrorDetail(res, "افزودن به سبد ناموفق بود."));
+  return res.json();
+}
+
+export async function updateCartItem(id: string, quantity: number): Promise<Cart> {
+  const res = await cartFetch(`/cart/items/${id}/`, { method: "PATCH", body: JSON.stringify({ quantity }) });
+  if (!res.ok) throw new Error("به‌روزرسانی سبد ناموفق بود.");
+  return res.json();
+}
+
+export async function removeCartItem(id: string): Promise<Cart> {
+  const res = await cartFetch(`/cart/items/${id}/`, { method: "DELETE" });
+  if (!res.ok) throw new Error("حذف از سبد ناموفق بود.");
+  return res.json();
+}
+
+export async function getOrders(): Promise<PaginatedResponse<OrderSummary>> {
+  const res = await authorizedFetch("/orders/");
+  if (!res.ok) throw new Error("دریافت سفارش‌ها ناموفق بود.");
+  return res.json();
+}
+
+export async function getOrder(number: string): Promise<Order> {
+  const res = await authorizedFetch(`/orders/${encodeURIComponent(number)}/`);
+  if (!res.ok) throw new Error("دریافت سفارش ناموفق بود.");
+  return res.json();
 }

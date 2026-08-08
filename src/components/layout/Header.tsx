@@ -1,19 +1,33 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink as RouterNavLink, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/cn";
 import { navLinks } from "@/app/navigation";
 import { VybeWordmark } from "@/components/brand/VybeWordmark";
 import { useAuth } from "@/lib/AuthContext";
+import { useSkipSeo } from "@/lib/prerenderContext";
+import { getCart } from "@/lib/api";
 
 export interface HeaderProps {
   onMenuOpen: () => void;
-  cartCount?: number;
 }
 
-export function Header({ onMenuOpen, cartCount = 0 }: HeaderProps) {
+export function Header({ onMenuOpen }: HeaderProps) {
   const [opaque, setOpaque] = useState(true);
   const location = useLocation();
   const { isAuthenticated } = useAuth();
+  // useSkipSeo() doubles as "are we in the build-time prerender pass" here —
+  // there's no real visitor/cart during prerendering, and firing a network
+  // call from inside the synchronous renderToStaticMarkup call would either
+  // hang the build or log an unhandled rejection once it outlives the render.
+  const isPrerendering = useSkipSeo();
+  const { data: cart } = useQuery({
+    queryKey: ["cart"],
+    queryFn: getCart,
+    staleTime: 30_000,
+    enabled: !isPrerendering,
+  });
+  const cartCount = cart?.itemCount ?? 0;
 
   useEffect(() => {
     let intersectionObserver: IntersectionObserver | null = null;
@@ -95,12 +109,12 @@ export function Header({ onMenuOpen, cartCount = 0 }: HeaderProps) {
           SEARCH
         </button>
         <div className="relative flex items-center">
-          <button
-            type="button"
-            className="rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver hover:text-white"
+          <Link
+            to="/cart"
+            className="rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver no-underline hover:text-white"
           >
             CART
-          </button>
+          </Link>
           {cartCount > 0 && (
             <span
               dir="ltr"
