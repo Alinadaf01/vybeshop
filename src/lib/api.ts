@@ -30,6 +30,36 @@ function paginate<T>(items: T[], page = 1, pageSize = 12): PaginatedResponse<T> 
   };
 }
 
+// The real backend base URL, e.g. "https://api.vybeshop.ir/api" or
+// "http://localhost:8000/api" for local Django dev. When unset, every
+// function below skips the network entirely and serves fake data — this
+// keeps the deployed storefront working before the backend exists, and
+// keeps every function falling back to fake data if the backend goes down.
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/+$/, "");
+
+class ApiUnavailableError extends Error {}
+
+async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
+  if (!API_BASE_URL) throw new ApiUnavailableError("VITE_API_BASE_URL is not configured");
+  try {
+    return await fetch(`${API_BASE_URL}${path}`, init);
+  } catch (cause) {
+    throw new ApiUnavailableError("Backend unreachable", { cause });
+  }
+}
+
+/** Runs `attempt`; falls back to `fallback` only when the backend itself is
+ * unreachable (unconfigured / network failure) — a real error response from
+ * a reachable backend (404, 400, 500, ...) is never masked by fake data. */
+async function withFallback<T>(attempt: () => Promise<T>, fallback: () => Promise<T>): Promise<T> {
+  try {
+    return await attempt();
+  } catch (error) {
+    if (error instanceof ApiUnavailableError) return fallback();
+    throw error;
+  }
+}
+
 export type ProductOrdering = "price" | "-price" | "name" | "-name";
 
 export interface GetProductsParams {
@@ -43,8 +73,8 @@ export interface GetProductsParams {
   pageSize?: number;
 }
 
-export async function getProducts(
-  params: GetProductsParams = {},
+async function getProductsFallback(
+  params: GetProductsParams,
 ): Promise<PaginatedResponse<Product>> {
   let items = [...products];
 
@@ -85,20 +115,68 @@ export async function getProducts(
   return delay(paginate(items, params.page, params.pageSize));
 }
 
+export async function getProducts(
+  params: GetProductsParams = {},
+): Promise<PaginatedResponse<Product>> {
+  return withFallback(
+    async () => {
+      const query = new URLSearchParams();
+      if (params.category) query.set("category", params.category);
+      if (params.search) query.set("search", params.search);
+      if (params.ordering) query.set("ordering", params.ordering);
+      if (typeof params.minPrice === "number") query.set("minPrice", String(params.minPrice));
+      if (typeof params.maxPrice === "number") query.set("maxPrice", String(params.maxPrice));
+      if (params.inStock) query.set("inStock", "true");
+      if (params.page) query.set("page", String(params.page));
+      if (params.pageSize) query.set("pageSize", String(params.pageSize));
+
+      const res = await apiFetch(`/products/?${query.toString()}`);
+      if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
+      return (await res.json()) as PaginatedResponse<Product>;
+    },
+    () => getProductsFallback(params),
+  );
+}
+
 export async function getProduct(slug: string): Promise<Product> {
-  const product = products.find((item) => item.slug === slug);
-  if (!product) throw new Error(`Product not found: ${slug}`);
-  return delay(product);
+  return withFallback(
+    async () => {
+      const res = await apiFetch(`/products/${encodeURIComponent(slug)}/`);
+      if (!res.ok) throw new Error(`Failed to fetch product ${slug}: ${res.status}`);
+      return (await res.json()) as Product;
+    },
+    async () => {
+      const product = products.find((item) => item.slug === slug);
+      if (!product) throw new Error(`Product not found: ${slug}`);
+      return delay(product);
+    },
+  );
 }
 
 export async function getCategories(): Promise<Category[]> {
-  return delay([...categories]);
+  return withFallback(
+    async () => {
+      const res = await apiFetch("/categories/");
+      if (!res.ok) throw new Error(`Failed to fetch categories: ${res.status}`);
+      return (await res.json()) as Category[];
+    },
+    () => delay([...categories]),
+  );
 }
 
 export async function getCategory(slug: string): Promise<Category> {
-  const category = categories.find((item) => item.slug === slug);
-  if (!category) throw new Error(`Category not found: ${slug}`);
-  return delay(category);
+  return withFallback(
+    async () => {
+      const res = await apiFetch(`/categories/${encodeURIComponent(slug)}/`);
+      if (!res.ok) throw new Error(`Failed to fetch category ${slug}: ${res.status}`);
+      return (await res.json()) as Category;
+    },
+    async () => {
+      const category = categories.find((item) => item.slug === slug);
+      if (!category) throw new Error(`Category not found: ${slug}`);
+      return delay(category);
+    },
+  );
 }
 
 export interface GetBlogPostsParams {
@@ -109,8 +187,8 @@ export interface GetBlogPostsParams {
   pageSize?: number;
 }
 
-export async function getBlogPosts(
-  params: GetBlogPostsParams = {},
+async function getBlogPostsFallback(
+  params: GetBlogPostsParams,
 ): Promise<PaginatedResponse<BlogPost>> {
   let items = [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
@@ -136,27 +214,83 @@ export async function getBlogPosts(
   return delay(paginate(items, params.page, params.pageSize));
 }
 
+export async function getBlogPosts(
+  params: GetBlogPostsParams = {},
+): Promise<PaginatedResponse<BlogPost>> {
+  return withFallback(
+    async () => {
+      const query = new URLSearchParams();
+      if (params.search) query.set("search", params.search);
+      if (params.tag) query.set("tag", params.tag);
+      if (params.category) query.set("category", params.category);
+      if (params.page) query.set("page", String(params.page));
+      if (params.pageSize) query.set("pageSize", String(params.pageSize));
+
+      const res = await apiFetch(`/blog/?${query.toString()}`);
+      if (!res.ok) throw new Error(`Failed to fetch blog posts: ${res.status}`);
+      return (await res.json()) as PaginatedResponse<BlogPost>;
+    },
+    () => getBlogPostsFallback(params),
+  );
+}
+
 export async function getBlogPost(slug: string): Promise<BlogPost> {
-  const post = blogPosts.find((item) => item.slug === slug);
-  if (!post) throw new Error(`Blog post not found: ${slug}`);
-  return delay(post);
+  return withFallback(
+    async () => {
+      const res = await apiFetch(`/blog/${encodeURIComponent(slug)}/`);
+      if (!res.ok) throw new Error(`Failed to fetch blog post ${slug}: ${res.status}`);
+      return (await res.json()) as BlogPost;
+    },
+    async () => {
+      const post = blogPosts.find((item) => item.slug === slug);
+      if (!post) throw new Error(`Blog post not found: ${slug}`);
+      return delay(post);
+    },
+  );
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
-  return delay(siteSettings);
+  return withFallback(
+    async () => {
+      const res = await apiFetch("/settings/");
+      if (!res.ok) throw new Error(`Failed to fetch site settings: ${res.status}`);
+      return (await res.json()) as SiteSettings;
+    },
+    () => delay(siteSettings),
+  );
 }
 
 export async function getCatalog(): Promise<CatalogFile> {
-  return delay(catalog);
+  return withFallback(
+    async () => {
+      const res = await apiFetch("/catalog/");
+      if (!res.ok) throw new Error(`Failed to fetch catalog: ${res.status}`);
+      return (await res.json()) as CatalogFile;
+    },
+    () => delay(catalog),
+  );
 }
 
 export async function submitContactMessage(
   input: ContactMessageInput,
 ): Promise<ContactMessage> {
-  const message: ContactMessage = {
-    ...input,
-    id: `msg-${Date.now()}`,
-    submittedAt: new Date().toISOString(),
-  };
-  return delay(message);
+  return withFallback(
+    async () => {
+      const res = await apiFetch("/contact/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      if (!res.ok) throw new Error(`Failed to submit contact message: ${res.status}`);
+      return (await res.json()) as ContactMessage;
+    },
+    async () => {
+      const message: ContactMessage = {
+        ...input,
+        id: `msg-${Date.now()}`,
+        submittedAt: new Date().toISOString(),
+      };
+      return delay(message);
+    },
+  );
 }
