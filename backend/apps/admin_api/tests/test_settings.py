@@ -1,0 +1,89 @@
+from django.urls import reverse
+from rest_framework.test import APITestCase
+
+from apps.analytics.models import AdminActivityLog
+from apps.settings.models import ApiCredential, ShippingMethod, SiteSettings
+
+from .base import AdminApiTestMixin
+
+
+class AdminSiteSettingsApiTests(AdminApiTestMixin, APITestCase):
+    def setUp(self):
+        self.client.force_authenticate(user=self.make_staff())
+
+    def test_get_and_patch_singleton(self):
+        response = self.client.get(reverse("admin-settings-site"))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.patch(reverse("admin-settings-site"), {"email": "shop@vybe.ir"}, format="multipart")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SiteSettings.load().email, "shop@vybe.ir")
+
+
+class AdminApiCredentialApiTests(AdminApiTestMixin, APITestCase):
+    def setUp(self):
+        self.client.force_authenticate(user=self.make_staff())
+
+    def test_credentials_never_appear_in_create_response(self):
+        response = self.client.post(
+            reverse("admin-settings-credential-list"),
+            {"service": "zarinpal", "label": "main", "credentials": {"merchantId": "SECRET-KEY-123"}, "isActive": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertNotIn("credentials", response.data)
+        self.assertNotIn("SECRET-KEY-123", str(response.data))
+
+    def test_credentials_never_appear_in_list_or_detail(self):
+        cred = ApiCredential.objects.create(service="kavenegar", credentials='{"apiKey": "TOP-SECRET"}')
+        list_response = self.client.get(reverse("admin-settings-credential-list"))
+        self.assertNotIn("credentials", list_response.data[0])
+        self.assertNotIn("TOP-SECRET", str(list_response.data))
+
+        detail_response = self.client.get(reverse("admin-settings-credential-detail", args=[cred.pk]))
+        self.assertNotIn("credentials", detail_response.data)
+        self.assertNotIn("TOP-SECRET", str(detail_response.data))
+
+    def test_credentials_never_leak_into_activity_log(self):
+        self.client.post(
+            reverse("admin-settings-credential-list"),
+            {"service": "idpay", "credentials": {"apiKey": "LEAK-ME-NOT"}, "isActive": False},
+            format="json",
+        )
+        for entry in AdminActivityLog.objects.all():
+            self.assertNotIn("LEAK-ME-NOT", str(entry.changes))
+
+    def test_credentials_actually_persisted_and_usable(self):
+        response = self.client.post(
+            reverse("admin-settings-credential-list"),
+            {"service": "zarinpal", "credentials": {"merchantId": "ABC"}, "isActive": True},
+            format="json",
+        )
+        cred = ApiCredential.objects.get(pk=response.data["id"])
+        self.assertTrue(cred.has_valid_credentials())
+
+    def test_delete_credential(self):
+        cred = ApiCredential.objects.create(service="kavenegar", credentials='{"apiKey": "x"}')
+        response = self.client.delete(reverse("admin-settings-credential-detail", args=[cred.pk]))
+        self.assertEqual(response.status_code, 204)
+
+
+class AdminShippingMethodApiTests(AdminApiTestMixin, APITestCase):
+    def setUp(self):
+        self.client.force_authenticate(user=self.make_staff())
+
+    def test_crud(self):
+        create = self.client.post(
+            reverse("admin-settings-shipping-list"), {"name": "پست پیشتاز", "cost": 50000}, format="json"
+        )
+        self.assertEqual(create.status_code, 201)
+        method_id = create.data["id"]
+
+        update = self.client.patch(
+            reverse("admin-settings-shipping-detail", args=[method_id]), {"cost": 60000}, format="json"
+        )
+        self.assertEqual(update.data["cost"], 60000)
+
+        delete = self.client.delete(reverse("admin-settings-shipping-detail", args=[method_id]))
+        self.assertEqual(delete.status_code, 204)
+        self.assertFalse(ShippingMethod.objects.filter(pk=method_id).exists())

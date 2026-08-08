@@ -1,0 +1,224 @@
+import django_filters
+from django.db.models import ProtectedError
+from rest_framework import serializers, status
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from apps.catalog.models import ColorOption, Product, ProductImage
+
+from .activity import AdminActivityLogMixin, log_admin_action
+from .permissions import IsAdminStaff
+
+PRODUCT_PREFETCH = ("images", "colors", "attributes__attribute", "attributes__value_option")
+
+
+class AdminProductImageSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductImage
+        fields = ["id", "image", "alt", "order"]
+
+    def get_id(self, obj: ProductImage) -> str:
+        return str(obj.pk)
+
+    def get_image(self, obj: ProductImage) -> str:
+        return obj.resolved_url
+
+
+class AdminColorOptionSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ColorOption
+        fields = ["id", "name", "hex", "in_stock", "order"]
+
+    def get_id(self, obj: ColorOption) -> str:
+        return str(obj.pk)
+
+
+class AdminProductSpecSerializer(serializers.Serializer):
+    label = serializers.SerializerMethodField()
+    value = serializers.SerializerMethodField()
+    unit = serializers.SerializerMethodField()
+
+    def get_label(self, obj) -> str:
+        return obj.attribute.name
+
+    def get_value(self, obj) -> str:
+        return obj.display_value
+
+    def get_unit(self, obj) -> str | None:
+        return obj.attribute.unit or None
+
+
+class AdminProductSerializer(serializers.ModelSerializer):
+    """§2 AdminProduct — stockCount/inStock are read-only everywhere on this
+    surface; the only sanctioned write path is a StockMovement (§13)."""
+
+    id = serializers.SerializerMethodField()
+    dimensions = serializers.SerializerMethodField()
+    weight = serializers.IntegerField(source="weight_g", required=False, default=0)
+    layer_height = serializers.DecimalField(
+        source="layer_height_mm", max_digits=4, decimal_places=2, coerce_to_string=False, required=False, default=0
+    )
+    images = AdminProductImageSerializer(many=True, read_only=True)
+    colors = AdminColorOptionSerializer(many=True, read_only=True)
+    stock_count = serializers.IntegerField(read_only=True)
+    in_stock = serializers.BooleanField(read_only=True)
+    specs = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = [
+            "id", "sku", "slug", "name", "short_description", "description",
+            "price", "cost_price", "category", "images", "colors",
+            "material", "dimensions", "weight", "layer_height",
+            "stock_count", "in_stock", "order", "is_active",
+            "shipping_time", "return_policy", "production_status",
+            "meta_title", "meta_description", "specs",
+            "created_at", "updated_at",
+        ]
+
+    def get_id(self, obj: Product) -> str:
+        return str(obj.pk)
+
+    def get_dimensions(self, obj: Product) -> dict:
+        return {"w": obj.width_mm, "h": obj.height_mm, "d": obj.depth_mm}
+
+    def get_specs(self, obj: Product) -> list[dict]:
+        return AdminProductSpecSerializer(
+            obj.attributes.select_related("attribute", "value_option").order_by("attribute__order"), many=True
+        ).data
+
+    def _apply_dimensions(self, instance: Product) -> None:
+        # `dimensions` is a read-only SerializerMethodField (it maps to 3
+        # flat model columns, not one), so writes are handled by hand here
+        # instead of through validated_data.
+        dimensions = self.initial_data.get("dimensions")
+        if not dimensions:
+            return
+        instance.width_mm = dimensions.get("w", instance.width_mm)
+        instance.height_mm = dimensions.get("h", instance.height_mm)
+        instance.depth_mm = dimensions.get("d", instance.depth_mm)
+
+    def create(self, validated_data):
+        instance = Product(**validated_data)
+        self._apply_dimensions(instance)
+        instance.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        self._apply_dimensions(instance)
+        instance.save()
+        return instance
+
+
+class AdminProductFilter(django_filters.FilterSet):
+    # Query-string param names match ADMIN-API-CONTRACT.md exactly (camelCase)
+    # — camelCase conversion only applies to JSON bodies, not GET params.
+    category = django_filters.NumberFilter(field_name="category_id")
+    search = django_filters.CharFilter(method="filter_search")
+    isActive = django_filters.BooleanFilter(field_name="is_active")
+    productionStatus = django_filters.CharFilter(field_name="production_status")
+    ordering = django_filters.OrderingFilter(
+        fields=(("price", "price"), ("stock_count", "stockCount"), ("order", "order"))
+    )
+
+    class Meta:
+        model = Product
+        fields = []
+
+    def filter_search(self, queryset, name, value):
+        from django.db.models import Q
+
+        return queryset.filter(Q(name__icontains=value) | Q(sku__icontains=value))
+
+
+class AdminProductListCreateView(AdminActivityLogMixin, ListCreateAPIView):
+    permission_classes = [IsAdminStaff]
+    serializer_class = AdminProductSerializer
+    filterset_class = AdminProductFilter
+    queryset = Product.objects.select_related("category").prefetch_related(*PRODUCT_PREFETCH)
+
+
+class AdminProductDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminStaff]
+    serializer_class = AdminProductSerializer
+    queryset = Product.objects.select_related("category").prefetch_related(*PRODUCT_PREFETCH)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            # StockMovement.product is on_delete=PROTECT — a product with
+            # any ledger history (even a single purchase) can't be deleted
+            # outright, or the کاردکس loses its own referent.
+            return Response(
+                {"detail": "این محصول سابقه تراکنش در کاردکس دارد و قابل حذف نیست — به‌جای حذف، غیرفعال کنید."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class AdminProductImageCreateView(APIView):
+    permission_classes = [IsAdminStaff]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, product_id):
+        product = Product.objects.get(pk=product_id)
+        serializer = AdminProductImageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        image = ProductImage.objects.create(
+            product=product,
+            image=request.data.get("image"),
+            alt=serializer.validated_data.get("alt", ""),
+            order=serializer.validated_data.get("order", 1),
+        )
+        log_admin_action(user=request.user, action="create", model_name="ProductImage", object_id=image.pk)
+        return Response(AdminProductImageSerializer(image).data, status=201)
+
+
+class AdminProductImageDeleteView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def delete(self, request, product_id, image_id):
+        ProductImage.objects.filter(pk=image_id, product_id=product_id).delete()
+        log_admin_action(user=request.user, action="delete", model_name="ProductImage", object_id=image_id)
+        return Response(status=204)
+
+
+class AdminColorOptionListCreateView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request, product_id):
+        colors = ColorOption.objects.filter(product_id=product_id)
+        return Response(AdminColorOptionSerializer(colors, many=True).data)
+
+    def post(self, request, product_id):
+        serializer = AdminColorOptionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        color = ColorOption.objects.create(product_id=product_id, **serializer.validated_data)
+        log_admin_action(user=request.user, action="create", model_name="ColorOption", object_id=color.pk)
+        return Response(AdminColorOptionSerializer(color).data, status=201)
+
+
+class AdminColorOptionDetailView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def patch(self, request, product_id, color_id):
+        color = ColorOption.objects.get(pk=color_id, product_id=product_id)
+        serializer = AdminColorOptionSerializer(color, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        log_admin_action(user=request.user, action="update", model_name="ColorOption", object_id=color.pk)
+        return Response(serializer.data)
+
+    def delete(self, request, product_id, color_id):
+        ColorOption.objects.filter(pk=color_id, product_id=product_id).delete()
+        log_admin_action(user=request.user, action="delete", model_name="ColorOption", object_id=color_id)
+        return Response(status=204)
