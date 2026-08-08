@@ -418,7 +418,7 @@ interface ShippingMethod {
 
 ### `POST /api/checkout/`
 
-Requires `Authorization: Bearer <access>` — checkout always requires a logged-in user (the cart itself works for guests, but placing an order does not). Converts the caller's current cart into a `pending` Order and empties the cart. **Never deducts stock** — that only happens once a payment gateway confirms the order `paid` (phase B5); a checkout-created order can still be canceled for free.
+Requires `Authorization: Bearer <access>` — checkout always requires a logged-in user (the cart itself works for guests, but placing an order does not). Converts the caller's current cart into a `pending` Order and empties the cart. **Never deducts stock** — that only happens once a payment gateway confirms the order `paid` (see Payments below); a checkout-created order can still be canceled for free.
 
 Request:
 ```ts
@@ -481,7 +481,47 @@ interface Order extends OrderSummary {
 }
 ```
 
-`payments` is always `[]` until phase B5 wires a real gateway. `items`/`statusLogs` snapshot exactly what happened at the time — they don't change if the underlying product is later edited or deleted.
+`payments` is `[]` until a payment attempt exists for the order (one row is created the moment `POST /api/orders/{number}/pay/` succeeds, regardless of whether it's ever verified). `items`/`statusLogs` snapshot exactly what happened at the time — they don't change if the underlying product is later edited or deleted.
+
+`gateway` on a `Payment` is always one of `"ZARINPAL" | "IDPAY" | "SNAPPPAY" | "DIGIPAY"` — the same codes as `PaymentGateway.code` below. `gatewayName` is a **snapshot** taken when the payment was created, not a live lookup — an order paid through a gateway that's since been disabled (or renamed) still shows the name it showed on the day it was paid.
+
+---
+
+## Payments
+
+### `GET /api/payment-gateways/`
+
+No auth, not paginated. Returns only gateways an admin has turned on **and** that have usable credentials configured — a gateway with `isActive=true` but empty/broken credentials never appears here. **The frontend never hardcodes this list**; it can be empty, have one entry, or up to four.
+
+```ts
+interface PaymentGateway {
+  code: "ZARINPAL" | "IDPAY" | "SNAPPPAY" | "DIGIPAY";
+  name: string;           // "زرین‌پال"
+  logo: string | null;
+  description: string | null;  // e.g. "پرداخت اعتباری" for SnapPay
+  order: number;
+}
+```
+
+Checkout UI must handle three cases, not just "the happy path with 4 gateways":
+- **0 gateways** — payment step is a dead end, not a broken form: show "پرداخت آنلاین موقتاً در دسترس نیست" and a way to contact support; the submit button stays disabled.
+- **1 gateway** — no picker. It's auto-selected and shown as plain info, not a radio button with one option.
+- **2–4 gateways** — a picker, nothing pre-selected, submitting without a choice is its own validation error (not a generic "form incomplete").
+
+### `POST /api/orders/{number}/pay/`
+
+Requires `Authorization: Bearer <access>`, scoped to the caller's own order (`404` otherwise). Starts a payment attempt against a `pending` order and returns a URL to redirect the browser to.
+
+Request: `{ gatewayCode: "ZARINPAL" | "IDPAY" | "SNAPPPAY" | "DIGIPAY" }`
+
+Response `201`: `{ redirectUrl: string }` — `window.location.href = redirectUrl` sends the user to the bank/gateway.
+Response `400`: `{ "gatewayCode": "..." }` if the order isn't `pending`, the gateway code isn't currently offered, or the gateway itself rejected the request. **This re-validates the gateway server-side at this exact moment** — a gateway the user saw in the picker two minutes ago that an admin has since disabled fails here with a specific error, not a generic 500; the frontend should re-fetch `GET /api/payment-gateways/` and ask the user to pick again.
+
+### `GET|POST /api/payments/callback/{gatewayCode}/{token}/`
+
+**Never called by the frontend directly.** The gateway itself redirects (or POSTs) the user's browser here after they finish at the bank. The server verifies the transaction with the gateway server-side, and only on a verified success does the order become `paid` — returning from the gateway is never itself sufficient. This callback is idempotent: a duplicate/retried call for an already-verified payment is a no-op, not a second stock deduction.
+
+Always responds `302`, redirecting into the SPA: `{FRONTEND_URL}/checkout/callback?order={number}&status=success|failed`. The frontend route at `/checkout/callback` reads these two query params to render the outcome — it does not need to poll or re-verify anything itself.
 
 ---
 

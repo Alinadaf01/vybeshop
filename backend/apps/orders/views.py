@@ -1,9 +1,10 @@
 import secrets
 
-from django.http import Http404
+from django.conf import settings as django_settings
+from django.http import Http404, HttpResponseRedirect
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,11 +17,12 @@ from .serializers import (
     AddCartItemSerializer,
     CartSerializer,
     CheckoutInputSerializer,
+    InitiatePaymentSerializer,
     OrderDetailSerializer,
     OrderListSerializer,
     UpdateCartItemSerializer,
 )
-from .services import CheckoutError, checkout
+from .services import CheckoutError, checkout, initiate_payment, verify_payment
 
 CART_SESSION_HEADER = "HTTP_X_CART_SESSION"
 
@@ -150,3 +152,58 @@ class OrderDetailView(RetrieveAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+
+
+class PaymentInitiateView(APIView):
+    """Deliberately separate from CheckoutView — checkout creates the
+    pending order, this starts a payment attempt against it. Splitting them
+    is what lets the gateway re-validation in initiate_payment() happen
+    right before the user is sent to the bank, not back when the order was
+    first created (see BACKEND-TASK.md's "gateway disabled mid-flow" trap)."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, number: str):
+        try:
+            order = Order.objects.get(number=number, user=request.user)
+        except Order.DoesNotExist:
+            raise Http404
+
+        serializer = InitiatePaymentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            payment, redirect_url = initiate_payment(
+                order=order, gateway_code=serializer.validated_data["gateway_code"]
+            )
+        except CheckoutError as exc:
+            field = exc.field or "detail"
+            return Response({field: exc.message}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"redirectUrl": redirect_url}, status=status.HTTP_201_CREATED)
+
+
+class PaymentCallbackView(APIView):
+    """Hit directly by the payment gateway redirecting the user's browser
+    back — never called by the SPA's own fetch layer, so it authenticates
+    via the idempotency token in the URL, not a JWT, and responds with a
+    redirect (not JSON) straight back into the SPA."""
+
+    permission_classes = [AllowAny]
+
+    def _handle(self, request, gateway: str, token: str) -> HttpResponseRedirect:
+        callback_data = {**request.GET.dict(), **request.POST.dict()}
+        try:
+            payment = verify_payment(gateway_code=gateway, idempotency_key=token, callback_data=callback_data)
+        except CheckoutError:
+            return HttpResponseRedirect(f"{django_settings.FRONTEND_BASE_URL}/checkout/callback?status=failed")
+
+        outcome = "success" if payment.status == "success" else "failed"
+        url = f"{django_settings.FRONTEND_BASE_URL}/checkout/callback?order={payment.order.number}&status={outcome}"
+        return HttpResponseRedirect(url)
+
+    def get(self, request, gateway: str, token: str):
+        return self._handle(request, gateway, token)
+
+    def post(self, request, gateway: str, token: str):
+        return self._handle(request, gateway, token)

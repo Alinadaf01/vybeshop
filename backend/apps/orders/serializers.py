@@ -97,6 +97,10 @@ class CheckoutInputSerializer(serializers.Serializer):
     note = serializers.CharField(required=False, allow_blank=True, default="")
 
 
+class InitiatePaymentSerializer(serializers.Serializer):
+    gateway_code = serializers.ChoiceField(choices=["ZARINPAL", "IDPAY", "SNAPPPAY", "DIGIPAY"])
+
+
 # --- Orders (read-only, for the account page's order history) ---
 
 
@@ -128,7 +132,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ["id", "gateway", "amount", "ref_id", "status", "created_at", "verified_at"]
+        fields = ["id", "gateway", "gateway_name", "amount", "ref_id", "status", "created_at", "verified_at"]
 
     def get_id(self, obj: Payment) -> str:
         return str(obj.pk)

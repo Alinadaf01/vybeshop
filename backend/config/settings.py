@@ -129,6 +129,16 @@ CORS_EXPOSE_HEADERS = ["X-Cart-Session"]
 CORS_ALLOW_HEADERS = [*default_headers, "x-cart-session"]
 
 
+# Payment gateways redirect the user's browser to a server-built callback
+# URL (BACKEND_BASE_URL) and, after verify, we redirect them back into the
+# SPA (FRONTEND_BASE_URL) — neither is guessable from the request itself
+# the way DRF's request.build_absolute_uri() would be, since the gateway
+# calls back on its own schedule outside any request context tied to the
+# original browser session.
+BACKEND_BASE_URL = config("BACKEND_BASE_URL", default="http://localhost:8000")
+FRONTEND_BASE_URL = config("FRONTEND_BASE_URL", default="http://localhost:5173")
+
+
 # Django REST Framework
 REST_FRAMEWORK = {
     # Global camelCase in/out per BACKEND-TASK.md — frontend never sees snake_case.
@@ -180,8 +190,10 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 # Run tasks synchronously under `manage.py test` — no worker/broker needed to
-# assert on their effects, and it keeps the test suite from depending on Redis.
-CELERY_TASK_ALWAYS_EAGER = "test" in sys.argv
+# assert on their effects, and it keeps the test suite from depending on
+# Redis. Also overridable via env for local `runserver` dev without Redis
+# running (e.g. Docker Compose not up) — never set in a real deployment.
+CELERY_TASK_ALWAYS_EAGER = config("CELERY_TASK_ALWAYS_EAGER", default="test" in sys.argv, cast=bool)
 
 CELERY_BEAT_SCHEDULE = {
     "aggregate-daily-stats": {

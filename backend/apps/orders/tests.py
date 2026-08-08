@@ -1,3 +1,6 @@
+import json
+from unittest.mock import MagicMock, patch
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -6,8 +9,10 @@ from rest_framework.test import APITestCase
 from apps.catalog.models import Category, Product
 from apps.content.models import Coupon
 from apps.inventory.models import StockMovement
-from apps.orders.models import Cart, CartItem, InvalidOrderTransition, Order, OrderItem
-from apps.settings.models import ShippingMethod
+from apps.notifications.models import SmsLog
+from apps.orders.models import Cart, CartItem, InvalidOrderTransition, Order, OrderItem, Payment
+from apps.orders.providers import PaymentProviderError, get_provider
+from apps.settings.models import ApiCredential, ShippingMethod, SiteSettings
 from apps.users.models import Address, User
 
 
@@ -117,6 +122,14 @@ class OrderStateMachineTests(TestCase):
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, "canceled")
         self.assertEqual(self.product.stock_count, 10)  # nothing was ever deducted
+
+    def test_mark_shipped_without_tracking_code_is_rejected(self):
+        self.order.mark_paid()
+        self.order.start_processing()
+        with self.assertRaises(InvalidOrderTransition):
+            self.order.mark_shipped(tracking_code="")
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, "processing")  # unchanged — never silently shipped
 
     def test_mark_returned_reverses_stock(self):
         self.order.mark_paid()
@@ -362,6 +375,263 @@ class OrderHistoryApiTests(APITestCase):
         self.client.force_authenticate(user=user)
         response = self.client.get(reverse("order-list"))
         self.assertEqual(response.data["count"], 1)
+
+    def test_order_detail_not_found_for_another_users_order(self):
+        user = User.objects.create_user(phone="09121110015", is_verified=True)
+        other = User.objects.create_user(phone="09121110016", is_verified=True)
+        order = Order.objects.create(user=other, shipping_address={}, total=1000)
+
+        self.client.force_authenticate(user=user)
+        response = self.client.get(reverse("order-detail", args=[order.number]))
+        self.assertEqual(response.status_code, 404)
+
+
+def _zarinpal_request_response(authority="A-TEST-AUTHORITY"):
+    mock = MagicMock()
+    mock.json.return_value = {"data": {"code": 100, "authority": authority, "fee_type": "Merchant", "fee": 0}, "errors": []}
+    return mock
+
+
+def _zarinpal_verify_response(code=100, ref_id=987654):
+    mock = MagicMock()
+    mock.json.return_value = {"data": {"code": code, "ref_id": ref_id}, "errors": []}
+    return mock
+
+
+class PaymentProviderTests(TestCase):
+    """Unit-level: the provider classes themselves, network mocked out."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(phone="09121110019", is_verified=True)
+
+    def test_get_provider_raises_for_unknown_code(self):
+        with self.assertRaises(PaymentProviderError):
+            get_provider("NOT-A-GATEWAY")
+
+    def test_provider_raises_when_no_credential_configured(self):
+        with self.assertRaises(PaymentProviderError):
+            get_provider("ZARINPAL")
+
+    def test_provider_raises_when_credential_is_invalid_json(self):
+        ApiCredential.objects.create(service="zarinpal", is_active=True, credentials="")
+        # is_active=True + empty credentials would fail clean(), but this
+        # simulates a row that reached the DB some other way (fixture/bulk).
+        with self.assertRaises(PaymentProviderError):
+            get_provider("ZARINPAL")
+
+    @patch("apps.orders.providers.zarinpal.requests.post")
+    def test_zarinpal_request_builds_startpay_redirect_url(self, mock_post):
+        ApiCredential.objects.create(
+            service="zarinpal", is_active=True, is_sandbox=True, credentials=json.dumps({"merchantId": "m-1"})
+        )
+        mock_post.return_value = _zarinpal_request_response(authority="A-123")
+        provider = get_provider("ZARINPAL")
+        order = Order.objects.create(user=self.user, shipping_address={}, total=100000)
+
+        result = provider.request(order, "http://backend/callback")
+        self.assertEqual(result.authority, "A-123")
+        self.assertIn("sandbox.zarinpal.com/pg/StartPay/A-123", result.redirect_url)
+        # Rial, not Toman — the payload sent to Zarinpal must be x10.
+        sent_payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(sent_payload["amount"], 1000000)
+
+    @patch("apps.orders.providers.zarinpal.requests.post")
+    def test_zarinpal_request_raises_on_gateway_rejection(self, mock_post):
+        ApiCredential.objects.create(
+            service="zarinpal", is_active=True, credentials=json.dumps({"merchantId": "m-1"})
+        )
+        mock = MagicMock()
+        mock.json.return_value = {"data": {}, "errors": {"code": -9, "message": "merchant_id نامعتبر است."}}
+        mock_post.return_value = mock
+        provider = get_provider("ZARINPAL")
+        order = Order.objects.create(user=self.user, shipping_address={}, total=100000)
+
+        with self.assertRaises(PaymentProviderError):
+            provider.request(order, "http://backend/callback")
+
+    @patch("apps.orders.providers.zarinpal.requests.post")
+    def test_zarinpal_verify_uses_payment_amount_not_callback_data(self, mock_post):
+        ApiCredential.objects.create(
+            service="zarinpal", is_active=True, credentials=json.dumps({"merchantId": "m-1"})
+        )
+        mock_post.return_value = _zarinpal_verify_response()
+        provider = get_provider("ZARINPAL")
+        order = Order.objects.create(user=self.user, shipping_address={}, total=250000)
+        payment = Payment.objects.create(
+            order=order, gateway="ZARINPAL", gateway_name="زرین‌پال", amount=250000,
+            authority="A-123", idempotency_key="tok-1",
+        )
+
+        result = provider.verify({"Status": "OK", "Authority": "A-123"}, payment)
+        self.assertTrue(result.success)
+        self.assertEqual(result.ref_id, "987654")
+        sent_payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(sent_payload["amount"], 2500000)  # order.total (Toman) * 10, from `payment`
+
+    def test_zarinpal_verify_returns_failure_without_network_call_when_status_not_ok(self):
+        ApiCredential.objects.create(
+            service="zarinpal", is_active=True, credentials=json.dumps({"merchantId": "m-1"})
+        )
+        provider = get_provider("ZARINPAL")
+        order = Order.objects.create(user=self.user, shipping_address={}, total=250000)
+        payment = Payment.objects.create(
+            order=order, gateway="ZARINPAL", gateway_name="زرین‌پال", amount=250000,
+            authority="A-123", idempotency_key="tok-2",
+        )
+        with patch("apps.orders.providers.zarinpal.requests.post") as mock_post:
+            result = provider.verify({"Status": "NOK", "Authority": "A-123"}, payment)
+            mock_post.assert_not_called()
+        self.assertFalse(result.success)
+
+
+class PaymentFlowApiTests(APITestCase):
+    """End-to-end through the real views: checkout -> initiate payment ->
+    gateway callback -> order paid. Only the outbound HTTP call to Zarinpal
+    itself is mocked."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(phone="09121110020", is_verified=True)
+        self.client.force_authenticate(user=self.user)
+        self.address = Address.objects.create(
+            user=self.user, province="تهران", city="تهران", line="خیابان ولیعصر",
+            postal_code="1234567890", receiver_name="Ali", receiver_phone="09121110020",
+        )
+        self.shipping = ShippingMethod.objects.create(name="پست پیشتاز", cost=50000)
+        category = Category.objects.create(slug="desktop-stands", name="Desktop Stands")
+        self.product = Product.objects.create(
+            sku="TEST-001", slug="test-product", name="Test Product", price=100000, category=category
+        )
+        StockMovement.objects.record(self.product, "purchase", 10, reference="PO-1")
+        Cart.objects.create(user=self.user)
+        self.client.post(reverse("cart-item-create"), {"productId": self.product.pk, "quantity": 2}, format="json")
+        checkout_response = self.client.post(
+            reverse("checkout"),
+            {"addressId": self.address.pk, "shippingMethodId": self.shipping.pk},
+            format="json",
+        )
+        self.order_number = checkout_response.data["number"]
+        self.order = Order.objects.get(number=self.order_number)
+
+        self.credential = ApiCredential.objects.create(
+            service="zarinpal", is_active=True, is_sandbox=True, credentials=json.dumps({"merchantId": "m-1"})
+        )
+
+    @patch("apps.orders.providers.zarinpal.requests.post")
+    def test_initiate_payment_creates_payment_and_returns_redirect_url(self, mock_post):
+        mock_post.return_value = _zarinpal_request_response(authority="A-INIT")
+        response = self.client.post(reverse("payment-initiate", args=[self.order_number]), {"gatewayCode": "ZARINPAL"}, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("A-INIT", response.data["redirectUrl"])
+        payment = Payment.objects.get(order=self.order)
+        self.assertEqual(payment.gateway, "ZARINPAL")
+        self.assertEqual(payment.gateway_name, "زرین‌پال")
+        self.assertEqual(payment.amount, self.order.total)
+        self.assertEqual(payment.status, "pending")
+
+    def test_initiate_payment_rejects_unconfigured_gateway(self):
+        response = self.client.post(reverse("payment-initiate", args=[self.order_number]), {"gatewayCode": "DIGIPAY"}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("gateway_code", response.data)
+        self.assertFalse(Payment.objects.exists())
+
+    def test_initiate_payment_rejects_inactive_gateway(self):
+        self.credential.is_active = False
+        self.credential.save(update_fields=["is_active"])
+        response = self.client.post(reverse("payment-initiate", args=[self.order_number]), {"gatewayCode": "ZARINPAL"}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("gateway_code", response.data)
+
+    def _initiate_and_get_payment(self) -> Payment:
+        with patch("apps.orders.providers.zarinpal.requests.post") as mock_post:
+            mock_post.return_value = _zarinpal_request_response(authority="A-FLOW")
+            self.client.post(reverse("payment-initiate", args=[self.order_number]), {"gatewayCode": "ZARINPAL"}, format="json")
+        return Payment.objects.get(order=self.order)
+
+    def test_callback_verifies_and_marks_order_paid_with_sms(self):
+        site_settings = SiteSettings.load()
+        site_settings.owner_notification_phone = "09120000001,09120000002"
+        site_settings.save(update_fields=["owner_notification_phone"])
+
+        payment = self._initiate_and_get_payment()
+        with patch("apps.orders.providers.zarinpal.requests.post") as mock_post:
+            mock_post.return_value = _zarinpal_verify_response()
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.get(
+                    reverse("payment-callback", args=["ZARINPAL", payment.idempotency_key]),
+                    {"Status": "OK", "Authority": "A-FLOW"},
+                )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(f"order={self.order_number}", response.url)
+        self.assertIn("status=success", response.url)
+
+        payment.refresh_from_db()
+        self.order.refresh_from_db()
+        self.product.refresh_from_db()
+        self.assertEqual(payment.status, "success")
+        self.assertEqual(payment.ref_id, "987654")
+        self.assertEqual(self.order.status, "paid")
+        self.assertEqual(self.product.stock_count, 8)  # 10 - 2, deducted exactly once
+
+        self.assertEqual(SmsLog.objects.filter(template__key="order_paid", phone=self.user.phone).count(), 1)
+        self.assertEqual(SmsLog.objects.filter(template__key="owner_new_order").count(), 2)
+
+    def test_duplicate_callback_does_not_double_deduct_stock_or_resend_sms(self):
+        payment = self._initiate_and_get_payment()
+
+        for _ in range(2):
+            with patch("apps.orders.providers.zarinpal.requests.post") as mock_post:
+                mock_post.return_value = _zarinpal_verify_response()
+                with self.captureOnCommitCallbacks(execute=True):
+                    self.client.get(
+                        reverse("payment-callback", args=["ZARINPAL", payment.idempotency_key]),
+                        {"Status": "OK", "Authority": "A-FLOW"},
+                    )
+
+        self.order.refresh_from_db()
+        self.product.refresh_from_db()
+        self.assertEqual(self.order.status, "paid")
+        self.assertEqual(self.product.stock_count, 8)  # still only deducted once
+        self.assertEqual(SmsLog.objects.filter(template__key="order_paid").count(), 1)
+
+    def test_callback_with_gateway_failure_leaves_order_pending(self):
+        payment = self._initiate_and_get_payment()
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.get(
+                reverse("payment-callback", args=["ZARINPAL", payment.idempotency_key]),
+                {"Status": "NOK", "Authority": "A-FLOW"},
+            )
+
+        self.assertIn("status=failed", response.url)
+        payment.refresh_from_db()
+        self.order.refresh_from_db()
+        self.assertEqual(payment.status, "failed")
+        self.assertEqual(self.order.status, "pending")
+
+    def test_verify_still_works_after_gateway_disabled_between_request_and_callback(self):
+        """The user already paid at the bank — disabling the gateway from
+        new checkouts afterward must not strand their in-flight payment."""
+        payment = self._initiate_and_get_payment()
+        self.credential.is_active = False
+        self.credential.save(update_fields=["is_active"])
+
+        with patch("apps.orders.providers.zarinpal.requests.post") as mock_post:
+            mock_post.return_value = _zarinpal_verify_response()
+            with self.captureOnCommitCallbacks(execute=True):
+                self.client.get(
+                    reverse("payment-callback", args=["ZARINPAL", payment.idempotency_key]),
+                    {"Status": "OK", "Authority": "A-FLOW"},
+                )
+
+        payment.refresh_from_db()
+        self.order.refresh_from_db()
+        self.assertEqual(payment.status, "success")
+        self.assertEqual(self.order.status, "paid")
+
+    def test_callback_with_unknown_token_redirects_to_generic_failure(self):
+        response = self.client.get(reverse("payment-callback", args=["ZARINPAL", "no-such-token"]), {"Status": "OK"})
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("status=failed", response.url)
 
     def test_order_detail_not_found_for_another_users_order(self):
         user = User.objects.create_user(phone="09121110015", is_verified=True)

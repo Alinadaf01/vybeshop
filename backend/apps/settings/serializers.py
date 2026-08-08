@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ShippingMethod, SiteSettings
+from .models import ApiCredential, ShippingMethod, SiteSettings
 
 _SOCIAL_FIELDS = [
     ("INSTAGRAM", "instagram_url"),
@@ -46,3 +46,22 @@ class ShippingMethodSerializer(serializers.ModelSerializer):
 
     def get_id(self, obj: ShippingMethod) -> str:
         return str(obj.pk)
+
+
+class PaymentGatewaySerializer(serializers.ModelSerializer):
+    """See BACKEND-TASK.md §3 — code/name/order here must exactly match
+    apps.orders.providers.PAYMENT_PROVIDERS keys and display_name values."""
+
+    code = serializers.SerializerMethodField()
+    name = serializers.CharField(source="get_service_display")
+    logo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ApiCredential
+        fields = ["code", "name", "logo", "description", "order"]
+
+    def get_code(self, obj: ApiCredential) -> str:
+        return obj.service.upper()
+
+    def get_logo(self, obj: ApiCredential) -> str | None:
+        return obj.logo.url if obj.logo else None

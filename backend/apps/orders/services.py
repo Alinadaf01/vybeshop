@@ -1,7 +1,10 @@
+import secrets
+
+from django.conf import settings as django_settings
 from django.db import models, transaction
 from django.utils import timezone
 
-from .models import Cart, CartItem, Order, OrderItem
+from .models import Cart, CartItem, Order, OrderItem, Payment
 
 
 @transaction.atomic
@@ -156,3 +159,76 @@ def checkout(*, user, address, shipping_method, coupon_code: str | None = None, 
 
     cart.items.all().delete()
     return order
+
+
+def initiate_payment(*, order: Order, gateway_code: str) -> tuple[Payment, str]:
+    """Creates the Payment row only after the gateway itself accepts the
+    request — a failed request() call must never leave an orphan `pending`
+    Payment with no authority behind it."""
+    from apps.settings.models import ApiCredential
+
+    from .providers import PAYMENT_PROVIDERS, PaymentProviderError, get_provider
+
+    if order.status != "pending":
+        raise CheckoutError("این سفارش دیگر قابل پرداخت نیست.", field="detail")
+
+    provider_class = PAYMENT_PROVIDERS.get(gateway_code)
+    if not provider_class or not ApiCredential.objects.filter(
+        service=provider_class.service, is_active=True
+    ).exists():
+        raise CheckoutError(
+            "این درگاه دیگر در دسترس نیست. لطفاً درگاه دیگری انتخاب کنید.", field="gateway_code"
+        )
+
+    try:
+        provider = get_provider(gateway_code)
+    except PaymentProviderError as exc:
+        raise CheckoutError(str(exc), field="gateway_code")
+
+    callback_token = secrets.token_hex(16)
+    callback_url = f"{django_settings.BACKEND_BASE_URL}/api/payments/callback/{gateway_code}/{callback_token}/"
+
+    try:
+        result = provider.request(order, callback_url)
+    except PaymentProviderError as exc:
+        raise CheckoutError(str(exc), field="gateway_code")
+
+    payment = Payment.objects.create(
+        order=order,
+        gateway=gateway_code,
+        gateway_name=provider.display_name,
+        amount=order.total,
+        authority=result.authority,
+        idempotency_key=callback_token,
+    )
+    return payment, result.redirect_url
+
+
+@transaction.atomic
+def verify_payment(*, gateway_code: str, idempotency_key: str, callback_data: dict) -> Payment:
+    """Idempotent by construction: a Payment already `success` short-circuits
+    before any network call, so a duplicate/retried callback (or a user
+    refreshing the return page) can never deduct stock twice — mark_paid()
+    only ever runs once per order regardless of how many times this fires."""
+    from .providers import PaymentProviderError, get_provider
+
+    try:
+        payment = Payment.objects.select_for_update().get(gateway=gateway_code, idempotency_key=idempotency_key)
+    except Payment.DoesNotExist:
+        raise CheckoutError("تراکنش یافت نشد.", field="detail")
+
+    if payment.status == "success":
+        return payment
+
+    try:
+        provider = get_provider(gateway_code)
+        result = provider.verify(callback_data, payment)
+    except PaymentProviderError as exc:
+        payment.mark_failed(raw_response={"error": str(exc)})
+        return payment
+
+    if result.success:
+        payment.mark_success(ref_id=result.ref_id, raw_response=result.raw_response)
+    else:
+        payment.mark_failed(raw_response=result.raw_response)
+    return payment

@@ -116,6 +116,13 @@ class Order(models.Model):
             order=self, from_status=previous, to_status=new_status, note=note, user=user
         )
 
+    def _already_notified_for(self, to_status: str) -> bool:
+        """Belt-and-suspenders check on top of the InvalidOrderTransition
+        guards that already make each forward transition reachable only
+        once per order — if a status log for this transition exists, the
+        SMS for it already went out, full stop."""
+        return self.status_logs.filter(to_status=to_status).exists()
+
     @transaction.atomic
     def mark_paid(self, *, user=None):
         """The only place stock leaves the ledger for a sale — never at order
@@ -125,6 +132,7 @@ class Order(models.Model):
 
         if self.status != "pending":
             raise InvalidOrderTransition("فقط سفارش pending می‌تواند paid شود.")
+        already_notified = self._already_notified_for("paid")
         for item in self.items.select_related("product"):
             if item.product_id:
                 StockMovement.objects.record(
@@ -132,6 +140,8 @@ class Order(models.Model):
                 )
         self.paid_at = timezone.now()
         self._transition("paid", user=user, extra_fields=["paid_at"])
+        if not already_notified:
+            transaction.on_commit(lambda: _send_order_paid_notifications(self))
 
     @transaction.atomic
     def start_processing(self, *, user=None):
@@ -140,12 +150,20 @@ class Order(models.Model):
         self._transition("processing", user=user)
 
     @transaction.atomic
-    def mark_shipped(self, *, tracking_code: str = "", user=None):
+    def mark_shipped(self, *, tracking_code: str, user=None):
         if self.status != "processing":
             raise InvalidOrderTransition("فقط سفارش processing می‌تواند shipped شود.")
+        if not tracking_code or not tracking_code.strip():
+            # Enforced here, not just in the admin form — a status change to
+            # "shipped" with no tracking code means an SMS with a blank code
+            # goes to the customer, which is worse than not shipping it yet.
+            raise InvalidOrderTransition("کد رهگیری برای ثبت ارسال الزامی است.")
+        already_notified = self._already_notified_for("shipped")
         self.tracking_code = tracking_code
         self.shipped_at = timezone.now()
         self._transition("shipped", note=tracking_code, user=user, extra_fields=["tracking_code", "shipped_at"])
+        if not already_notified:
+            transaction.on_commit(lambda: _send_order_shipped_notification(self))
 
     @transaction.atomic
     def mark_delivered(self, *, user=None):
@@ -182,6 +200,33 @@ class Order(models.Model):
                     item.product, "return_in", item.quantity, reference=self.number, user=user
                 )
         self._transition("returned", user=user)
+
+
+def _send_order_paid_notifications(order: "Order") -> None:
+    """Two SMS, both scoped to this exact moment — never at order creation,
+    since a pending order might just be an abandoned cart. See
+    BACKEND-TASK.md §3.5."""
+    from apps.notifications.services import NotificationService
+    from apps.settings.models import SiteSettings
+
+    NotificationService.send_sms(order.user.phone, "order_paid", {"orderNumber": order.number})
+
+    site_settings = SiteSettings.load()
+    if not site_settings.notify_owner_new_order:
+        return
+    customer_name = f"{order.user.first_name} {order.user.last_name}".strip() or order.user.phone
+    item_count = sum(order.items.values_list("quantity", flat=True))
+    context = {"orderNumber": order.number, "total": order.total, "itemCount": item_count, "customerName": customer_name}
+    for phone in site_settings.owner_notification_phone_list:
+        NotificationService.send_sms(phone, "owner_new_order", context)
+
+
+def _send_order_shipped_notification(order: "Order") -> None:
+    from apps.notifications.services import NotificationService
+
+    NotificationService.send_sms(
+        order.user.phone, "order_shipped", {"orderNumber": order.number, "trackingCode": order.tracking_code}
+    )
 
 
 class OrderStatusLog(models.Model):
@@ -222,11 +267,14 @@ class OrderItem(models.Model):
         return self.price * self.quantity
 
 
+# Values match PaymentProvider.code in apps/orders/providers/ exactly —
+# these are also what the public GET /api/payment-gateways/ endpoint and
+# frontend both call the gateway "code".
 PAYMENT_GATEWAY_CHOICES = [
-    ("zarinpal", "زرین‌پال"),
-    ("idpay", "آیدی‌پی"),
-    ("snapppay", "اسنپ‌پی"),
-    ("digipay", "دیجی‌پی"),
+    ("ZARINPAL", "زرین‌پال"),
+    ("IDPAY", "آیدی‌پی"),
+    ("SNAPPPAY", "اسنپ‌پی"),
+    ("DIGIPAY", "دیجی‌پی"),
 ]
 
 PAYMENT_STATUS_CHOICES = [
@@ -239,6 +287,11 @@ PAYMENT_STATUS_CHOICES = [
 class Payment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="payments")
     gateway = models.CharField(max_length=20, choices=PAYMENT_GATEWAY_CHOICES)
+    # Snapshotted from PaymentProvider.display_name at creation time — the
+    # gateway's *code* is a stable Python constant, but its human-readable
+    # name is still copy that could change later, and a paid order must
+    # keep showing whatever name it showed the day it was paid.
+    gateway_name = models.CharField(max_length=50, blank=True)
     amount = models.PositiveIntegerField()
     authority = models.CharField(max_length=100, blank=True)
     ref_id = models.CharField(max_length=100, blank=True)
@@ -250,6 +303,27 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"{self.order.number} — {self.gateway} ({self.status})"
+
+    @transaction.atomic
+    def mark_success(self, *, ref_id: str, raw_response: dict, user=None):
+        """The only place a Payment becomes success — always followed by
+        Order.mark_paid() in the same transaction so a payment can never be
+        success while its order stays pending."""
+        if self.status == "success":
+            return  # already verified once — duplicate callback, no-op
+        self.status = "success"
+        self.ref_id = ref_id
+        self.raw_response = raw_response
+        self.verified_at = timezone.now()
+        self.save(update_fields=["status", "ref_id", "raw_response", "verified_at"])
+        self.order.mark_paid(user=user)
+
+    def mark_failed(self, *, raw_response: dict):
+        if self.status != "pending":
+            return
+        self.status = "failed"
+        self.raw_response = raw_response
+        self.save(update_fields=["status", "raw_response"])
 
 
 RETURN_STATUS_CHOICES = [

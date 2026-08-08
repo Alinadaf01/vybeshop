@@ -1,3 +1,6 @@
+import json
+
+from django.core.exceptions import ValidationError
 from django.db import models
 from encrypted_model_fields.fields import EncryptedTextField
 
@@ -35,6 +38,13 @@ class SiteSettings(models.Model):
     google_analytics_id = models.CharField(max_length=50, blank=True)
     google_tag_manager_id = models.CharField(max_length=50, blank=True)
 
+    owner_notification_phone = models.CharField(
+        max_length=200, blank=True, help_text="یک یا چند شماره، جدا با کاما — مثلاً 09120000000,09121111111"
+    )
+    notify_owner_new_order = models.BooleanField(
+        default=True, help_text="پیامک به کارفرما پس از پرداخت موفق هر سفارش (نه هنگام ثبت سفارش pending)"
+    )
+
     class Meta:
         verbose_name_plural = "site settings"
 
@@ -53,6 +63,10 @@ class SiteSettings(models.Model):
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj
 
+    @property
+    def owner_notification_phone_list(self) -> list[str]:
+        return [p.strip() for p in self.owner_notification_phone.split(",") if p.strip()]
+
 
 API_CREDENTIAL_SERVICE_CHOICES = [
     ("kavenegar", "کاوه‌نگار"),
@@ -68,16 +82,49 @@ class ApiCredential(models.Model):
 
     service = models.CharField(max_length=20, choices=API_CREDENTIAL_SERVICE_CHOICES)
     label = models.CharField(max_length=100, blank=True)
-    credentials = EncryptedTextField(help_text="JSON string, e.g. {\"apiKey\": \"...\", \"merchantId\": \"...\"}")
+    # blank=True on purpose — an admin can add a disabled placeholder row
+    # before keys exist. clean() below is what actually requires it, and
+    # only once isActive=True.
+    credentials = EncryptedTextField(
+        blank=True, help_text="JSON string, e.g. {\"apiKey\": \"...\", \"merchantId\": \"...\"}"
+    )
     is_active = models.BooleanField(default=True, help_text="controls checkout-time visibility")
     is_sandbox = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
+    # Only meaningful for payment gateways — shown on the checkout page's
+    # gateway picker. Unused (blank) for kavenegar.
+    logo = models.ImageField(upload_to="settings/gateways/", blank=True, null=True)
+    description = models.CharField(max_length=150, blank=True, help_text='مثلاً «پرداخت اعتباری» برای اسنپ‌پی')
 
     class Meta:
         ordering = ["service", "order"]
 
     def __str__(self):
         return f"{self.get_service_display()} ({self.label or 'default'})"
+
+    def clean(self):
+        # An admin flipping isActive=True on a row with empty/malformed
+        # credentials would otherwise silently expose a broken gateway (or a
+        # broken SMS provider) to real traffic — catch it at save time.
+        if not self.is_active:
+            return
+        if not self.credentials or not self.credentials.strip():
+            raise ValidationError({"is_active": "بدون credentials نمی‌توان این سرویس را فعال کرد."})
+        try:
+            data = json.loads(self.credentials)
+        except (TypeError, ValueError) as exc:
+            raise ValidationError({"credentials": "credentials باید JSON معتبر باشد."}) from exc
+        if not isinstance(data, dict) or not data:
+            raise ValidationError({"credentials": "credentials باید یک JSON object غیرخالی باشد."})
+
+    def has_valid_credentials(self) -> bool:
+        if not self.credentials or not self.credentials.strip():
+            return False
+        try:
+            data = json.loads(self.credentials)
+        except (TypeError, ValueError):
+            return False
+        return isinstance(data, dict) and bool(data)
 
 
 class ShippingMethod(models.Model):

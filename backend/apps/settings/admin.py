@@ -14,7 +14,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
 @admin.register(ApiCredential)
 class ApiCredentialAdmin(admin.ModelAdmin):
-    list_display = ["service", "label", "is_active", "is_sandbox", "order"]
+    list_display = ["service", "label", "description", "is_active", "is_sandbox", "order"]
     list_filter = ["service", "is_active", "is_sandbox"]
 
 

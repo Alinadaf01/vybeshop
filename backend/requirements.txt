@@ -14,3 +14,4 @@ python-decouple>=3.8
 dj-database-url>=2.2
 django-encrypted-model-fields>=0.6
 kavenegar>=1.1.2
+requests>=2.31
