@@ -7,13 +7,19 @@ import { Image } from "@/components/ui/Image";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Seo } from "@/components/seo/Seo";
-import { getCart, updateCartItem, removeCartItem } from "@/lib/api";
+import { getCart, updateCartItem, removeCartItem, addFavorite } from "@/lib/api";
 import { formatPrice } from "@/lib/formatters";
+import { useAuth } from "@/lib/AuthContext";
+import { useToast } from "@/lib/useToast";
+import { loadFavoriteIds, saveFavoriteIds } from "@/lib/favoritesStorage";
 import { cartContent as c } from "@/content/cart";
+import { favoritesContent } from "@/content/favorites";
 import type { CartItem } from "@/types/cart";
 
 export default function CartPage() {
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const { data: cart, isLoading, isError } = useQuery({ queryKey: ["cart"], queryFn: getCart });
 
   const updateMutation = useMutation({
@@ -24,6 +30,21 @@ export default function CartPage() {
   const removeMutation = useMutation({
     mutationFn: (id: string) => removeCartItem(id),
     onSuccess: (updated) => queryClient.setQueryData(["cart"], updated),
+  });
+
+  const moveToFavoritesMutation = useMutation({
+    mutationFn: async (item: CartItem) => {
+      if (isAuthenticated) {
+        const updatedFavorites = await addFavorite(item.product.id);
+        queryClient.setQueryData(["favorites"], updatedFavorites);
+      } else {
+        const ids = loadFavoriteIds();
+        if (!ids.includes(item.product.id)) saveFavoriteIds([...ids, item.product.id]);
+      }
+      return removeCartItem(item.id);
+    },
+    onSuccess: (updatedCart) => queryClient.setQueryData(["cart"], updatedCart),
+    onError: () => showToast({ variant: "danger", message: favoritesContent.toast.error }),
   });
 
   async function clearCart() {
@@ -96,6 +117,7 @@ export default function CartPage() {
                   bordered={index < cart.items.length - 1}
                   onQuantityChange={(quantity) => updateMutation.mutate({ id: item.id, quantity })}
                   onRemove={() => removeMutation.mutate(item.id)}
+                  onMoveToFavorites={() => moveToFavoritesMutation.mutate(item)}
                 />
               ))}
             </div>
@@ -149,11 +171,13 @@ function CartItemRow({
   bordered,
   onQuantityChange,
   onRemove,
+  onMoveToFavorites,
 }: {
   item: CartItem;
   bordered: boolean;
   onQuantityChange: (quantity: number) => void;
   onRemove: () => void;
+  onMoveToFavorites: () => void;
 }) {
   return (
     <div
@@ -195,6 +219,13 @@ function CartItemRow({
             className="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite"
           >
             {c.remove}
+          </button>
+          <button
+            type="button"
+            onClick={onMoveToFavorites}
+            className="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite"
+          >
+            {c.moveToFavorites}
           </button>
         </div>
       </div>

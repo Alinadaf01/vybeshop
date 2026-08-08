@@ -421,6 +421,34 @@ export async function deleteAddress(id: string): Promise<void> {
   if (!res.ok) throw new Error("حذف آدرس ناموفق بود.");
 }
 
+// Favorites — per-user only, same reasoning as auth/addresses: no fake-data
+// fallback. Guests keep their picks in localStorage (see favoritesStorage.ts)
+// and never call these; every function here requires a logged-in user.
+
+export async function getFavorites(): Promise<Product[]> {
+  const res = await authorizedFetch("/favorites/");
+  if (!res.ok) throw new Error("دریافت علاقه‌مندی‌ها ناموفق بود.");
+  return res.json();
+}
+
+export async function addFavorite(productId: string): Promise<Product[]> {
+  const res = await authorizedFetch("/favorites/", { method: "POST", body: JSON.stringify({ productId }) });
+  if (!res.ok) throw new Error("افزودن به علاقه‌مندی‌ها ناموفق بود.");
+  return res.json();
+}
+
+export async function removeFavorite(productId: string): Promise<Product[]> {
+  const res = await authorizedFetch(`/favorites/${productId}/`, { method: "DELETE" });
+  if (!res.ok) throw new Error("حذف از علاقه‌مندی‌ها ناموفق بود.");
+  return res.json();
+}
+
+export async function mergeFavorites(productIds: string[]): Promise<Product[]> {
+  const res = await authorizedFetch("/favorites/merge/", { method: "POST", body: JSON.stringify({ productIds }) });
+  if (!res.ok) throw new Error("ادغام علاقه‌مندی‌ها ناموفق بود.");
+  return res.json();
+}
+
 // Fire-and-forget — must never throw or slow down navigation. No-ops when
 // no backend is configured (matches every other function's fallback story,
 // except here there's simply nothing to record instead of fake data).

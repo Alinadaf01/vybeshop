@@ -18,6 +18,7 @@ export const accountContent = {
     orders: "سفارش‌های من",
     detail: "جزئیات سفارش",
     addresses: "آدرس‌ها",
+    favorites: "علاقه‌مندی‌ها",
     profile: "اطلاعات حساب",
   },
   orders: {

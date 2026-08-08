@@ -9,16 +9,31 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ProductCard } from "@/components/product/ProductCard";
 import { Seo } from "@/components/seo/Seo";
-import { getMe, updateMe, getAddresses, createAddress, updateAddress, deleteAddress, getOrders, getOrder } from "@/lib/api";
+import {
+  getMe,
+  updateMe,
+  getAddresses,
+  createAddress,
+  updateAddress,
+  deleteAddress,
+  getOrders,
+  getOrder,
+  getFavorites,
+  removeFavorite,
+} from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import { useToast } from "@/lib/useToast";
 import { profileFormSchema, addressFormSchema, type ProfileFormValues, type AddressFormValues } from "@/lib/authSchema";
 import { accountContent as c, orderStatusLabel } from "@/content/account";
+import { favoritesContent as fc } from "@/content/favorites";
 import { formatPrice, formatJalaliDateTime } from "@/lib/formatters";
 import type { Address } from "@/types/address";
 import type { OrderStatus, OrderSummary } from "@/types/order";
 
-type Tab = "orders" | "detail" | "addresses" | "profile";
+type Tab = "orders" | "detail" | "addresses" | "favorites" | "profile";
 
 const STATUS_BADGE: Record<OrderStatus, string> = {
   pending: "border border-silver text-gray-800",
@@ -64,6 +79,7 @@ export default function AccountPage() {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   const [tab, setTab] = useState<Tab>("orders");
   const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>("all");
@@ -157,6 +173,20 @@ export default function AccountPage() {
     setShowAddressForm(true);
   }
 
+  // --- Favorites ---
+  const {
+    data: favorites,
+    isLoading: favoritesLoading,
+    isError: favoritesLoadError,
+    refetch: refetchFavorites,
+  } = useQuery({ queryKey: ["favorites"], queryFn: getFavorites });
+
+  const removeFavoriteMutation = useMutation({
+    mutationFn: (productId: string) => removeFavorite(productId),
+    onSuccess: (updated) => queryClient.setQueryData(["favorites"], updated),
+    onError: () => showToast({ variant: "danger", message: fc.toast.error }),
+  });
+
   // --- Profile ---
   const { data: me } = useQuery({ queryKey: ["me"], queryFn: getMe, initialData: user ?? undefined });
 
@@ -205,7 +235,7 @@ export default function AccountPage() {
 
       <section className="flex flex-col gap-8 pb-14 md:pb-20">
         <div className="flex gap-6 overflow-x-auto border-b border-gray-100" role="tablist">
-          {(["orders", "detail", "addresses", "profile"] as Tab[]).map((id) => (
+          {(["orders", "detail", "addresses", "favorites", "profile"] as Tab[]).map((id) => (
             <button
               key={id}
               type="button"
@@ -635,6 +665,59 @@ export default function AccountPage() {
                   </div>
                 )}
               </form>
+            )}
+          </div>
+        )}
+
+        {tab === "favorites" && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="m-0 text-h3 font-semibold">{fc.account.heading}</h2>
+              <span className="text-small text-gray-800">{fc.account.countTemplate(favorites?.length ?? 0)}</span>
+            </div>
+
+            {favoritesLoading && <p className="m-0 text-body text-gray-800">{fc.account.loading}</p>}
+
+            {favoritesLoadError && (
+              <div className="flex flex-col items-start gap-3 rounded-xl border border-gray-100 bg-white p-12">
+                <p className="m-0 text-body text-danger-ink">{fc.account.loadError}</p>
+                <Button variant="secondary" onClick={() => refetchFavorites()}>
+                  {fc.account.retry}
+                </Button>
+              </div>
+            )}
+
+            {!favoritesLoading && !favoritesLoadError && favorites && favorites.length === 0 && (
+              <EmptyState
+                title={fc.account.empty.heading}
+                description={fc.account.empty.body}
+                action={
+                  <Link
+                    to="/products"
+                    className="inline-flex h-12 items-center rounded-md bg-graphite px-6 text-body font-medium text-fog-white no-underline hover:bg-ink"
+                  >
+                    {fc.account.empty.cta}
+                  </Link>
+                }
+              />
+            )}
+
+            {!favoritesLoading && !favoritesLoadError && favorites && favorites.length > 0 && (
+              <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
+                {favorites.map((product) => (
+                  <div key={product.id} className="relative">
+                    <ProductCard product={product} />
+                    <button
+                      type="button"
+                      onClick={() => removeFavoriteMutation.mutate(product.id)}
+                      aria-label={fc.account.removeAriaTemplate(product.name)}
+                      className="absolute end-2 top-2 grid size-8 place-items-center rounded-full border border-gray-100 bg-white text-gray-800 hover:border-danger-ink hover:text-danger-ink"
+                    >
+                      &#10005;
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         )}

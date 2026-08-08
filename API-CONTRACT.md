@@ -396,6 +396,30 @@ Response: full updated `Cart`.
 
 ---
 
+## Favorites
+
+Favorites are **per-user only** — there is no guest favorite row on the server. Guests keep their picks in `localStorage` (a plain array of product IDs) and every endpoint here requires `Authorization: Bearer <access>`. On login, POST the locally-saved IDs to `merge/` once; after that, clear `localStorage` and use these endpoints normally.
+
+Every endpoint below (including `POST`/`DELETE`) returns the user's **full, updated favorites list as an array of `Product`** (same shape as `GET /api/products/{slug}/`), most-recently-favorited first — not just the changed row — so the frontend can `setQueryData` directly without a second request.
+
+### `GET /api/favorites/`
+
+Response: `Product[]`.
+
+### `POST /api/favorites/`
+
+Request: `{ productId: string }`. Adding a product that's already favorited is a no-op (idempotent), not an error. `404` if the product doesn't exist. Response: `Product[]`, status `201`.
+
+### `DELETE /api/favorites/{productId}/`
+
+Removing a product that was never favorited is a no-op, not an error. Response: `Product[]`.
+
+### `POST /api/favorites/merge/`
+
+Request: `{ productIds: string[] }`. Bulk-adds every ID that exists and isn't already favorited; unknown IDs are silently skipped, existing favorites are left untouched (never duplicated). Response: `Product[]`.
+
+---
+
 ## Shipping methods
 
 ### `GET /api/shipping-methods/`

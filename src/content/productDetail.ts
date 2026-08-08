@@ -12,6 +12,7 @@ export const productDetailContent = {
   viewCart: "مشاهده سبد",
   outOfStock: "ناموجود",
   saveToFavorites: "ذخیره در علاقه‌مندی‌ها",
+  savedToFavorites: "ذخیره شد",
   share: "SHARE",
   shipping: { label: "ارسال", value: "۲ تا ۴ روز کاری، تهران و شهرستان" },
   returns: { label: "مرجوعی", value: "۷ روز، بدون قید" },

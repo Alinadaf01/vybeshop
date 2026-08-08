@@ -6,6 +6,7 @@ export const cartContent = {
   continueShoppingLink: "ادامه خرید",
   clearCart: "خالی کردن سبد",
   remove: "حذف",
+  moveToFavorites: "انتقال به علاقه‌مندی‌ها",
   summary: {
     heading: "خلاصه سفارش",
     subtotalLabel: "جمع کالاها",

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProduct, addCartItem } from "@/lib/api";
 import { useToast } from "@/lib/useToast";
+import { useFavoriteToggle } from "@/lib/useFavoriteToggle";
 import { categories } from "@/data/categories";
 import { getProductsByCategory } from "@/data/products";
 import { formatPrice, formatDimensions } from "@/lib/formatters";
@@ -53,6 +54,11 @@ export default function ProductDetailPage() {
       showToast({ variant: "danger", message: c.addToCartErrorToast });
     },
   });
+
+  // Called unconditionally (before the loading/error early returns) since
+  // hooks can't be conditional — the hook itself tolerates an empty id fine,
+  // it's only used once the user can actually click the button below.
+  const favoriteToggle = useFavoriteToggle(product?.id ?? "");
 
   if (isError) return <NotFoundPage />;
   if (isLoading || !product) return <PageLoadingFallback />;
@@ -167,8 +173,14 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Button variant="secondary" className="flex-1">
-                {c.saveToFavorites}
+              <Button
+                variant="secondary"
+                className={"flex-1" + (favoriteToggle.isFavorited ? " border-graphite text-graphite" : "")}
+                disabled={favoriteToggle.isPending}
+                aria-pressed={favoriteToggle.isFavorited}
+                onClick={favoriteToggle.toggle}
+              >
+                {favoriteToggle.isFavorited ? c.savedToFavorites : c.saveToFavorites}
               </Button>
               <Button variant="secondary" className="font-mono text-micro">
                 {c.share}

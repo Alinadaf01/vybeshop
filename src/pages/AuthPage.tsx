@@ -2,14 +2,16 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { Seo } from "@/components/seo/Seo";
-import { requestOtp, verifyOtp, updateMe } from "@/lib/api";
+import { requestOtp, verifyOtp, updateMe, mergeFavorites } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import { loadFavoriteIds, clearFavoriteIds } from "@/lib/favoritesStorage";
 import { phoneFormSchema, profileFormSchema, type PhoneFormValues, type ProfileFormValues } from "@/lib/authSchema";
 import { authContent as c } from "@/content/auth";
 
@@ -23,6 +25,7 @@ function formatPhoneDisplay(phone: string): string {
 export default function AuthPage() {
   const auth = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("");
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
@@ -102,6 +105,20 @@ export default function AuthPage() {
       const result = await verifyOtp(phone, code);
       auth.login(result);
       setStep(result.isNewUser ? "profile" : "done");
+
+      // Merge on login, same idea as the cart's guest-session merge — fire
+      // and forget so a slow/failed merge never blocks the login flow.
+      // Local IDs are only cleared once the server confirms the merge, so a
+      // failure just means we retry on the next login instead of losing them.
+      const localFavoriteIds = loadFavoriteIds();
+      if (localFavoriteIds.length > 0) {
+        mergeFavorites(localFavoriteIds)
+          .then((updated) => {
+            queryClient.setQueryData(["favorites"], updated);
+            clearFavoriteIds();
+          })
+          .catch(() => undefined);
+      }
     } catch (error) {
       setOtpError(error instanceof Error ? error.message : "کد وارد‌شده اشتباه یا منقضی است.");
       setOtpDigits(Array(OTP_LENGTH).fill(""));
