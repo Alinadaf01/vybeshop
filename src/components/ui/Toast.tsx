@@ -62,14 +62,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {createPortal(
-        <div className="fixed bottom-6 start-6 z-[200] flex w-full max-w-sm flex-col gap-3">
-          {toasts.map((toast) => (
-            <ToastItem key={toast.id} {...toast} />
-          ))}
-        </div>,
-        document.body,
-      )}
+      {/* document doesn't exist in Node — this now also renders during the
+          build-time prerender pass (see PrerenderLayout), and there are
+          never any toasts to show there anyway. */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed bottom-6 start-6 z-[200] flex w-full max-w-sm flex-col gap-3">
+            {toasts.map((toast) => (
+              <ToastItem key={toast.id} {...toast} />
+            ))}
+          </div>,
+          document.body,
+        )}
     </ToastContext.Provider>
   );
 }

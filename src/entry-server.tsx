@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { StaticRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { PrerenderLayout } from "@/app/PrerenderLayout";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
@@ -11,7 +11,6 @@ import { getRouteHead, listAllRoutes, type RouteHead } from "@/lib/seoRoutes";
 import { getSiteSettings, getCatalog } from "@/lib/api";
 
 export { listAllRoutes };
-import { SkipSeoProvider } from "@/lib/prerenderContext";
 
 const BODY_PAGES: Record<string, () => ReactElement> = {
   "/about": AboutPage,
@@ -47,15 +46,11 @@ export async function renderRoute(path: string): Promise<PrerenderResult> {
   await Promise.all(prefetches);
 
   const body = renderToStaticMarkup(
-    <SkipSeoProvider value={true}>
-      <QueryClientProvider client={queryClient}>
-        <StaticRouter location={path}>
-          <PrerenderLayout>
-            <Page />
-          </PrerenderLayout>
-        </StaticRouter>
-      </QueryClientProvider>
-    </SkipSeoProvider>,
+    <StaticRouter location={path}>
+      <PrerenderLayout queryClient={queryClient}>
+        <Page />
+      </PrerenderLayout>
+    </StaticRouter>,
   );
   return { head, body };
 }
