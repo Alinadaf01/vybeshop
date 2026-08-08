@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import BlogPost, CatalogEdition, CatalogFile, CatalogSpread, ContactMessage, Coupon, ProductReview
+from .models import BlogPost, CatalogEdition, CatalogFile, CatalogSpread, ContactMessage, Coupon, Favorite, ProductReview
 
 
 @admin.register(BlogPost)
@@ -31,6 +31,13 @@ class CouponAdmin(admin.ModelAdmin):
     list_display = ["code", "type", "value", "used_count", "usage_limit", "is_active"]
     list_filter = ["type", "is_active"]
     search_fields = ["code"]
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ["user", "product", "created_at"]
+    list_filter = ["created_at"]
+    search_fields = ["user__phone", "product__name"]
 
 
 class CatalogSpreadInline(admin.TabularInline):
