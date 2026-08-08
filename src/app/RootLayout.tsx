@@ -1,11 +1,20 @@
-import { useState } from "react";
-import { Outlet, ScrollRestoration } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { Footer } from "@/components/layout/Footer";
+import { reportPageView } from "@/lib/api";
 
 export function RootLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // useEffect never runs during the build-time prerender pass (only the
+  // render phase does), so this is safely client-only despite living in a
+  // component that also gets prerendered for 4 static routes.
+  useEffect(() => {
+    reportPageView(location.pathname);
+  }, [location.pathname]);
 
   return (
     <div className="flex min-h-screen flex-col bg-fog-white text-graphite">

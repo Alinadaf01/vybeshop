@@ -413,3 +413,15 @@ export async function deleteAddress(id: string): Promise<void> {
   const res = await authorizedFetch(`/addresses/${id}/`, { method: "DELETE" });
   if (!res.ok) throw new Error("حذف آدرس ناموفق بود.");
 }
+
+// Fire-and-forget — must never throw or slow down navigation. No-ops when
+// no backend is configured (matches every other function's fallback story,
+// except here there's simply nothing to record instead of fake data).
+export function reportPageView(path: string, productSlug?: string): void {
+  if (!API_BASE_URL) return;
+  fetch(`${API_BASE_URL}/analytics/pageview/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path, referrer: document.referrer, productSlug }),
+  }).catch(() => undefined);
+}

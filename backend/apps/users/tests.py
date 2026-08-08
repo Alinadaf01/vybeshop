@@ -2,7 +2,10 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
+from apps.catalog.models import Category, Product
+from apps.inventory.models import StockMovement
 from apps.notifications.models import SmsLog
+from apps.orders.models import Cart, CartItem
 from apps.users.models import Address, OTPCode, User
 
 
@@ -39,6 +42,29 @@ class OtpFlowTests(APITestCase):
         self.assertTrue(response.data["isNewUser"])
         user = User.objects.get(phone="09121110003")
         self.assertTrue(user.is_verified)
+
+    def test_verify_merges_guest_cart_by_session_key(self):
+        category = Category.objects.create(slug="desktop-stands", name="Desktop Stands")
+        product = Product.objects.create(
+            sku="TEST-001", slug="test-product", name="Test Product", price=100000, category=category
+        )
+        StockMovement.objects.record(product, "purchase", 10, reference="PO-1")
+        guest_cart = Cart.objects.create(session_key="guest-session-abc")
+        CartItem.objects.create(cart=guest_cart, product=product, quantity=2)
+
+        OTPCode.issue("09121110020", "444444")
+        response = self.client.post(
+            reverse("otp-verify"),
+            {"phone": "09121110020", "code": "444444", "cartSessionKey": "guest-session-abc"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        user = User.objects.get(phone="09121110020")
+        user_cart = Cart.objects.get(user=user)
+        self.assertEqual(user_cart.items.count(), 1)
+        self.assertEqual(user_cart.items.first().quantity, 2)
+        self.assertFalse(Cart.objects.filter(pk=guest_cart.pk).exists())
 
     def test_verify_same_code_twice_fails_second_time(self):
         """A used OTP must not be replayable — same guard class as duplicate payment callbacks."""

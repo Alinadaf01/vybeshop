@@ -295,7 +295,7 @@ Response `429`: `{ detail: string }` — rate-limited at 3 requests / 10 minutes
 
 ### `POST /api/auth/otp/verify/`
 
-Request: `{ phone: string; code: string }`
+Request: `{ phone: string; code: string; cartSessionKey?: string }` — pass the guest cart's session key (see Cart below) to merge it into the user's cart as part of logging in; omit it if there's no guest cart to merge.
 
 Response `200`:
 ```ts
@@ -355,10 +355,150 @@ Standard CRUD, same ownership scoping. `404` if the id doesn't belong to the cal
 
 ---
 
+## Cart
+
+A cart is either **guest** (identified by a client-generated session key, no login required) or **owned by a logged-in user** — never both. There is no separate "merge" endpoint: send the guest session key as `cartSessionKey` in the `POST /api/auth/otp/verify/` body (see Auth above) and the backend merges it into the user's cart as part of logging in.
+
+**Identifying a guest cart:** send header `X-Cart-Session: <key>` on every cart request. If you don't have one yet, omit the header — the first response includes a new key in the `X-Cart-Session` **response** header; store it (e.g. `localStorage`) and send it on every subsequent request. Once the user is authenticated, stop sending this header entirely — `Authorization: Bearer <access>` alone identifies their cart.
+
+```ts
+interface Cart {
+  id: string;
+  items: CartItem[];
+  itemCount: number;   // sum of quantities
+  subtotal: number;    // sum of price × quantity, computed from live Product prices, not stored
+}
+
+interface CartItem {
+  id: string;
+  product: { id: string; slug: string; name: string; sku: string; price: number; image: string | null; inStock: boolean; stockCount: number };
+  colorOption: { id: string; name: string; hex: string; inStock: boolean } | null;
+  quantity: number;
+  lineTotal: number;   // product.price × quantity
+}
+```
+
+### `GET /api/cart/`
+
+Response: `Cart` (empty `items: []` if nothing's been added yet — there's no 404 for "no cart", one is created lazily).
+
+### `POST /api/cart/items/`
+
+Request: `{ productId: string; colorOptionId?: string; quantity?: number }` (`quantity` defaults to 1). **No price field — the server always reads the live `Product.price`.** Adding a product/color combo that's already in the cart increases its quantity instead of creating a duplicate line. Response: the full updated `Cart`, status `201`.
+
+### `PATCH /api/cart/items/{id}/`
+
+Request: `{ quantity: number }`. Response: full updated `Cart`.
+
+### `DELETE /api/cart/items/{id}/`
+
+Response: full updated `Cart`.
+
+---
+
+## Shipping methods
+
+### `GET /api/shipping-methods/`
+
+No params, not paginated (method count is always small), active methods only.
+
+```ts
+interface ShippingMethod {
+  id: string;
+  name: string;
+  cost: number;
+  freeAbove: number | null;  // subtotal threshold for free shipping, or null if none
+  estimatedDays: string;
+}
+```
+
+---
+
+## Checkout
+
+### `POST /api/checkout/`
+
+Requires `Authorization: Bearer <access>` — checkout always requires a logged-in user (the cart itself works for guests, but placing an order does not). Converts the caller's current cart into a `pending` Order and empties the cart. **Never deducts stock** — that only happens once a payment gateway confirms the order `paid` (phase B5); a checkout-created order can still be canceled for free.
+
+Request:
+```ts
+interface CheckoutInput {
+  addressId: string;         // must be one of the caller's own saved addresses
+  shippingMethodId: string;
+  couponCode?: string;
+  note?: string;
+}
+```
+
+Response `201`: an `Order` (see below).
+Response `400`: field-keyed errors, e.g. `{ "addressId": "آدرس یافت نشد." }`, `{ "couponCode": "..." }`, or `{ "cart": "سبد خرید خالی است." }`/`"موجودی «...» کافی نیست."` for stock/availability problems. Same shape as every other validation error in this contract — no special-casing needed client-side.
+
+Total calculation (all server-side, all four components always present even when zero):
+```
+subtotal  = Σ (live product price × quantity)
+discount  = coupon-dependent (see below); 0 if no coupon
+shipping  = shippingMethod.cost, or 0 if subtotal ≥ shippingMethod.freeAbove
+tax       = 0 (no tax-rate configuration exists yet — field is reserved for when one does)
+total     = subtotal − discount + shipping + tax
+```
+
+A coupon scoped to specific products/categories only discounts the subtotal of matching cart lines, not the whole cart; an unscoped coupon discounts everything. `min_order_value` is checked against the full cart subtotal regardless of scoping.
+
+---
+
+## Orders (history)
+
+Both endpoints require `Authorization: Bearer <access>` and are scoped to the caller — a mismatched order number is `404`, same non-disclosure rule as addresses.
+
+### `GET /api/orders/`
+
+Paginated, newest first.
+
+```ts
+interface OrderSummary {
+  id: string;
+  number: string;              // e.g. "VYBE-260608-A1B2C3"
+  status: "pending" | "paid" | "processing" | "shipped" | "delivered" | "canceled" | "returned";
+  total: number;
+  itemCount: number;
+  createdAt: string;
+  paidAt: string | null;
+}
+```
+
+### `GET /api/orders/{number}/`
+
+```ts
+interface Order extends OrderSummary {
+  shippingAddress: { title: string; province: string; city: string; line: string; postalCode: string; receiverName: string; receiverPhone: string };
+  subtotal: number; discount: number; shippingCost: number; tax: number;
+  note: string;
+  trackingCode: string;
+  items: { id: string; productName: string; sku: string; price: number; colorName: string; quantity: number; subtotal: number }[];
+  payments: { id: string; gateway: string; amount: number; refId: string; status: "pending" | "success" | "failed"; createdAt: string; verifiedAt: string | null }[];
+  statusLogs: { fromStatus: string; toStatus: string; note: string; user: string | null; createdAt: string }[];
+  shippedAt: string | null;
+}
+```
+
+`payments` is always `[]` until phase B5 wires a real gateway. `items`/`statusLogs` snapshot exactly what happened at the time — they don't change if the underlying product is later edited or deleted.
+
+---
+
+## Analytics (internal, fire-and-forget)
+
+### `POST /api/analytics/pageview/`
+
+No auth required, no meaningful response body (`204`). The frontend calls this once per route change; it must never block navigation or surface an error to the user — a failed call is silently ignored client-side.
+
+Request: `{ path: string; referrer?: string; productSlug?: string }`. The server reads the real IP/User-Agent from the request itself (never trusts a client-supplied value) and only ever stores a one-way, daily-salted hash of them — no raw IP, no cookie. `/api/*`, `/admin/`, and static-asset paths are never recorded even if sent.
+
+---
+
 ## Things explicitly out of scope for this contract
 
 - **Product data itself** (names, descriptions, prices, images, dimensions) — the current 24 fake products stay as placeholder content until a separate content-authoring pass with the client.
-- **Cart / checkout** — the header shows a static `CART` button with no behavior; not part of this phase. (Auth is no longer out of scope — see above.)
+- **Payment gateways** — checkout creates a `pending` order; actually paying for it (`GET /api/payment-gateways/`, redirect, callback, `verify`) is phase B5. `13-checkout.html` isn't converted to React until that lands.
 - **Newsletter subscription** (footer form) — currently a local-only success state (`setSubscribed(true)`), no endpoint wired.
 - **Search** (`/search` route) — page exists as a stub, not built out yet.
 - **Invoice PDF** (`GET /api/orders/{orderNumber}/invoice.pdf`) — documented in `BACKEND-TASK.md` §3.6, lands with the PDF-export phase, not this one. The account page's "دانلود فاکتور" button exists but stays disabled until then.

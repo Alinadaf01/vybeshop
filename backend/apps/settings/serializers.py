@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import SiteSettings
+from .models import ShippingMethod, SiteSettings
 
 _SOCIAL_FIELDS = [
     ("INSTAGRAM", "instagram_url"),
@@ -35,3 +35,14 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             for platform, field_name in _SOCIAL_FIELDS
             if getattr(obj, field_name)
         ]
+
+
+class ShippingMethodSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ShippingMethod
+        fields = ["id", "name", "cost", "free_above", "estimated_days"]
+
+    def get_id(self, obj: ShippingMethod) -> str:
+        return str(obj.pk)

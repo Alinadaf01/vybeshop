@@ -1,7 +1,7 @@
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
-from .models import SiteSettings
-from .serializers import SiteSettingsSerializer
+from .models import ShippingMethod, SiteSettings
+from .serializers import ShippingMethodSerializer, SiteSettingsSerializer
 
 
 class SiteSettingsDetailView(RetrieveAPIView):
@@ -9,3 +9,9 @@ class SiteSettingsDetailView(RetrieveAPIView):
 
     def get_object(self):
         return SiteSettings.load()
+
+
+class ShippingMethodListView(ListAPIView):
+    serializer_class = ShippingMethodSerializer
+    pagination_class = None
+    queryset = ShippingMethod.objects.filter(is_active=True)

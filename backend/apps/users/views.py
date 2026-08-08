@@ -57,6 +57,12 @@ class VerifyOtpView(APIView):
             user.is_verified = True
             user.save(update_fields=["is_verified"])
 
+        cart_session_key = serializer.validated_data.get("cart_session_key")
+        if cart_session_key:
+            from apps.orders.services import merge_guest_cart_into_user
+
+            merge_guest_cart_into_user(cart_session_key, user)
+
         refresh = RefreshToken.for_user(user)
         return Response(
             {

@@ -2,10 +2,12 @@
 Django settings for the VYBE backend (config project).
 """
 
+import sys
 from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
+from celery.schedules import crontab
 from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -168,6 +170,16 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
+# Run tasks synchronously under `manage.py test` — no worker/broker needed to
+# assert on their effects, and it keeps the test suite from depending on Redis.
+CELERY_TASK_ALWAYS_EAGER = "test" in sys.argv
+
+CELERY_BEAT_SCHEDULE = {
+    "aggregate-daily-stats": {
+        "task": "apps.analytics.tasks.aggregate_daily_stats",
+        "schedule": crontab(hour=1, minute=0),  # 01:00 server time — rolls up yesterday, purges >90 days
+    },
+}
 
 
 # django-encrypted-model-fields — used by apps.settings.ApiCredential

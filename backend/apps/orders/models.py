@@ -15,6 +15,16 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user"], condition=models.Q(user__isnull=False), name="one_cart_per_user"),
+            models.UniqueConstraint(
+                fields=["session_key"],
+                condition=models.Q(user__isnull=True) & ~models.Q(session_key=""),
+                name="one_cart_per_guest_session",
+            ),
+        ]
+
     def __str__(self):
         return f"Cart({self.user or self.session_key})"
 
@@ -108,22 +118,25 @@ class Order(models.Model):
 
     @transaction.atomic
     def mark_paid(self, *, user=None):
-        if self.status != "pending":
-            raise InvalidOrderTransition("فقط سفارش pending می‌تواند paid شود.")
-        self.paid_at = timezone.now()
-        self._transition("paid", user=user, extra_fields=["paid_at"])
-
-    @transaction.atomic
-    def start_processing(self, *, user=None):
+        """The only place stock leaves the ledger for a sale — never at order
+        creation. Each StockMovement.record() call locks its product row
+        (select_for_update), so concurrent payments can't oversell."""
         from apps.inventory.models import StockMovement
 
-        if self.status != "paid":
-            raise InvalidOrderTransition("فقط سفارش paid می‌تواند processing شود.")
+        if self.status != "pending":
+            raise InvalidOrderTransition("فقط سفارش pending می‌تواند paid شود.")
         for item in self.items.select_related("product"):
             if item.product_id:
                 StockMovement.objects.record(
                     item.product, "sale", item.quantity, reference=self.number, user=user
                 )
+        self.paid_at = timezone.now()
+        self._transition("paid", user=user, extra_fields=["paid_at"])
+
+    @transaction.atomic
+    def start_processing(self, *, user=None):
+        if self.status != "paid":
+            raise InvalidOrderTransition("فقط سفارش paid می‌تواند processing شود.")
         self._transition("processing", user=user)
 
     @transaction.atomic
@@ -146,7 +159,10 @@ class Order(models.Model):
 
         if self.status not in _CANCELABLE_FROM:
             raise InvalidOrderTransition(f"سفارش با وضعیت {self.status} قابل لغو نیست.")
-        if self.status == "processing":
+        # Stock only left the ledger once the order reached "paid" (see
+        # mark_paid) — "pending" never deducted anything, so only reverse
+        # for the two statuses reachable after payment.
+        if self.status in {"paid", "processing"}:
             for item in self.items.select_related("product"):
                 if item.product_id:
                     StockMovement.objects.record(
@@ -156,8 +172,15 @@ class Order(models.Model):
 
     @transaction.atomic
     def mark_returned(self, *, user=None):
+        from apps.inventory.models import StockMovement
+
         if self.status not in _RETURNABLE_FROM:
             raise InvalidOrderTransition(f"سفارش با وضعیت {self.status} قابل مرجوع‌شدن نیست.")
+        for item in self.items.select_related("product"):
+            if item.product_id:
+                StockMovement.objects.record(
+                    item.product, "return_in", item.quantity, reference=self.number, user=user
+                )
         self._transition("returned", user=user)
 
 

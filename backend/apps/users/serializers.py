@@ -45,3 +45,4 @@ class OtpRequestSerializer(serializers.Serializer):
 class OtpVerifySerializer(serializers.Serializer):
     phone = serializers.CharField(validators=[phone_validator])
     code = serializers.CharField(min_length=6, max_length=6)
+    cart_session_key = serializers.CharField(required=False, allow_blank=True, allow_null=True)
