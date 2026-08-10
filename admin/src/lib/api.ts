@@ -6,6 +6,8 @@ import type { Attribute, AttributeFormValues, AttributeValue } from "@/types/att
 import type { AdminProduct, ColorOption, ProductFormValues, ProductImage, ProductSpecEntry, ProductSpecRow } from "@/types/product";
 import type { AdminOrder } from "@/types/order";
 import type { AdminSiteSettings, ApiCredential, ApiCredentialService, ShippingMethod } from "@/types/settings";
+import type { AdminAddress, AdminUser, AdminUserListItem, CreateUserFormValues, UpdateUserFormValues } from "@/types/user";
+import type { AdminContactMessage } from "@/types/message";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -440,4 +442,69 @@ export async function updateShippingMethod(
 export async function deleteShippingMethod(id: string): Promise<void> {
   const res = await authorizedFetch(`/settings/shipping-methods/${id}/`, { method: "DELETE" });
   await throwIfError(res, "حذف روش ارسال ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Users (§9)
+// ---------------------------------------------------------------------------
+
+export interface UserListParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  isVerified?: string;
+}
+
+export async function listUsers(params: UserListParams): Promise<PaginatedResponse<AdminUserListItem>> {
+  const res = await authorizedFetch(`/users/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت کاربران ناموفق بود.");
+}
+
+export async function getUser(id: string): Promise<AdminUser> {
+  const res = await authorizedFetch(`/users/${id}/`);
+  return parseOrThrow(res, "دریافت کاربر ناموفق بود.");
+}
+
+export async function createUser(data: CreateUserFormValues): Promise<AdminUser> {
+  const res = await authorizedFetch("/users/", { method: "POST", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ایجاد کاربر ناموفق بود.");
+}
+
+export async function updateUser(id: string, data: Partial<UpdateUserFormValues>): Promise<AdminUser> {
+  const res = await authorizedFetch(`/users/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ویرایش کاربر ناموفق بود.");
+}
+
+export async function listUserAddresses(userId: string): Promise<AdminAddress[]> {
+  const res = await authorizedFetch(`/users/${userId}/addresses/`);
+  return parseOrThrow(res, "دریافت آدرس‌ها ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Messages (§10)
+// ---------------------------------------------------------------------------
+
+export interface MessageListParams {
+  page?: number;
+  pageSize?: number;
+  isRead?: string;
+  subject?: string;
+}
+
+export async function listMessages(params: MessageListParams): Promise<PaginatedResponse<AdminContactMessage>> {
+  const res = await authorizedFetch(`/messages/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت پیام‌ها ناموفق بود.");
+}
+
+export async function getMessage(id: string): Promise<AdminContactMessage> {
+  const res = await authorizedFetch(`/messages/${id}/`);
+  return parseOrThrow(res, "دریافت پیام ناموفق بود.");
+}
+
+export async function updateMessage(
+  id: string,
+  data: Partial<{ isRead: boolean; adminNote: string }>,
+): Promise<AdminContactMessage> {
+  const res = await authorizedFetch(`/messages/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ویرایش پیام ناموفق بود.");
 }

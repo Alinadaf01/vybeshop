@@ -13,7 +13,9 @@ import SpecsPage from "@/pages/SpecsPage";
 import InventoryPage from "@/pages/InventoryPage";
 import StockLedgerPage from "@/pages/StockLedgerPage";
 import UsersPage from "@/pages/UsersPage";
+import UserDetailPage from "@/pages/users/UserDetailPage";
 import MessagesPage from "@/pages/MessagesPage";
+import MessageDetailPage from "@/pages/messages/MessageDetailPage";
 import ReportsPage from "@/pages/ReportsPage";
 import SettingsPage from "@/pages/SettingsPage";
 import ReviewsPage from "@/pages/ReviewsPage";
@@ -46,7 +48,9 @@ export const router = createBrowserRouter([
           { path: "inventory", element: <InventoryPage /> },
           { path: "stock-ledger", element: <StockLedgerPage /> },
           { path: "users", element: <UsersPage /> },
+          { path: "users/:id", element: <UserDetailPage /> },
           { path: "messages", element: <MessagesPage /> },
+          { path: "messages/:id", element: <MessageDetailPage /> },
           { path: "reports", element: <ReportsPage /> },
           { path: "settings", element: <SettingsPage /> },
           { path: "reviews", element: <ReviewsPage /> },
