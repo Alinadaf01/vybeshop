@@ -27,6 +27,7 @@ export default function ProductsPage() {
     search: "",
     isActive: "",
     productionStatus: "",
+    inStock: "",
     ordering: "",
   });
   const [deleteTarget, setDeleteTarget] = useState<AdminProduct | null>(null);
@@ -51,6 +52,7 @@ export default function ProductsPage() {
         search: filters.search || undefined,
         isActive: filters.isActive || undefined,
         productionStatus: filters.productionStatus || undefined,
+        inStock: filters.inStock || undefined,
         ordering: filters.ordering || undefined,
       }),
   });
@@ -110,6 +112,11 @@ export default function ProductsPage() {
                 {label}
               </option>
             ))}
+          </Select>
+          <Select className="w-auto" value={filters.inStock} onChange={(e) => setFilters({ inStock: e.target.value, page: "1" })}>
+            <option value="">همه موجودی‌ها</option>
+            <option value="true">موجود</option>
+            <option value="false">ناموجود</option>
           </Select>
           <Select className="w-auto" value={filters.ordering} onChange={(e) => setFilters({ ordering: e.target.value, page: "1" })}>
             <option value="">مرتب‌سازی پیش‌فرض</option>

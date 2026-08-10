@@ -27,6 +27,7 @@ import type {
   TopProductRow,
   TopProductsBy,
 } from "@/types/report";
+import type { DashboardSummary } from "@/types/dashboard";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -247,6 +248,7 @@ export interface ProductListParams {
   search?: string;
   isActive?: string;
   productionStatus?: string;
+  inStock?: string;
   ordering?: string;
 }
 
@@ -646,7 +648,9 @@ export async function updateReview(
 // Returns (bonus §)
 // ---------------------------------------------------------------------------
 
-export async function listReturns(params: { page?: number; pageSize?: number }): Promise<PaginatedResponse<AdminReturn>> {
+export async function listReturns(
+  params: { page?: number; pageSize?: number; status?: string },
+): Promise<PaginatedResponse<AdminReturn>> {
   const res = await authorizedFetch(`/returns/${buildQuery(params)}`);
   return parseOrThrow(res, "دریافت مرجوعی‌ها ناموفق بود.");
 }
@@ -791,4 +795,18 @@ export async function getReturnRateReport(params: ReportDateRange): Promise<Retu
 export async function getGrossMarginReport(params: ReportDateRange): Promise<GrossMarginReport> {
   const res = await authorizedFetch(`/reports/gross-margin/${buildQuery(params)}`);
   return parseOrThrow(res, "دریافت گزارش حاشیه سود ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard (§1)
+// ---------------------------------------------------------------------------
+
+export async function getDashboard(): Promise<DashboardSummary> {
+  const res = await authorizedFetch("/dashboard/");
+  return parseOrThrow(res, "دریافت داشبورد ناموفق بود.");
+}
+
+export async function markDashboardSeen(): Promise<{ lastDashboardVisit: string }> {
+  const res = await authorizedFetch("/dashboard/mark-seen/", { method: "POST" });
+  return parseOrThrow(res, "ثبت بازدید ناموفق بود.");
 }

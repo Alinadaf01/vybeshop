@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Chip } from "@/components/ui/Chip";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Field";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/Stateviews";
 import { Pagination } from "@/components/ui/Pagination";
@@ -24,7 +25,7 @@ const STATUS_TONE: Record<ReturnStatus, "warning" | "brand" | "success" | "dange
 };
 
 export default function ReturnsPage() {
-  const [filters, setFilters] = useQueryFilters({ page: "1" });
+  const [filters, setFilters] = useQueryFilters({ page: "1", status: "" });
   const page = Number(filters.page) || 1;
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -32,7 +33,7 @@ export default function ReturnsPage() {
 
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["returns", filters],
-    queryFn: () => listReturns({ page, pageSize: PAGE_SIZE }),
+    queryFn: () => listReturns({ page, pageSize: PAGE_SIZE, status: filters.status || undefined }),
   });
 
   const returns = data?.results ?? [];
@@ -53,6 +54,17 @@ export default function ReturnsPage() {
       <PageHeader title="مرجوعی‌ها" description="گردش کار تأیید، دریافت و بازپرداخت مرجوعی سفارش‌ها." />
 
       <section className="glass-card overflow-hidden p-0">
+        <div className="flex flex-wrap items-center gap-3 border-b border-white/[0.06] px-6 py-4">
+          <Select className="w-auto" value={filters.status} onChange={(e) => setFilters({ status: e.target.value, page: "1" })}>
+            <option value="">همه وضعیت‌ها</option>
+            {Object.entries(RETURN_STATUS_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </Select>
+        </div>
+
         {isError ? (
           <ErrorState description="دریافت مرجوعی‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && returns.length === 0 ? (
