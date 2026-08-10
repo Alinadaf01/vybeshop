@@ -5,10 +5,10 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 import tailwind from "eslint-plugin-tailwindcss";
 import prettierConfig from "eslint-config-prettier";
-import logicalProps from "./eslint-rules/no-physical-direction-classes.js";
+import logicalProps from "../eslint-rules/no-physical-direction-classes.js";
 
 export default tseslint.config(
-  { ignores: ["dist", "dist-ssr", "backend", "admin-template", "admin"] },
+  { ignores: ["dist"] },
   {
     extends: [
       js.configs.recommended,
