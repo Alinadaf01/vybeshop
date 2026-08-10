@@ -10,6 +10,10 @@ import type { AdminAddress, AdminUser, AdminUserListItem, CreateUserFormValues, 
 import type { AdminContactMessage } from "@/types/message";
 import type { CreateStockMovementValues, InventoryRow, InventorySummary, StockMovement } from "@/types/inventory";
 import type { BulkPriceEditInput, PriceChange, PriceHistoryEntry, ProductPriceRow } from "@/types/pricing";
+import type { AdminProductReview, ReviewStatus } from "@/types/review";
+import type { AdminReturn } from "@/types/return";
+import type { AdminCoupon, CouponFormValues } from "@/types/coupon";
+import type { AdminBlogPost, BlogPostFormValues } from "@/types/blog";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -599,4 +603,111 @@ export async function downloadStockMovementsExport(params: StockMovementListPara
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+// ---------------------------------------------------------------------------
+// Reviews (§14)
+// ---------------------------------------------------------------------------
+
+export interface ReviewListParams {
+  page?: number;
+  pageSize?: number;
+  status?: string;
+  product?: string;
+}
+
+export async function listReviews(params: ReviewListParams): Promise<PaginatedResponse<AdminProductReview>> {
+  const res = await authorizedFetch(`/reviews/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت نظرات ناموفق بود.");
+}
+
+export async function updateReview(
+  id: string,
+  data: Partial<{ status: ReviewStatus; adminReply: string }>,
+): Promise<AdminProductReview> {
+  const res = await authorizedFetch(`/reviews/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ذخیره نظر ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Returns (bonus §)
+// ---------------------------------------------------------------------------
+
+export async function listReturns(params: { page?: number; pageSize?: number }): Promise<PaginatedResponse<AdminReturn>> {
+  const res = await authorizedFetch(`/returns/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت مرجوعی‌ها ناموفق بود.");
+}
+
+async function returnTransition(id: string, action: string): Promise<AdminReturn> {
+  const res = await authorizedFetch(`/returns/${id}/${action}/`, { method: "POST" });
+  return parseOrThrow(res, "عملیات ناموفق بود.");
+}
+
+export const approveReturn = (id: string) => returnTransition(id, "approve");
+export const rejectReturn = (id: string) => returnTransition(id, "reject");
+export const markReturnReceived = (id: string) => returnTransition(id, "mark-received");
+export const markReturnRefunded = (id: string) => returnTransition(id, "mark-refunded");
+
+// ---------------------------------------------------------------------------
+// Coupons (bonus §)
+// ---------------------------------------------------------------------------
+
+export async function listCoupons(params: { page?: number; pageSize?: number }): Promise<PaginatedResponse<AdminCoupon>> {
+  const res = await authorizedFetch(`/coupons/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت کوپن‌ها ناموفق بود.");
+}
+
+export async function createCoupon(data: CouponFormValues): Promise<AdminCoupon> {
+  const res = await authorizedFetch("/coupons/", { method: "POST", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ایجاد کوپن ناموفق بود.");
+}
+
+export async function updateCoupon(id: string, data: CouponFormValues): Promise<AdminCoupon> {
+  const res = await authorizedFetch(`/coupons/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ویرایش کوپن ناموفق بود.");
+}
+
+export async function deleteCoupon(id: string): Promise<void> {
+  const res = await authorizedFetch(`/coupons/${id}/`, { method: "DELETE" });
+  await throwIfError(res, "حذف کوپن ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Blog (bonus §)
+// ---------------------------------------------------------------------------
+
+export async function listBlogPosts(params: { page?: number; pageSize?: number }): Promise<PaginatedResponse<AdminBlogPost>> {
+  const res = await authorizedFetch(`/blog/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت مطالب بلاگ ناموفق بود.");
+}
+
+function buildBlogPayload(data: BlogPostFormValues) {
+  return {
+    ...data,
+    tags: data.tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean),
+  };
+}
+
+export async function createBlogPost(data: BlogPostFormValues, coverImage?: File | null): Promise<AdminBlogPost> {
+  const init: RequestInit = coverImage
+    ? { method: "POST", body: buildFormData(buildBlogPayload(data), coverImage, "coverImage") }
+    : { method: "POST", body: JSON.stringify(buildBlogPayload(data)) };
+  const res = await authorizedFetch("/blog/", init);
+  return parseOrThrow(res, "ایجاد مطلب بلاگ ناموفق بود.");
+}
+
+export async function updateBlogPost(id: string, data: BlogPostFormValues, coverImage?: File | null): Promise<AdminBlogPost> {
+  const init: RequestInit = coverImage
+    ? { method: "PATCH", body: buildFormData(buildBlogPayload(data), coverImage, "coverImage") }
+    : { method: "PATCH", body: JSON.stringify(buildBlogPayload(data)) };
+  const res = await authorizedFetch(`/blog/${id}/`, init);
+  return parseOrThrow(res, "ویرایش مطلب بلاگ ناموفق بود.");
+}
+
+export async function deleteBlogPost(id: string): Promise<void> {
+  const res = await authorizedFetch(`/blog/${id}/`, { method: "DELETE" });
+  await throwIfError(res, "حذف مطلب بلاگ ناموفق بود.");
 }
