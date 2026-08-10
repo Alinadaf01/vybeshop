@@ -4,6 +4,7 @@ import { RequireStaffAuth } from "@/app/RequireStaffAuth";
 import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
 import OrdersPage from "@/pages/OrdersPage";
+import OrderDetailPage from "@/pages/orders/OrderDetailPage";
 import ProductsPage from "@/pages/ProductsPage";
 import ProductFormPage from "@/pages/products/ProductFormPage";
 import PricingPage from "@/pages/PricingPage";
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <DashboardPage /> },
           { path: "orders", element: <OrdersPage /> },
+          { path: "orders/:id", element: <OrderDetailPage /> },
           { path: "products", element: <ProductsPage /> },
           { path: "products/new", element: <ProductFormPage /> },
           { path: "products/:id", element: <ProductFormPage /> },
