@@ -78,3 +78,10 @@ export interface ProductSpecEntry {
   valueOptionId?: number | null;
   valueText?: string | null;
 }
+
+export interface ProductSpecRow {
+  id: number;
+  attributeId: number;
+  valueOptionId: number | null;
+  valueText: string | null;
+}

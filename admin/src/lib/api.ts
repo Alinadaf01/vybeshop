@@ -3,7 +3,7 @@ import type { AdminLoginResponse } from "@/types/adminAuth";
 import type { PaginatedResponse } from "@/types/api";
 import type { AdminCategory, CategoryFormValues } from "@/types/category";
 import type { Attribute, AttributeFormValues, AttributeValue } from "@/types/attribute";
-import type { AdminProduct, ColorOption, ProductFormValues, ProductImage, ProductSpecEntry } from "@/types/product";
+import type { AdminProduct, ColorOption, ProductFormValues, ProductImage, ProductSpecEntry, ProductSpecRow } from "@/types/product";
 import type { AdminOrder } from "@/types/order";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
@@ -303,10 +303,12 @@ export async function deleteColor(productId: string, colorId: string): Promise<v
   await throwIfError(res, "حذف رنگ ناموفق بود.");
 }
 
-export async function putProductSpecs(
-  productId: string,
-  entries: ProductSpecEntry[],
-): Promise<Array<{ id: number; attributeId: number; valueOptionId: number | null; valueText: string | null }>> {
+export async function getProductSpecs(productId: string): Promise<ProductSpecRow[]> {
+  const res = await authorizedFetch(`/products/${productId}/specs/`);
+  return parseOrThrow(res, "دریافت مشخصات ناموفق بود.");
+}
+
+export async function putProductSpecs(productId: string, entries: ProductSpecEntry[]): Promise<ProductSpecRow[]> {
   const res = await authorizedFetch(`/products/${productId}/specs/`, { method: "PUT", body: JSON.stringify(entries) });
   return parseOrThrow(res, "ذخیره مشخصات ناموفق بود.");
 }
