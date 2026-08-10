@@ -1,9 +1,20 @@
+import io
+
 from django.urls import reverse
+from PIL import Image
 from rest_framework.test import APITestCase
 
 from apps.content.models import BlogPost, ContactMessage, Coupon, ProductReview
 
 from .base import AdminApiTestMixin
+
+
+def _fake_image_file(name="cover.png"):
+    buffer = io.BytesIO()
+    Image.new("RGB", (10, 10), color="blue").save(buffer, format="PNG")
+    buffer.seek(0)
+    buffer.name = name
+    return buffer
 
 
 class AdminMessageApiTests(AdminApiTestMixin, APITestCase):
@@ -59,6 +70,33 @@ class AdminBlogApiTests(AdminApiTestMixin, APITestCase):
         )
         self.assertEqual(response.status_code, 201)
         self.assertTrue(BlogPost.objects.get(slug="post-1").is_published)
+
+    def test_cover_image_upload_is_writable(self):
+        # Regression: cover_image used to be a SerializerMethodField (read-only),
+        # so no admin request could ever set the actual uploaded image.
+        response = self.client.post(
+            reverse("admin-blog-list"),
+            {
+                "slug": "post-with-cover", "title": "پست با کاور", "excerpt": "خلاصه",
+                "category": "محصول", "author": "تیم VYBE", "coverImage": _fake_image_file(),
+            },
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, 201)
+        post = BlogPost.objects.get(slug="post-with-cover")
+        self.assertTrue(post.cover_image)
+
+    def test_resolved_cover_url_falls_back_to_external(self):
+        post = BlogPost.objects.create(
+            slug="post-external", title="پست خارجی", excerpt="خلاصه", category="محصول",
+            author="تیم VYBE", external_cover_url="/images/fallback.jpg",
+        )
+        response = self.client.get(reverse("admin-blog-detail", args=[post.pk]))
+        self.assertEqual(response.status_code, 200)
+        # response.data is the pre-render serializer output (snake_case);
+        # the camelCase conversion only happens in the renderer, over the wire.
+        self.assertEqual(response.data["resolved_cover_url"], "/images/fallback.jpg")
+        self.assertIsNone(response.data["cover_image"])
 
 
 class AdminCouponApiTests(AdminApiTestMixin, APITestCase):

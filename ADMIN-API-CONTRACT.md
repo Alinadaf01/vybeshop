@@ -392,11 +392,13 @@ Only `approved` reviews are ever included in the public product-detail average/d
   interface AdminBlogPost {
     id: number; slug: string; title: string; excerpt: string; category: string;
     sections: { id: string; heading: string; body: string }[];
-    coverImage: string; author: string; authorRole: string; tags: string[];
+    coverImage: string | null; resolvedCoverUrl: string; author: string; authorRole: string; tags: string[];
     readingTime: number; isPublished: boolean; metaTitle: string; metaDescription: string;
     publishedAt: string | null;
   }
   ```
+
+  `coverImage` is a writable `ImageField` (multipart upload); `resolvedCoverUrl` is read-only and falls back to the seed data's `externalCoverUrl` when no file has been uploaded yet — the panel previews `resolvedCoverUrl`, uploads write `coverImage`.
 
 ### Coupons
 
