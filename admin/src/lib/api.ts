@@ -14,6 +14,19 @@ import type { AdminProductReview, ReviewStatus } from "@/types/review";
 import type { AdminReturn } from "@/types/return";
 import type { AdminCoupon, CouponFormValues } from "@/types/coupon";
 import type { AdminBlogPost, BlogPostFormValues } from "@/types/blog";
+import type {
+  AbandonedCartsReport,
+  ByCategoryRow,
+  ByGatewayRow,
+  ConversionReport,
+  CustomersReport,
+  GrossMarginReport,
+  ReportGroupBy,
+  ReturnRateReport,
+  SalesReport,
+  TopProductRow,
+  TopProductsBy,
+} from "@/types/report";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -710,4 +723,72 @@ export async function updateBlogPost(id: string, data: BlogPostFormValues, cover
 export async function deleteBlogPost(id: string): Promise<void> {
   const res = await authorizedFetch(`/blog/${id}/`, { method: "DELETE" });
   await throwIfError(res, "حذف مطلب بلاگ ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Sales reports (§11)
+// ---------------------------------------------------------------------------
+
+export interface ReportDateRange {
+  from?: string;
+  to?: string;
+}
+
+export async function getSalesReport(params: ReportDateRange & { groupBy?: ReportGroupBy }): Promise<SalesReport> {
+  const res = await authorizedFetch(`/reports/sales/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش فروش ناموفق بود.");
+}
+
+export async function downloadSalesReportExport(params: ReportDateRange & { groupBy?: ReportGroupBy }): Promise<void> {
+  const res = await authorizedFetch(`/reports/sales/export/${buildQuery({ ...params, format: "xlsx" })}`);
+  if (!res.ok) throw new Error(await readErrorDetail(res, "خروجی اکسل ناموفق بود."));
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "sales-report.xlsx";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+export async function getTopProductsReport(params: ReportDateRange & { by?: TopProductsBy }): Promise<TopProductRow[]> {
+  const res = await authorizedFetch(`/reports/top-products/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش پرفروش‌ترین‌ها ناموفق بود.");
+}
+
+export async function getByCategoryReport(params: ReportDateRange): Promise<ByCategoryRow[]> {
+  const res = await authorizedFetch(`/reports/by-category/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش دسته‌بندی‌ها ناموفق بود.");
+}
+
+export async function getConversionReport(params: ReportDateRange): Promise<ConversionReport> {
+  const res = await authorizedFetch(`/reports/conversion/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش نرخ تبدیل ناموفق بود.");
+}
+
+export async function getAbandonedCartsReport(params: ReportDateRange): Promise<AbandonedCartsReport> {
+  const res = await authorizedFetch(`/reports/abandoned-carts/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش سبدهای رهاشده ناموفق بود.");
+}
+
+export async function getCustomersReport(params: ReportDateRange): Promise<CustomersReport> {
+  const res = await authorizedFetch(`/reports/customers/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش مشتریان ناموفق بود.");
+}
+
+export async function getByGatewayReport(params: ReportDateRange): Promise<ByGatewayRow[]> {
+  const res = await authorizedFetch(`/reports/by-gateway/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش درگاه‌های پرداخت ناموفق بود.");
+}
+
+export async function getReturnRateReport(params: ReportDateRange): Promise<ReturnRateReport> {
+  const res = await authorizedFetch(`/reports/return-rate/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش نرخ مرجوعی ناموفق بود.");
+}
+
+export async function getGrossMarginReport(params: ReportDateRange): Promise<GrossMarginReport> {
+  const res = await authorizedFetch(`/reports/gross-margin/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش حاشیه سود ناموفق بود.");
 }
