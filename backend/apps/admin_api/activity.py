@@ -65,7 +65,19 @@ def _jsonable(value):
     """AdminActivityLog.changes is a plain JSONField — model instances,
     Decimals, etc. from validated_data/instance attrs need to survive
     json.dumps, so this only keeps the printable form (repr for anything
-    non-primitive) rather than risk a save-time TypeError."""
-    if value is None or isinstance(value, (str, int, float, bool, list, dict)):
+    non-primitive) rather than risk a save-time TypeError.
+
+    Recurses into list/dict: an M2M field like Attribute.categories arrives
+    in validated_data as a *list of Category instances*, not a list of
+    primitives — returning such a list unchanged (as the old `isinstance`
+    check did) stores raw model objects in the JSONField and blows up at
+    the psycopg2 layer, not at validation time, so it's easy to miss in
+    review.
+    """
+    if value is None or isinstance(value, (str, int, float, bool)):
         return value
+    if isinstance(value, list):
+        return [_jsonable(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _jsonable(v) for k, v in value.items()}
     return str(value)

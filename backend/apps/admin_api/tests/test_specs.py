@@ -14,6 +14,27 @@ class AdminSpecsApiTests(AdminApiTestMixin, APITestCase):
         self.attribute.categories.add(self.product.category)
         self.other_attribute = Attribute.objects.create(name="Material", slug="material", input_type="text")
 
+    def test_create_attribute_with_categories_logs_activity_without_crashing(self):
+        # Regression: the activity log used to store validated_data's
+        # `categories` M2M list (Category *instances*, not IDs) verbatim
+        # into a JSONField, which crashed at the DB layer — see
+        # AdminActivityLogMixin's _jsonable().
+        response = self.client.post(
+            reverse("admin-attribute-list"),
+            {
+                "name": "Max Load",
+                "slug": "max-load",
+                "unit": "kg",
+                "inputType": "number",
+                "categories": [self.product.category_id],
+                "isRequired": False,
+                "order": 0,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(Attribute.objects.filter(slug="max-load").exists())
+
     def test_attributes_scoped_by_category(self):
         response = self.client.get(reverse("admin-attribute-list"), {"category": self.product.category_id})
         slugs = [a["slug"] for a in response.data]
