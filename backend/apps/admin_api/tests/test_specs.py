@@ -46,6 +46,17 @@ class AdminSpecsApiTests(AdminApiTestMixin, APITestCase):
         self.assertEqual(response.status_code, 201)
         self.assertTrue(AttributeValue.objects.filter(attribute=self.attribute, value="Red").exists())
 
+    def test_get_specs_returns_editable_shape(self):
+        value = AttributeValue.objects.create(attribute=self.attribute, value="Blue")
+        ProductAttribute.objects.create(product=self.product, attribute=self.attribute, value_option=value)
+        ProductAttribute.objects.create(product=self.product, attribute=self.other_attribute, value_text="Plastic")
+
+        response = self.client.get(reverse("admin-product-specs", args=[self.product.pk]))
+        self.assertEqual(response.status_code, 200)
+        by_attribute = {row["attribute_id"]: row for row in response.data}
+        self.assertEqual(by_attribute[self.attribute.pk]["value_option_id"], value.pk)
+        self.assertEqual(by_attribute[self.other_attribute.pk]["value_text"], "Plastic")
+
     def test_put_specs_replaces_all(self):
         value = AttributeValue.objects.create(attribute=self.attribute, value="Blue")
         # seed one existing spec that should be gone after the PUT

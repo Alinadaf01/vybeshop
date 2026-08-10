@@ -86,9 +86,29 @@ class ProductSpecInputSerializer(serializers.Serializer):
 class AdminProductSpecsView(APIView):
     """PUT /api/admin/products/{id}/specs/ — replaces all ProductAttribute
     rows for the product in one transaction (delete-then-recreate), exactly
-    as specified in ADMIN-API-CONTRACT.md §5."""
+    as specified in ADMIN-API-CONTRACT.md §5.
+
+    GET returns the same raw {id, attributeId, valueOptionId, valueText}
+    shape (not the AdminProductSerializer.specs display triple, which only
+    has label/value/unit) — the product edit form needs the underlying
+    attribute/value ids to pre-populate its spec inputs, not just text to
+    display."""
 
     permission_classes = [IsAdminStaff]
+
+    def get(self, request, product_id):
+        rows = ProductAttribute.objects.filter(product_id=product_id).select_related("attribute", "value_option")
+        return Response(
+            [
+                {
+                    "id": pa.pk,
+                    "attribute_id": pa.attribute_id,
+                    "value_option_id": pa.value_option_id,
+                    "value_text": pa.value_text or None,
+                }
+                for pa in rows
+            ]
+        )
 
     def put(self, request, product_id):
         product = Product.objects.get(pk=product_id)
