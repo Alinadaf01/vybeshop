@@ -9,6 +9,7 @@ import type { AdminSiteSettings, ApiCredential, ApiCredentialService, ShippingMe
 import type { AdminAddress, AdminUser, AdminUserListItem, CreateUserFormValues, UpdateUserFormValues } from "@/types/user";
 import type { AdminContactMessage } from "@/types/message";
 import type { CreateStockMovementValues, InventoryRow, InventorySummary, StockMovement } from "@/types/inventory";
+import type { BulkPriceEditInput, PriceChange, PriceHistoryEntry, ProductPriceRow } from "@/types/pricing";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -315,6 +316,34 @@ export async function getProductSpecs(productId: string): Promise<ProductSpecRow
 export async function putProductSpecs(productId: string, entries: ProductSpecEntry[]): Promise<ProductSpecRow[]> {
   const res = await authorizedFetch(`/products/${productId}/specs/`, { method: "PUT", body: JSON.stringify(entries) });
   return parseOrThrow(res, "ذخیره مشخصات ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Price bulk edit (§3)
+// ---------------------------------------------------------------------------
+
+export interface ProductPriceListParams {
+  page?: number;
+  pageSize?: number;
+  category?: string;
+}
+
+export async function listProductPrices(params: ProductPriceListParams): Promise<PaginatedResponse<ProductPriceRow>> {
+  const res = await authorizedFetch(`/products/prices/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت قیمت‌ها ناموفق بود.");
+}
+
+export async function bulkEditPrices(data: BulkPriceEditInput, preview: boolean): Promise<{ changes: PriceChange[] }> {
+  const res = await authorizedFetch(`/products/prices/bulk/?preview=${preview}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  return parseOrThrow(res, "اعمال تغییر قیمت ناموفق بود.");
+}
+
+export async function listPriceHistory(productId: string): Promise<PaginatedResponse<PriceHistoryEntry>> {
+  const res = await authorizedFetch(`/products/${productId}/price-history/`);
+  return parseOrThrow(res, "دریافت تاریخچه قیمت ناموفق بود.");
 }
 
 // ---------------------------------------------------------------------------
