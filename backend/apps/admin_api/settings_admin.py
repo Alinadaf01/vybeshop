@@ -1,9 +1,8 @@
 import json
 
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
+from djangorestframework_camel_case.parser import CamelCaseFormParser, CamelCaseJSONParser, CamelCaseMultiPartParser
 from rest_framework import serializers
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.parsers import FormParser, MultiPartParser
 
 from apps.settings.models import ApiCredential, ShippingMethod, SiteSettings
 
@@ -33,7 +32,7 @@ class AdminSiteSettingsView(RetrieveUpdateAPIView):
     # actually being uploaded, and sends plain JSON the rest of the time
     # (e.g. toggling notifyOwnerNewOrder). Restricting this to multipart
     # only, as it originally was, made every text-only PATCH 415.
-    parser_classes = [MultiPartParser, FormParser, CamelCaseJSONParser]
+    parser_classes = [CamelCaseMultiPartParser, CamelCaseFormParser, CamelCaseJSONParser]
 
     def get_object(self):
         return SiteSettings.load()

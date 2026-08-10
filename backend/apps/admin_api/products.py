@@ -1,8 +1,8 @@
 import django_filters
 from django.db.models import ProtectedError
+from djangorestframework_camel_case.parser import CamelCaseFormParser, CamelCaseMultiPartParser
 from rest_framework import serializers, status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -171,7 +171,7 @@ class AdminProductDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView
 
 class AdminProductImageCreateView(APIView):
     permission_classes = [IsAdminStaff]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [CamelCaseMultiPartParser, CamelCaseFormParser]
 
     def post(self, request, product_id):
         product = Product.objects.get(pk=product_id)

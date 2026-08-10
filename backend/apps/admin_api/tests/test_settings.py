@@ -1,12 +1,22 @@
+import io
 import json
 
 from django.urls import reverse
+from PIL import Image
 from rest_framework.test import APITestCase
 
 from apps.analytics.models import AdminActivityLog
 from apps.settings.models import ApiCredential, ShippingMethod, SiteSettings
 
 from .base import AdminApiTestMixin
+
+
+def _fake_image_file(name="logo.png"):
+    buffer = io.BytesIO()
+    Image.new("RGB", (10, 10), color="blue").save(buffer, format="PNG")
+    buffer.seek(0)
+    buffer.name = name
+    return buffer
 
 
 class AdminSiteSettingsApiTests(AdminApiTestMixin, APITestCase):
@@ -35,6 +45,20 @@ class AdminSiteSettingsApiTests(AdminApiTestMixin, APITestCase):
         settings = SiteSettings.load()
         self.assertEqual(settings.email, "json-only@vybe.ir")
         self.assertFalse(settings.notify_owner_new_order)
+
+    def test_multiword_image_field_upload_is_written(self):
+        # Regression: the view used plain MultiPartParser/FormParser, which
+        # only underscoreizes single-word field names. A multi-word field
+        # like logoLight was silently dropped instead of landing on
+        # logo_light — the same bug class fixed in blog.py for coverImage.
+        response = self.client.patch(
+            reverse("admin-settings-site"),
+            {"logoLight": _fake_image_file()},
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, 200)
+        settings = SiteSettings.load()
+        self.assertTrue(settings.logo_light)
 
 
 class AdminApiCredentialApiTests(AdminApiTestMixin, APITestCase):
