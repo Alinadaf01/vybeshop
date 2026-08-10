@@ -5,6 +5,7 @@ import type { AdminCategory, CategoryFormValues } from "@/types/category";
 import type { Attribute, AttributeFormValues, AttributeValue } from "@/types/attribute";
 import type { AdminProduct, ColorOption, ProductFormValues, ProductImage, ProductSpecEntry, ProductSpecRow } from "@/types/product";
 import type { AdminOrder } from "@/types/order";
+import type { AdminSiteSettings, ApiCredential, ApiCredentialService, ShippingMethod } from "@/types/settings";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -351,3 +352,92 @@ export const markOrderShipped = (id: string, trackingCode: string) =>
   orderAction(id, "mark-shipped", { trackingCode });
 export const markOrderDelivered = (id: string) => orderAction(id, "mark-delivered");
 export const cancelOrder = (id: string, reason?: string) => orderAction(id, "cancel", { reason });
+
+// ---------------------------------------------------------------------------
+// Settings (§12)
+// ---------------------------------------------------------------------------
+
+export async function getSiteSettings(): Promise<AdminSiteSettings> {
+  const res = await authorizedFetch("/settings/site/");
+  return parseOrThrow(res, "دریافت تنظیمات ناموفق بود.");
+}
+
+export async function updateSiteSettings(
+  data: Partial<AdminSiteSettings>,
+  imageFiles?: Partial<Record<"trustBadgeImage" | "logoLight" | "logoDark" | "favicon" | "defaultOgImage", File>>,
+): Promise<AdminSiteSettings> {
+  const hasFiles = imageFiles && Object.values(imageFiles).some(Boolean);
+  let init: RequestInit;
+  if (hasFiles) {
+    const form = buildFormData(data);
+    for (const [key, file] of Object.entries(imageFiles ?? {})) {
+      if (file) form.append(key, file);
+    }
+    init = { method: "PATCH", body: form };
+  } else {
+    init = { method: "PATCH", body: JSON.stringify(data) };
+  }
+  const res = await authorizedFetch("/settings/site/", init);
+  return parseOrThrow(res, "ذخیره تنظیمات ناموفق بود.");
+}
+
+export async function listCredentials(): Promise<ApiCredential[]> {
+  const res = await authorizedFetch("/settings/credentials/");
+  return parseOrThrow(res, "دریافت کلیدهای API ناموفق بود.");
+}
+
+export async function createCredential(data: {
+  service: ApiCredentialService;
+  label: string;
+  isActive: boolean;
+  isSandbox: boolean;
+  order: number;
+  credentials: Record<string, string>;
+}): Promise<ApiCredential> {
+  const res = await authorizedFetch("/settings/credentials/", { method: "POST", body: JSON.stringify(data) });
+  return parseOrThrow(res, "افزودن کلید ناموفق بود.");
+}
+
+export async function updateCredential(
+  id: string,
+  data: Partial<{
+    label: string;
+    isActive: boolean;
+    isSandbox: boolean;
+    order: number;
+    credentials: Record<string, string>;
+  }>,
+): Promise<ApiCredential> {
+  const res = await authorizedFetch(`/settings/credentials/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ویرایش کلید ناموفق بود.");
+}
+
+export async function deleteCredential(id: string): Promise<void> {
+  const res = await authorizedFetch(`/settings/credentials/${id}/`, { method: "DELETE" });
+  await throwIfError(res, "حذف کلید ناموفق بود.");
+}
+
+export async function listShippingMethods(): Promise<ShippingMethod[]> {
+  const res = await authorizedFetch("/settings/shipping-methods/");
+  return parseOrThrow(res, "دریافت روش‌های ارسال ناموفق بود.");
+}
+
+export async function createShippingMethod(
+  data: Omit<ShippingMethod, "id">,
+): Promise<ShippingMethod> {
+  const res = await authorizedFetch("/settings/shipping-methods/", { method: "POST", body: JSON.stringify(data) });
+  return parseOrThrow(res, "افزودن روش ارسال ناموفق بود.");
+}
+
+export async function updateShippingMethod(
+  id: string,
+  data: Partial<Omit<ShippingMethod, "id">>,
+): Promise<ShippingMethod> {
+  const res = await authorizedFetch(`/settings/shipping-methods/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ویرایش روش ارسال ناموفق بود.");
+}
+
+export async function deleteShippingMethod(id: string): Promise<void> {
+  const res = await authorizedFetch(`/settings/shipping-methods/${id}/`, { method: "DELETE" });
+  await throwIfError(res, "حذف روش ارسال ناموفق بود.");
+}
