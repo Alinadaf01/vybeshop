@@ -6,6 +6,9 @@ export const businessHourSchema = z.object({
 });
 
 export const siteSettingsFormSchema = z.object({
+  businessName: z.string(),
+  economicCode: z.string(),
+  nationalId: z.string(),
   phoneDisplay: z.string(),
   phoneHref: z.string(),
   email: z.union([z.literal(""), z.string().email("ایمیل معتبر نیست.")]),

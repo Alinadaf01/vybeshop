@@ -36,6 +36,7 @@ export function SiteInfoTab() {
   } = useForm<SiteSettingsFormValues>({
     resolver: zodResolver(siteSettingsFormSchema),
     defaultValues: {
+      businessName: "", economicCode: "", nationalId: "",
       phoneDisplay: "", phoneHref: "", email: "", address: "", businessHours: [],
       instagramUrl: "", telegramUrl: "", whatsappUrl: "", linkedinUrl: "", youtubeUrl: "", pinterestUrl: "",
       googleMapsEmbed: "", latitude: null, longitude: null,
@@ -50,6 +51,9 @@ export function SiteInfoTab() {
   useEffect(() => {
     if (!settings) return;
     reset({
+      businessName: settings.businessName,
+      economicCode: settings.economicCode,
+      nationalId: settings.nationalId,
       phoneDisplay: settings.phoneDisplay,
       phoneHref: settings.phoneHref,
       email: settings.email,
@@ -101,6 +105,24 @@ export function SiteInfoTab() {
 
   return (
     <form onSubmit={handleSubmit((values) => mutation.mutate(values))} className="flex flex-col gap-6">
+      <section className="glass-card flex flex-col gap-4 p-6">
+        <h2 className="m-0 text-sm font-bold text-white">مشخصات فروشنده</h2>
+        <p className="m-0 text-xs text-slate-500">
+          فقط روی فاکتور PDF نمایش داده می‌شود — در هیچ‌جای فروشگاه آنلاین دیده نمی‌شود.
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Field label="نام کسب‌وکار" htmlFor="s-business-name" error={errors.businessName?.message}>
+            <Input id="s-business-name" {...register("businessName")} />
+          </Field>
+          <Field label="کد اقتصادی" htmlFor="s-economic-code" error={errors.economicCode?.message}>
+            <Input id="s-economic-code" dir="ltr" {...register("economicCode")} />
+          </Field>
+          <Field label="شناسه ملی" htmlFor="s-national-id" error={errors.nationalId?.message}>
+            <Input id="s-national-id" dir="ltr" {...register("nationalId")} />
+          </Field>
+        </div>
+      </section>
+
       <section className="glass-card flex flex-col gap-4 p-6">
         <h2 className="m-0 text-sm font-bold text-white">تماس</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

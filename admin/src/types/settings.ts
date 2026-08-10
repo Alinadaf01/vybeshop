@@ -4,6 +4,9 @@ export interface BusinessHour {
 }
 
 export interface AdminSiteSettings {
+  businessName: string;
+  economicCode: string;
+  nationalId: string;
   phoneDisplay: string;
   phoneHref: string;
   email: string;
