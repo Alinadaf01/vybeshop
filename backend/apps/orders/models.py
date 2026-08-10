@@ -95,6 +95,13 @@ class Order(models.Model):
     note = models.TextField(blank=True)
     tracking_code = models.CharField(max_length=100, blank=True)
 
+    # Invoice PDFs are expensive to render (headless Chromium) and mostly
+    # static once paid, so the rendered file is cached here and only
+    # regenerated when invoice_pdf_generated_at is older than updated_at
+    # (e.g. a tracking code was added after shipping) — see apps/documents.
+    invoice_pdf = models.FileField(upload_to="invoices/", blank=True, null=True)
+    invoice_pdf_generated_at = models.DateTimeField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     paid_at = models.DateTimeField(blank=True, null=True)

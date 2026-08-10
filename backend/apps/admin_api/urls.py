@@ -31,6 +31,7 @@ urlpatterns = [
     path("admin/dashboard/mark-seen/", dashboard.AdminDashboardMarkSeenView.as_view(), name="admin-dashboard-mark-seen"),
     # Products
     path("admin/products/", products.AdminProductListCreateView.as_view(), name="admin-product-list"),
+    path("admin/products/price-list.pdf", products.AdminPriceListPdfView.as_view(), name="admin-product-price-list-pdf"),
     path("admin/products/<int:pk>/", products.AdminProductDetailView.as_view(), name="admin-product-detail"),
     path("admin/products/<int:product_id>/images/", products.AdminProductImageCreateView.as_view(), name="admin-product-image-create"),
     path("admin/products/<int:product_id>/images/<int:image_id>/", products.AdminProductImageDetailView.as_view(), name="admin-product-image-delete"),
@@ -56,6 +57,9 @@ urlpatterns = [
     path("admin/orders/<int:pk>/mark-shipped/", orders.AdminOrderMarkShippedView.as_view(), name="admin-order-mark-shipped"),
     path("admin/orders/<int:pk>/mark-delivered/", orders.AdminOrderMarkDeliveredView.as_view(), name="admin-order-mark-delivered"),
     path("admin/orders/<int:pk>/cancel/", orders.AdminOrderCancelView.as_view(), name="admin-order-cancel"),
+    path("admin/orders/<int:pk>/invoice.pdf", orders.AdminOrderInvoicePdfView.as_view(), name="admin-order-invoice-pdf"),
+    path("admin/orders/<int:pk>/packing-slip.pdf", orders.AdminOrderPackingSlipPdfView.as_view(), name="admin-order-packing-slip-pdf"),
+    path("admin/orders/daily-shipping-list.pdf", orders.AdminDailyShippingListPdfView.as_view(), name="admin-daily-shipping-list-pdf"),
     # Search Console
     path("admin/search-console/performance/", search_console.AdminSearchConsolePerformanceView.as_view(), name="admin-sc-performance"),
     path("admin/search-console/queries/", search_console.AdminSearchConsoleQueriesView.as_view(), name="admin-sc-queries"),
@@ -65,17 +69,20 @@ urlpatterns = [
     # Inventory
     path("admin/inventory/", inventory.AdminInventoryListView.as_view(), name="admin-inventory-list"),
     path("admin/inventory/summary/", inventory.AdminInventorySummaryView.as_view(), name="admin-inventory-summary"),
+    path("admin/inventory/stocktake.pdf", inventory.AdminStocktakePdfView.as_view(), name="admin-inventory-stocktake-pdf"),
     path("admin/inventory/<int:product_id>/alert/", inventory.AdminInventoryAlertView.as_view(), name="admin-inventory-alert"),
     # Users
     path("admin/users/", users.AdminUserListCreateView.as_view(), name="admin-user-list"),
     path("admin/users/<int:pk>/", users.AdminUserDetailView.as_view(), name="admin-user-detail"),
     path("admin/users/<int:user_id>/addresses/", users.AdminUserAddressListView.as_view(), name="admin-user-addresses"),
+    path("admin/users/<int:user_id>/statement.pdf", users.AdminCustomerStatementPdfView.as_view(), name="admin-user-statement-pdf"),
     # Messages
     path("admin/messages/", contact_messages.AdminMessageListView.as_view(), name="admin-message-list"),
     path("admin/messages/<int:pk>/", contact_messages.AdminMessageDetailView.as_view(), name="admin-message-detail"),
     # Sales reports
     path("admin/reports/sales/", reports.AdminSalesReportView.as_view(), name="admin-report-sales"),
     path("admin/reports/sales/export/", reports.AdminSalesReportExportView.as_view(), name="admin-report-sales-export"),
+    path("admin/reports/sales/export.pdf", reports.AdminSalesReportPdfView.as_view(), name="admin-report-sales-pdf"),
     path("admin/reports/top-products/", reports.AdminTopProductsReportView.as_view(), name="admin-report-top-products"),
     path("admin/reports/by-category/", reports.AdminByCategoryReportView.as_view(), name="admin-report-by-category"),
     path("admin/reports/conversion/", reports.AdminConversionReportView.as_view(), name="admin-report-conversion"),
@@ -93,6 +100,7 @@ urlpatterns = [
     # Stock ledger
     path("admin/stock-movements/", inventory.AdminStockMovementListCreateView.as_view(), name="admin-stock-movement-list"),
     path("admin/stock-movements/export/", inventory.AdminStockMovementExportView.as_view(), name="admin-stock-movement-export"),
+    path("admin/stock-movements/export.pdf", inventory.AdminStockLedgerPdfView.as_view(), name="admin-stock-ledger-pdf"),
     # Reviews
     path("admin/reviews/", reviews.AdminReviewListView.as_view(), name="admin-review-list"),
     path("admin/reviews/<int:pk>/", reviews.AdminReviewDetailView.as_view(), name="admin-review-detail"),

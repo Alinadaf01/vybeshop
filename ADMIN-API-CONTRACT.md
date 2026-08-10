@@ -140,6 +140,10 @@ interface ColorOption { id: number; name: string; hex: string; inStock: boolean;
 ### `DELETE /api/admin/products/{id}/images/{imageId}/`
 ### `POST/PATCH/DELETE /api/admin/products/{id}/colors/` / `.../colors/{colorId}/`
 
+### `GET /api/admin/products/price-list.pdf`
+
+Same filters as `GET /api/admin/products/` (BACKEND-TASK.md §3.6-ب). SKU/name/category/price table, straight from the database so it's never stale — for sending to wholesale customers or printing. `Content-Disposition: attachment`.
+
 ---
 
 ## 3. Price bulk edit (بخش ۳)
@@ -246,6 +250,14 @@ interface Order {
 
 No endpoint ever accepts a raw `status` field — only these action routes, exactly mirroring the model: **no direct field writes**.
 
+### PDF exports (BACKEND-TASK.md §3.6-ب — HTML→PDF via headless Chromium, never ReportLab/FPDF)
+
+- `GET /api/admin/orders/{id}/invoice.pdf` → same document and same on-order cache as the customer-facing `GET /api/orders/{number}/invoice.pdf` (`API-CONTRACT.md`); `400` if the order isn't `paid` or later.
+- `GET /api/admin/orders/{id}/packing-slip.pdf` → no prices, printed and dropped inside the box while packing.
+- `GET /api/admin/orders/daily-shipping-list.pdf?date=YYYY-MM-DD` (defaults to today) → every `processing` order that became ready to ship that day, with a blank tracking-code column filled in by hand at the post office counter.
+
+All three: `Content-Type: application/pdf`, `Content-Disposition: attachment`.
+
 ---
 
 ## 7. Search Console (بخش ۷)
@@ -273,6 +285,10 @@ Paginated `{ product: { id, name, sku }, stockCount, reorderPoint, isLow, stockV
 ### `GET /api/admin/inventory/summary/` → `{ totalStockValue: number | null, lowStockCount: number }`
 
 ### `PATCH /api/admin/inventory/{productId}/alert/` → `{ reorderPoint: number; isActive: boolean }` (upserts the product's `StockAlert`)
+
+### `GET /api/admin/inventory/stocktake.pdf`
+
+Same filters as `GET /api/admin/inventory/` (BACKEND-TASK.md §3.6-ب). SKU/name/category/system-stock table with two blank columns (manual count, discrepancy) for a physical warehouse count. `Content-Disposition: attachment`.
 
 ---
 
@@ -305,6 +321,10 @@ interface AdminCreateUserInput {
 ### `PATCH /api/admin/users/{id}/`
 
 ### `GET /api/admin/users/{id}/addresses/`
+
+### `GET /api/admin/users/{id}/statement.pdf`
+
+Purchase history for one customer — every order (any status), plus a paid-orders-only total spent (BACKEND-TASK.md §3.6-ب: "برای خریداران تکراری و عمده"). `Content-Disposition: attachment`.
 
 ---
 
@@ -339,6 +359,7 @@ All accept `from`, `to` (ISO dates). All amounts in Toman.
 - `GET /api/admin/reports/return-rate/` → `{ ordersDelivered: number; ordersReturned: number; rate: number }`
 - `GET /api/admin/reports/gross-margin/` → `{ revenue, cost, margin, coveragePercent }` — `coveragePercent` is the share of sold units that had `costPrice` set; excluded units are noted, never silently guessed.
 - `GET /api/admin/reports/sales/export/?format=xlsx` → binary `.xlsx` download (`Content-Disposition: attachment`), same filters as `/reports/sales/`.
+- `GET /api/admin/reports/sales/export.pdf` → for the accountant: sales/discount/shipping/tax totals plus a gateway breakdown, over `from`/`to` (BACKEND-TASK.md §3.6-ب). Rendered via Celery, not inline — see §13's stock-ledger PDF for why. `Content-Disposition: attachment`.
 
 ---
 
@@ -350,6 +371,7 @@ Singleton — `PATCH` accepts a partial multipart body (for the image fields). F
 
 ```ts
 interface AdminSiteSettings {
+  businessName: string; economicCode: string; nationalId: string; // seller identity for invoice PDFs (§3.6-الف), shown nowhere on the storefront
   phoneDisplay: string; phoneHref: string; email: string; address: string;
   businessHours: { day: string; time: string }[];
   instagramUrl: string; telegramUrl: string; whatsappUrl: string;
@@ -406,6 +428,8 @@ interface CreateStockMovementInput { productId: number; type: "purchase" | "prod
 `type: "sale"`/`"return_in"` are **rejected here (400)** — those are only ever created by the order state machine (§6), never manually. Server-side this calls `StockMovement.objects.record(...)`; a quantity that would drive stock negative → `400 { "detail": "موجودی نمی‌تواند منفی شود." }`.
 
 ### `GET /api/admin/stock-movements/export/?...&format=xlsx` → binary `.xlsx`, same filters as the list.
+
+### `GET /api/admin/stock-movements/export.pdf?...` → same filters as the list. Per product: opening balance, total in, total out, closing balance, then the movement rows — a warehouse audit document (BACKEND-TASK.md §3.6-ب). Rendered through a Celery task (`apps.documents.tasks.render_pdf_async`), not inline in the request, since an unfiltered multi-product range can be large enough to time out a web worker.
 
 ---
 

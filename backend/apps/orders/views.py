@@ -154,6 +154,36 @@ class OrderDetailView(RetrieveAPIView):
         return Order.objects.filter(user=self.request.user)
 
 
+INVOICE_ELIGIBLE_STATUSES = {"paid", "processing", "shipped", "delivered", "returned"}
+
+
+class OrderInvoicePdfView(APIView):
+    """GET /api/orders/{number}/invoice.pdf — BACKEND-TASK.md §3.6-الف.
+    Only the order's own customer or staff, and only once paid — an unpaid
+    order has no real invoice yet."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, number: str):
+        from apps.documents.invoice import get_invoice_pdf
+        from apps.documents.responses import pdf_filename, pdf_response
+
+        try:
+            order = Order.objects.get(number=number)
+        except Order.DoesNotExist:
+            raise Http404
+
+        if order.user_id != request.user.id and not request.user.is_staff:
+            raise Http404
+        if order.status not in INVOICE_ELIGIBLE_STATUSES:
+            return Response(
+                {"detail": "فاکتور فقط برای سفارش‌های پرداخت‌شده در دسترس است."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        pdf_bytes = get_invoice_pdf(order, generated_by_name=request.user.get_full_name())
+        return pdf_response(pdf_bytes, pdf_filename(f"invoice-{order.number}"))
+
+
 class PaymentInitiateView(APIView):
     """Deliberately separate from CheckoutView — checkout creates the
     pending order, this starts a payment attempt against it. Splitting them

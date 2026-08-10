@@ -1,0 +1,77 @@
+{% extends "documents/base.html" %}
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; margin-bottom:14px;">
+  <div>
+    <div class="section-title" style="margin-top:0;">مشخصات خریدار</div>
+    <div>{{ buyer_name }}</div>
+    <div class="mono" style="direction:ltr; display:inline-block;">{{ buyer_phone }}</div>
+  </div>
+  <div style="text-align:left;">
+    <div class="section-title" style="margin-top:0;">آدرس تحویل</div>
+    <div>{{ shipping_address_line }}</div>
+    {% if postal_code %}<div class="mono" style="direction:ltr; display:inline-block;">کد پستی: {{ postal_code }}</div>{% endif %}
+  </div>
+</div>
+
+<div class="section-title">اقلام سفارش</div>
+<table>
+  <thead>
+    <tr>
+      <th>شرح کالا</th>
+      <th>کد کالا</th>
+      <th>تعداد</th>
+      <th>قیمت واحد</th>
+      <th>جمع</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.name }}</td>
+      <td class="mono">{{ item.sku }}</td>
+      <td class="mono">{{ item.quantity }}</td>
+      <td class="mono">{{ item.price }}</td>
+      <td class="mono">{{ item.subtotal }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div style="display:flex; justify-content:flex-end; margin-top:14px;">
+  <table style="width:280px;">
+    <tbody>
+      <tr><td>جمع اقلام</td><td class="mono">{{ subtotal }}</td></tr>
+      <tr><td>تخفیف</td><td class="mono">{{ discount }}</td></tr>
+      <tr><td>هزینه ارسال</td><td class="mono">{{ shipping_cost }}</td></tr>
+      <tr><td>مالیات</td><td class="mono">{{ tax }}</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td>مبلغ نهایی</td><td class="mono">{{ total }}</td></tr>
+    </tfoot>
+  </table>
+</div>
+
+<div class="muted" style="margin-top:6px; font-size:11px;">مبلغ به حروف: {{ total_in_words }}</div>
+
+<div class="section-title">پرداخت و ارسال</div>
+<table>
+  <tbody>
+    <tr>
+      <td class="muted" style="width:140px;">روش و درگاه پرداخت</td>
+      <td>{{ payment_gateway_display|default:"—" }}</td>
+    </tr>
+    <tr>
+      <td class="muted">کد رهگیری تراکنش</td>
+      <td class="mono">{{ payment.ref_id|default:"—" }}</td>
+    </tr>
+    {% if tracking_code %}
+    <tr>
+      <td class="muted">کد رهگیری پستی</td>
+      <td class="mono">{{ tracking_code }}</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% endblock %}

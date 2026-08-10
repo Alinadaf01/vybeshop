@@ -178,3 +178,40 @@ class AdminStockMovementExportView(APIView):
         )
         response["Content-Disposition"] = 'attachment; filename="stock-movements.xlsx"'
         return response
+
+
+class AdminStockLedgerPdfView(APIView):
+    """Same filters as AdminStockMovementListCreateView — BACKEND-TASK.md
+    §3.6: 'همان فیلترهای فعال را روی سند اعمال کند'."""
+
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request):
+        from apps.documents.responses import pdf_filename, pdf_response
+        from apps.documents.stock_ledger import render_stock_ledger_pdf
+
+        from django.utils.dateparse import parse_date
+
+        base_qs = StockMovement.objects.select_related("user", "product").order_by("-created_at")
+        movements = AdminStockMovementFilter(request.query_params, queryset=base_qs).qs
+
+        date_from = parse_date(request.query_params.get("dateFrom", "")) if request.query_params.get("dateFrom") else None
+        date_to = parse_date(request.query_params.get("dateTo", "")) if request.query_params.get("dateTo") else None
+
+        pdf_bytes = render_stock_ledger_pdf(
+            movements, date_from=date_from, date_to=date_to, generated_by_name=request.user.get_full_name()
+        )
+        return pdf_response(pdf_bytes, pdf_filename("stock-ledger"))
+
+
+class AdminStocktakePdfView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request):
+        from apps.documents.responses import pdf_filename, pdf_response
+        from apps.documents.stocktake import render_stocktake_pdf
+
+        base_qs = Product.objects.select_related("category").order_by("name")
+        products = AdminInventoryFilter(request.query_params, queryset=base_qs).qs
+        pdf_bytes = render_stocktake_pdf(products, generated_by_name=request.user.get_full_name())
+        return pdf_response(pdf_bytes, pdf_filename("stocktake-sheet"))

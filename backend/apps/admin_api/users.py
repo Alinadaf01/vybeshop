@@ -3,6 +3,7 @@ from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.users.models import Address, User
 
@@ -92,3 +93,15 @@ class AdminUserAddressListView(ListAPIView):
 
     def get_queryset(self):
         return Address.objects.filter(user_id=self.kwargs["user_id"])
+
+
+class AdminCustomerStatementPdfView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request, user_id):
+        from apps.documents.customer_statement import render_customer_statement_pdf
+        from apps.documents.responses import pdf_filename, pdf_response
+
+        user = User.objects.get(pk=user_id)
+        pdf_bytes = render_customer_statement_pdf(user, generated_by_name=request.user.get_full_name())
+        return pdf_response(pdf_bytes, pdf_filename(f"customer-statement-{user.phone}"))

@@ -641,3 +641,65 @@ class PaymentFlowApiTests(APITestCase):
         self.client.force_authenticate(user=user)
         response = self.client.get(reverse("order-detail", args=[order.number]))
         self.assertEqual(response.status_code, 404)
+
+
+class OrderInvoicePdfTests(APITestCase):
+    """BACKEND-TASK.md §3.6-الف — HTML->PDF via headless Chromium."""
+
+    def setUp(self):
+        self.owner = User.objects.create_user(phone="09121110020", is_verified=True)
+        self.other = User.objects.create_user(phone="09121110021", is_verified=True)
+        self.order = Order.objects.create(
+            user=self.owner,
+            shipping_address={
+                "province": "تهران", "city": "تهران", "line": "خیابان آزادی",
+                "postalCode": "1234567890", "receiverName": "علی نادفی", "receiverPhone": "09121110020",
+            },
+            status="paid",
+            subtotal=500000, discount=50000, shipping_cost=30000, tax=0, total=480000,
+            paid_at=timezone.now(),
+        )
+        OrderItem.objects.create(order=self.order, product_name="پایه دسکتاپ VYBE", sku="VYBE-001", price=250000, quantity=2)
+        Payment.objects.create(
+            order=self.order, gateway="ZARINPAL", gateway_name="زرین‌پال", amount=480000,
+            ref_id="REF-12345", status="success", verified_at=timezone.now(), idempotency_key="idem-invoice-test",
+        )
+
+    def test_owner_can_download_invoice(self):
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(reverse("order-invoice-pdf", args=[self.order.number]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/pdf")
+        self.assertTrue(response.content.startswith(b"%PDF-"))
+
+    def test_second_download_is_served_from_cache(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("order-invoice-pdf", args=[self.order.number])
+        first = self.client.get(url).content
+        self.order.refresh_from_db()
+        cached_at = self.order.invoice_pdf_generated_at
+        second = self.client.get(url).content
+        self.order.refresh_from_db()
+        self.assertEqual(first, second)
+        self.assertEqual(cached_at, self.order.invoice_pdf_generated_at)
+
+    def test_other_user_gets_404(self):
+        self.client.force_authenticate(user=self.other)
+        response = self.client.get(reverse("order-invoice-pdf", args=[self.order.number]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_staff_can_download_any_invoice(self):
+        staff = User.objects.create_user(phone="09121110022", is_verified=True, is_staff=True)
+        self.client.force_authenticate(user=staff)
+        response = self.client.get(reverse("order-invoice-pdf", args=[self.order.number]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_unpaid_order_returns_400(self):
+        pending_order = Order.objects.create(user=self.owner, shipping_address={}, status="pending", total=1000)
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(reverse("order-invoice-pdf", args=[pending_order.number]))
+        self.assertEqual(response.status_code, 400)
+
+    def test_anonymous_gets_401(self):
+        response = self.client.get(reverse("order-invoice-pdf", args=[self.order.number]))
+        self.assertEqual(response.status_code, 401)

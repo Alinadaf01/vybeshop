@@ -1,4 +1,7 @@
+import datetime
+
 import django_filters
+from django.utils import timezone
 from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
@@ -98,6 +101,58 @@ def _transition_response(order: Order, method_name: str, /, **kwargs) -> Respons
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
     order.refresh_from_db()
     return Response(AdminOrderSerializer(order).data)
+
+
+class AdminOrderInvoicePdfView(APIView):
+    """Same document and cache as the customer-facing invoice — see
+    apps/documents/invoice.py."""
+
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request, pk):
+        from apps.documents.invoice import get_invoice_pdf
+        from apps.documents.responses import pdf_filename, pdf_response
+
+        order = Order.objects.get(pk=pk)
+        if order.status not in {"paid", "processing", "shipped", "delivered", "returned"}:
+            return Response(
+                {"detail": "فاکتور فقط برای سفارش‌های پرداخت‌شده در دسترس است."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        pdf_bytes = get_invoice_pdf(order, generated_by_name=request.user.get_full_name())
+        return pdf_response(pdf_bytes, pdf_filename(f"invoice-{order.number}"))
+
+
+class AdminOrderPackingSlipPdfView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request, pk):
+        from apps.documents.packing_slip import render_packing_slip_pdf
+        from apps.documents.responses import pdf_filename, pdf_response
+
+        order = Order.objects.prefetch_related("items").get(pk=pk)
+        pdf_bytes = render_packing_slip_pdf(order, generated_by_name=request.user.get_full_name())
+        return pdf_response(pdf_bytes, pdf_filename(f"packing-slip-{order.number}"))
+
+
+class AdminDailyShippingListPdfView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request):
+        from apps.documents.daily_shipping_list import render_daily_shipping_list_pdf
+        from apps.documents.responses import pdf_filename, pdf_response
+
+        date_param = request.query_params.get("date")
+        target_date = datetime.date.fromisoformat(date_param) if date_param else timezone.localdate()
+
+        orders = (
+            Order.objects.filter(status="processing", updated_at__date=target_date)
+            .prefetch_related("items")
+            .order_by("number")
+        )
+        pdf_bytes = render_daily_shipping_list_pdf(
+            orders, target_date=target_date, generated_by_name=request.user.get_full_name()
+        )
+        return pdf_response(pdf_bytes, pdf_filename(f"daily-shipping-list-{target_date.isoformat()}"))
 
 
 class AdminOrderMarkPaidView(APIView):

@@ -1,0 +1,31 @@
+{% extends "documents/base.html" %}
+{% block content %}
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:26px;">#</th>
+      <th>کد کالا</th>
+      <th>نام کالا</th>
+      <th>دسته‌بندی</th>
+      <th>موجودی سیستم</th>
+      <th style="width:110px;">شمارش دستی</th>
+      <th style="width:110px;">مغایرت</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <td class="mono">{{ forloop.counter }}</td>
+      <td class="mono">{{ row.sku }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.category }}</td>
+      <td class="mono">{{ row.system_stock }}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

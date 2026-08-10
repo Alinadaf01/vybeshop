@@ -509,6 +509,14 @@ interface Order extends OrderSummary {
 
 `gateway` on a `Payment` is always one of `"ZARINPAL" | "IDPAY" | "SNAPPPAY" | "DIGIPAY"` — the same codes as `PaymentGateway.code` below. `gatewayName` is a **snapshot** taken when the payment was created, not a live lookup — an order paid through a gateway that's since been disabled (or renamed) still shows the name it showed on the day it was paid.
 
+### `GET /api/orders/{number}/invoice.pdf`
+
+Requires `Authorization: Bearer <access>`, scoped to the caller's own order or staff (`404` for any other user, matching `GET /api/orders/{number}/`). Only orders at `paid` status or later (`paid`, `processing`, `shipped`, `delivered`, `returned`) have an invoice — anything still `pending`/`canceled` returns `400`.
+
+Response: `Content-Type: application/pdf`, `Content-Disposition: attachment; filename="invoice-{number}-{ISO date}.pdf"`. Rendered server-side via headless Chromium (BACKEND-TASK.md §3.6 — HTML→PDF, never ReportLab/FPDF, so Persian shapes and RTL correctly). The rendered file is cached on the order and only regenerated if the order changed since (e.g. a tracking code was added after shipping) — a second download of the same unchanged order is instant, not a re-render.
+
+Same document as the admin panel's `GET /api/admin/orders/{id}/invoice.pdf` (see `ADMIN-API-CONTRACT.md` §6).
+
 ---
 
 ## Payments
@@ -565,4 +573,3 @@ Request: `{ path: string; referrer?: string; productSlug?: string }`. The server
 - **Payment gateways** — checkout creates a `pending` order; actually paying for it (`GET /api/payment-gateways/`, redirect, callback, `verify`) is phase B5. `13-checkout.html` isn't converted to React until that lands.
 - **Newsletter subscription** (footer form) — currently a local-only success state (`setSubscribed(true)`), no endpoint wired.
 - **Search** (`/search` route) — page exists as a stub, not built out yet.
-- **Invoice PDF** (`GET /api/orders/{orderNumber}/invoice.pdf`) — documented in `BACKEND-TASK.md` §3.6, lands with the PDF-export phase, not this one. The account page's "دانلود فاکتور" button exists but stays disabled until then.

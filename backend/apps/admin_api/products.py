@@ -169,6 +169,22 @@ class AdminProductDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView
             )
 
 
+class AdminPriceListPdfView(APIView):
+    """Same filters as AdminProductListCreateView, per BACKEND-TASK.md §3.6:
+    'همان فیلترهای فعال را روی سند اعمال کند'."""
+
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request):
+        from apps.documents.price_list import render_price_list_pdf
+        from apps.documents.responses import pdf_filename, pdf_response
+
+        base_qs = Product.objects.select_related("category").order_by("name")
+        products = AdminProductFilter(request.query_params, queryset=base_qs).qs
+        pdf_bytes = render_price_list_pdf(products, generated_by_name=request.user.get_full_name())
+        return pdf_response(pdf_bytes, pdf_filename("price-list"))
+
+
 class AdminProductImageCreateView(APIView):
     permission_classes = [IsAdminStaff]
     parser_classes = [CamelCaseMultiPartParser, CamelCaseFormParser]

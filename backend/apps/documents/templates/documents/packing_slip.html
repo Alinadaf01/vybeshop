@@ -1,0 +1,39 @@
+{% extends "documents/base.html" %}
+{% block content %}
+
+<div style="border:2px solid #1a1a1c; border-radius:8px; padding:14px 18px; margin-bottom:16px;">
+  <div class="muted" style="font-size:11px;">گیرنده</div>
+  <div style="font-size:18px; font-weight:700; margin:2px 0;">{{ buyer_name }}</div>
+  <div class="mono" style="font-size:14px; direction:ltr; display:inline-block;">{{ buyer_phone }}</div>
+  <div style="font-size:14px; margin-top:6px; line-height:1.6;">{{ shipping_address_line }}</div>
+  {% if postal_code %}<div class="mono" style="font-size:12px; direction:ltr; display:inline-block; margin-top:4px;">کد پستی: {{ postal_code }}</div>{% endif %}
+</div>
+
+<div class="section-title">اقلام ({{ item_count }} عدد)</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:40px;">☐</th>
+      <th>شرح کالا</th>
+      <th>کد کالا</th>
+      <th>تعداد</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td style="font-size:14px;">☐</td>
+      <td>{{ item.name }}</td>
+      <td class="mono">{{ item.sku }}</td>
+      <td class="mono">{{ item.quantity }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if note %}
+<div class="section-title">یادداشت سفارش</div>
+<p>{{ note }}</p>
+{% endif %}
+
+{% endblock %}

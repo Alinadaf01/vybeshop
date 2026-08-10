@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>{{ doc_title }}</title>
+<style>
+  @font-face {
+    font-family: "Peyda";
+    src: url("{{ font_regular }}") format("woff2");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "Peyda";
+    src: url("{{ font_medium }}") format("woff2");
+    font-weight: 500;
+  }
+  @font-face {
+    font-family: "Peyda";
+    src: url("{{ font_semibold }}") format("woff2");
+    font-weight: 600;
+  }
+  @font-face {
+    font-family: "Peyda";
+    src: url("{{ font_bold }}") format("woff2");
+    font-weight: 700;
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("{{ mono_regular }}") format("woff2");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("{{ mono_bold }}") format("woff2");
+    font-weight: 700;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Peyda", sans-serif;
+    font-size: 12px;
+    color: #1a1a1c;
+    direction: rtl;
+  }
+  .mono { font-family: "JetBrains Mono", "Peyda", monospace; direction: ltr; unicode-bidi: embed; }
+
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #1a1a1c;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  .doc-header .brand { display: flex; align-items: center; gap: 10px; }
+  .doc-header .brand img { height: 32px; width: auto; }
+  .doc-header .brand-name { font-weight: 700; font-size: 15px; }
+  .doc-header .doc-meta { text-align: left; font-size: 10.5px; color: #55555a; line-height: 1.7; }
+  .doc-header .doc-title { font-weight: 700; font-size: 16px; margin: 0 0 4px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 6px 8px; text-align: right; font-size: 11px; }
+  thead th {
+    background: #f2f2f3;
+    border-bottom: 1.5px solid #1a1a1c;
+    font-weight: 600;
+  }
+  tbody tr { border-bottom: 1px solid #e2e2e4; }
+  tfoot td { border-top: 1.5px solid #1a1a1c; font-weight: 700; }
+
+  .section-title { font-weight: 700; font-size: 12.5px; margin: 18px 0 8px; }
+  .muted { color: #6b6b70; }
+</style>
+</head>
+<body>
+  <div class="doc-header">
+    <div class="brand">
+      {% if logo_uri %}<img src="{{ logo_uri }}" alt="">{% endif %}
+      <div>
+        <div class="brand-name">{{ business_name }}</div>
+        {% if seller_address %}<div class="muted" style="font-size:10px;">{{ seller_address }}</div>{% endif %}
+      </div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-title">{{ doc_title }}</div>
+      {% if filter_summary %}<div>{{ filter_summary }}</div>{% endif %}
+      <div>تاریخ تولید: {{ generated_at }}</div>
+      <div>تولیدکننده: {{ generated_by }}</div>
+    </div>
+  </div>
+
+  {% block content %}{% endblock %}
+</body>
+</html>

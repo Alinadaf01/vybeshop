@@ -1,0 +1,29 @@
+{% extends "documents/base.html" %}
+{% block content %}
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:26px;">#</th>
+      <th>کد کالا</th>
+      <th>نام کالا</th>
+      <th>دسته‌بندی</th>
+      <th>قیمت</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <td class="mono">{{ forloop.counter }}</td>
+      <td class="mono">{{ row.sku }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.category }}</td>
+      <td class="mono">{{ row.price }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="muted" style="text-align:center; padding:20px;">کالایی یافت نشد.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

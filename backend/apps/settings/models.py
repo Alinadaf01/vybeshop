@@ -8,6 +8,12 @@ from encrypted_model_fields.fields import EncryptedTextField
 class SiteSettings(models.Model):
     """Singleton — always pk=1. Use SiteSettings.load() to fetch/create it."""
 
+    # Legal seller identity for PDF invoices (BACKEND-TASK.md §3.6-الف) —
+    # not shown anywhere on the storefront, only on generated documents.
+    business_name = models.CharField(max_length=150, blank=True)
+    economic_code = models.CharField(max_length=30, blank=True, help_text="کد اقتصادی")
+    national_id = models.CharField(max_length=30, blank=True, help_text="شناسه ملی")
+
     phone_display = models.CharField(max_length=30, blank=True)
     phone_href = models.CharField(max_length=30, blank=True, help_text='e.g. "+982112345678" for tel:')
     email = models.EmailField(blank=True)

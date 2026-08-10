@@ -14,6 +14,7 @@ class AdminSiteSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteSettings
         fields = [
+            "business_name", "economic_code", "national_id",
             "phone_display", "phone_href", "email", "address", "business_hours",
             "instagram_url", "telegram_url", "whatsapp_url", "linkedin_url", "youtube_url", "pinterest_url",
             "google_maps_embed", "latitude", "longitude",

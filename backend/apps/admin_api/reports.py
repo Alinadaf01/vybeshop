@@ -86,6 +86,20 @@ class AdminSalesReportExportView(APIView):
         return response
 
 
+class AdminSalesReportPdfView(APIView):
+    permission_classes = [IsAdminStaff]
+
+    def get(self, request):
+        from apps.documents.responses import pdf_filename, pdf_response
+        from apps.documents.sales_report import render_sales_report_pdf
+
+        from_date, to_date = _date_range(request)
+        pdf_bytes = render_sales_report_pdf(
+            date_from=from_date, date_to=to_date, generated_by_name=request.user.get_full_name()
+        )
+        return pdf_response(pdf_bytes, pdf_filename("sales-report"))
+
+
 class AdminTopProductsReportView(APIView):
     permission_classes = [IsAdminStaff]
 
