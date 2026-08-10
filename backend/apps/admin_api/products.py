@@ -183,8 +183,20 @@ class AdminProductImageCreateView(APIView):
         return Response(AdminProductImageSerializer(image).data, status=201)
 
 
-class AdminProductImageDeleteView(APIView):
+class AdminProductImageDetailView(APIView):
+    """PATCH supports drag-reorder (send the new `order`) and alt-text
+    edits; the file itself is immutable once uploaded — delete + re-add
+    to replace it."""
+
     permission_classes = [IsAdminStaff]
+
+    def patch(self, request, product_id, image_id):
+        image = ProductImage.objects.get(pk=image_id, product_id=product_id)
+        serializer = AdminProductImageSerializer(image, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        log_admin_action(user=request.user, action="update", model_name="ProductImage", object_id=image.pk)
+        return Response(serializer.data)
 
     def delete(self, request, product_id, image_id):
         ProductImage.objects.filter(pk=image_id, product_id=product_id).delete()

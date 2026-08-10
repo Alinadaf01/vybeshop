@@ -76,6 +76,19 @@ class AdminProductApiTests(AdminApiTestMixin, APITestCase):
         delete = self.client.delete(reverse("admin-product-image-delete", args=[self.product.pk, image_id]))
         self.assertEqual(delete.status_code, 204)
 
+    def test_reorder_product_image(self):
+        create = self.client.post(
+            reverse("admin-product-image-create", args=[self.product.pk]),
+            {"alt": "Front view", "order": 1},
+            format="multipart",
+        )
+        image_id = create.data["id"]
+        response = self.client.patch(
+            reverse("admin-product-image-delete", args=[self.product.pk, image_id]), {"order": 2}, format="json"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["order"], 2)
+
     def test_add_update_delete_color(self):
         create = self.client.post(
             reverse("admin-product-color-list", args=[self.product.pk]),

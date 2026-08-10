@@ -32,7 +32,7 @@ urlpatterns = [
     path("admin/products/", products.AdminProductListCreateView.as_view(), name="admin-product-list"),
     path("admin/products/<int:pk>/", products.AdminProductDetailView.as_view(), name="admin-product-detail"),
     path("admin/products/<int:product_id>/images/", products.AdminProductImageCreateView.as_view(), name="admin-product-image-create"),
-    path("admin/products/<int:product_id>/images/<int:image_id>/", products.AdminProductImageDeleteView.as_view(), name="admin-product-image-delete"),
+    path("admin/products/<int:product_id>/images/<int:image_id>/", products.AdminProductImageDetailView.as_view(), name="admin-product-image-delete"),
     path("admin/products/<int:product_id>/colors/", products.AdminColorOptionListCreateView.as_view(), name="admin-product-color-list"),
     path("admin/products/<int:product_id>/colors/<int:color_id>/", products.AdminColorOptionDetailView.as_view(), name="admin-product-color-detail"),
     # Price bulk edit
