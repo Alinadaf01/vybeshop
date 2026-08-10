@@ -49,6 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    # Per-admin, not global — the dashboard's "since your last visit" feed
+    # (BACKEND-TASK.md §6, ناحیه ۴) needs each staff member's own watermark.
+    last_dashboard_visit = models.DateTimeField(blank=True, null=True)
 
     objects = UserManager()
 

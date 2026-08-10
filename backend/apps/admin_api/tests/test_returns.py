@@ -19,6 +19,12 @@ class AdminReturnApiTests(AdminApiTestMixin, APITestCase):
         response = self.client.get(reverse("admin-return-detail", args=[self.ret.pk]))
         self.assertEqual(response.data["status"], "requested")
 
+    def test_filter_by_status(self):
+        response = self.client.get(reverse("admin-return-list"), {"status": "requested"})
+        self.assertEqual(response.data["count"], 1)
+        response = self.client.get(reverse("admin-return-list"), {"status": "refunded"})
+        self.assertEqual(response.data["count"], 0)
+
     def test_full_happy_path(self):
         r1 = self.client.post(reverse("admin-return-approve", args=[self.ret.pk]))
         self.assertEqual(r1.data["status"], "approved")

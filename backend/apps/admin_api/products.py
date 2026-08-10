@@ -126,6 +126,7 @@ class AdminProductFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method="filter_search")
     isActive = django_filters.BooleanFilter(field_name="is_active")
     productionStatus = django_filters.CharFilter(field_name="production_status")
+    inStock = django_filters.BooleanFilter(method="filter_in_stock")
     ordering = django_filters.OrderingFilter(
         fields=(("price", "price"), ("stock_count", "stockCount"), ("order", "order"))
     )
@@ -138,6 +139,9 @@ class AdminProductFilter(django_filters.FilterSet):
         from django.db.models import Q
 
         return queryset.filter(Q(name__icontains=value) | Q(sku__icontains=value))
+
+    def filter_in_stock(self, queryset, name, value):
+        return queryset.filter(stock_count__gt=0) if value else queryset.filter(stock_count=0)
 
 
 class AdminProductListCreateView(AdminActivityLogMixin, ListCreateAPIView):

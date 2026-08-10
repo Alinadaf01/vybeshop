@@ -28,6 +28,7 @@ urlpatterns = [
     path("admin/auth/refresh/", TokenRefreshView.as_view(), name="admin-refresh"),
     # Dashboard
     path("admin/dashboard/", dashboard.AdminDashboardView.as_view(), name="admin-dashboard"),
+    path("admin/dashboard/mark-seen/", dashboard.AdminDashboardMarkSeenView.as_view(), name="admin-dashboard-mark-seen"),
     # Products
     path("admin/products/", products.AdminProductListCreateView.as_view(), name="admin-product-list"),
     path("admin/products/<int:pk>/", products.AdminProductDetailView.as_view(), name="admin-product-detail"),

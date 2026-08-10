@@ -36,23 +36,68 @@ Request: `{ refresh: string }` → Response: `{ access: string }`
 
 ## 1. Dashboard (بخش ۱)
 
+Five zones per BACKEND-TASK.md §6 — "needs action" first, charts last. Every number in `needsAction` and `systemHealth` is meant to be a link on the frontend to that zone's already-existing filtered list (e.g. `paidPendingProcessing` → `/orders?status=paid`); the backend only returns counts, the admin panel owns the routes.
+
 ### `GET /api/admin/dashboard/`
 
 ```ts
 interface DashboardSummary {
-  salesToday: number;
-  salesThisMonth: number;
-  pendingOrders: number;      // status=processing not yet shipped
-  unpaidOrders: number;       // status=pending
-  lowStockCount: number;      // StockAlert.isTriggered
-  unreadMessages: number;
-  pendingReviews: number;
-  newUsersThisWeek: number;
-  salesChart: { date: string; total: number }[]; // last 30 days
-  recentOrders: Order[];      // last 10, same shape as §6
-  topProductsThisWeek: { product: Product; unitsSold: number }[];
+  needsAction: {
+    paidPendingProcessing: number;   // Order.status="paid"
+    readyToShip: number;             // Order.status="processing"
+    newReturnRequests: number;       // Return.status="requested"
+    unreadMessages: number;
+    pendingReviews: number;
+    lowStockCount: number;           // StockAlert.isTriggered
+    outOfStockActive: number;        // stockCount=0 AND isActive — visible but unbuyable
+    stalePendingPayments: number;    // status="pending" older than 30 minutes
+  };
+  today: {
+    sales: number; salesLastWeekSameDay: number;
+    orders: number; ordersLastWeekSameDay: number;
+    averageOrderValue: number; averageOrderValueLastWeekSameDay: number;
+    conversionRate: number; conversionRateLastWeekSameDay: number; // cartsCreated vs ordersPaid, today only
+  };
+  siteVisits: {
+    today: { pageViews: number; uniqueVisitors: number };
+    thisMonth: { pageViews: number; uniqueVisitors: number };
+    total: { pageViews: number; uniqueVisitors: number }; // always from DailyStat, never a live PageView count
+    topPages: { path: string; views: number }[];          // last 14 days
+    topReferrers: { referrer: string; views: number }[];  // last 14 days
+    worstViewToPurchase: { product: Product; views: number; purchases: number; ratio: number }[]; // lowest ratio first
+  };
+  trends: {
+    salesChart30d: { date: string; total: number }[];
+    topProductsByQuantity: { product: Product; unitsSold: number; revenue: number }[]; // this week, top 5
+    topProductsByRevenue: { product: Product; unitsSold: number; revenue: number }[];  // this week, top 5
+    thisMonthToDate: number;
+    lastMonthToDate: number; // same day-of-month cutoff as thisMonthToDate
+  };
+  sinceLastVisit: {
+    lastVisitAt: string | null; // User.lastDashboardVisit
+    feed: {
+      type: "order" | "user" | "review" | "message" | "return" | "activity";
+      id: string; summary: string; createdAt: string;
+      link: { path: string; id: string } | null; // null only for "activity" rows
+    }[]; // newest first, capped at 30
+  };
+  systemHealth: {
+    kavenegarCredit: number | null;         // null if no active credential or the API call failed
+    kavenegarThresholdBreached: boolean;    // credit < 10000
+    gateways: { service: string; label: string; isActive: boolean; hasValidCredentials: boolean }[];
+    paymentErrors24h: number;
+    stockDiscrepancies: { product: Product; stockCount: number; ledgerBalance: number }[]; // top 10
+    sitemapLastReadAt: string | null;
+    sitemapDiscoveredUrls: number;
+    paidNotShippedOverThreshold: number; // status in (paid, processing) and paidAt older than 3 days
+  };
+  recentOrders: Order[]; // last 10, same shape as §6
 }
 ```
+
+### `POST /api/admin/dashboard/mark-seen/`
+
+Sets the calling admin's `lastDashboardVisit` to now. Returns `{ lastDashboardVisit: string }`. Call this from the "mark all as seen" button, never automatically on `GET` — otherwise the feed would clear itself before the admin reads it.
 
 ---
 
@@ -60,7 +105,7 @@ interface DashboardSummary {
 
 ### `GET /api/admin/products/`
 
-Filters: `category` (id), `search` (name/sku), `isActive`, `productionStatus`, `ordering` (`price`, `-price`, `stockCount`, `-stockCount`, `order`).
+Filters: `category` (id), `search` (name/sku), `isActive`, `productionStatus`, `inStock` (`stockCount>0` vs `=0`), `ordering` (`price`, `-price`, `stockCount`, `-stockCount`, `order`).
 
 ### `GET/PATCH/DELETE /api/admin/products/{id}/`
 
@@ -415,7 +460,7 @@ Only `approved` reviews are ever included in the public product-detail average/d
 
 ### Returns
 
-- `GET /api/admin/returns/`, `GET /api/admin/returns/{id}/`
+- `GET /api/admin/returns/`, `GET /api/admin/returns/{id}/` — filter: `status` (`requested` | `approved` | `received` | `refunded` | `rejected`)
 - `POST /api/admin/returns/{id}/approve/`, `.../reject/`, `.../mark-received/`, `.../mark-refunded/` — same "action route, never a raw status field" pattern as orders (§6). `mark-refunded` also settles the associated `Payment`/refund flow once phase B5 exists.
 
 ### Admin activity log

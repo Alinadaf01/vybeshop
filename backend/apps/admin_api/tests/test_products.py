@@ -18,6 +18,16 @@ class AdminProductApiTests(AdminApiTestMixin, APITestCase):
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["stock_count"], 7)
 
+    def test_filter_by_in_stock(self):
+        out_of_stock = self.make_product(sku="OOS-001", slug="oos-product", stock=0)
+        response = self.client.get(reverse("admin-product-list"), {"inStock": "true"})
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["id"], str(self.product.pk))
+
+        response = self.client.get(reverse("admin-product-list"), {"inStock": "false"})
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["id"], str(out_of_stock.pk))
+
     def test_stock_count_is_read_only_on_update(self):
         response = self.client.patch(
             reverse("admin-product-detail", args=[self.product.pk]), {"stockCount": 999}, format="json"

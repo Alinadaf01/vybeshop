@@ -1,3 +1,4 @@
+import django_filters
 from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
@@ -22,9 +23,18 @@ class AdminReturnSerializer(serializers.ModelSerializer):
         return str(obj.pk)
 
 
+class AdminReturnFilter(django_filters.FilterSet):
+    status = django_filters.CharFilter(field_name="status")
+
+    class Meta:
+        model = Return
+        fields = []
+
+
 class AdminReturnListView(ListAPIView):
     permission_classes = [IsAdminStaff]
     serializer_class = AdminReturnSerializer
+    filterset_class = AdminReturnFilter
     queryset = Return.objects.select_related("order").order_by("-created_at")
 
 
