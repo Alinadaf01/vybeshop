@@ -21,6 +21,21 @@ class AdminSiteSettingsApiTests(AdminApiTestMixin, APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(SiteSettings.load().email, "shop@vybe.ir")
 
+    def test_patch_with_plain_json_when_no_image_files(self):
+        # Regression: the view only accepted multipart/form-data, so the
+        # panel's own optimization (send JSON when no image is being
+        # uploaded, multipart only when one is) 415'd on every text-only
+        # save — e.g. just toggling notifyOwnerNewOrder.
+        response = self.client.patch(
+            reverse("admin-settings-site"),
+            {"email": "json-only@vybe.ir", "notifyOwnerNewOrder": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        settings = SiteSettings.load()
+        self.assertEqual(settings.email, "json-only@vybe.ir")
+        self.assertFalse(settings.notify_owner_new_order)
+
 
 class AdminApiCredentialApiTests(AdminApiTestMixin, APITestCase):
     def setUp(self):

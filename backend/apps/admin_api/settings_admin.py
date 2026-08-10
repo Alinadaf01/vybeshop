@@ -1,5 +1,6 @@
 import json
 
+from djangorestframework_camel_case.parser import CamelCaseJSONParser
 from rest_framework import serializers
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -27,7 +28,12 @@ class AdminSiteSettingsSerializer(serializers.ModelSerializer):
 class AdminSiteSettingsView(RetrieveUpdateAPIView):
     permission_classes = [IsAdminStaff]
     serializer_class = AdminSiteSettingsSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    # Multipart for the image fields (logos, favicon, trust badge) *plus*
+    # JSON — the panel only switches to multipart when an image file is
+    # actually being uploaded, and sends plain JSON the rest of the time
+    # (e.g. toggling notifyOwnerNewOrder). Restricting this to multipart
+    # only, as it originally was, made every text-only PATCH 415.
+    parser_classes = [MultiPartParser, FormParser, CamelCaseJSONParser]
 
     def get_object(self):
         return SiteSettings.load()
