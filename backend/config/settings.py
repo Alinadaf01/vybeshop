@@ -170,6 +170,13 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "config.pagination.StandardPagination",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # Export endpoints use `?format=xlsx` as a plain query param telling the
+    # view which file to build (ADMIN-API-CONTRACT.md — stock movement and
+    # reports export). DRF's own content negotiation reserves that same query
+    # param name to pick a *renderer* by format suffix, and raises Http404
+    # before the view even runs when no renderer declares that format —
+    # disable the override so it doesn't collide with our unrelated use.
+    "URL_FORMAT_OVERRIDE": None,
 }
 
 SPECTACULAR_SETTINGS = {
