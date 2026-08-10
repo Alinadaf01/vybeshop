@@ -8,6 +8,7 @@ import type { AdminOrder } from "@/types/order";
 import type { AdminSiteSettings, ApiCredential, ApiCredentialService, ShippingMethod } from "@/types/settings";
 import type { AdminAddress, AdminUser, AdminUserListItem, CreateUserFormValues, UpdateUserFormValues } from "@/types/user";
 import type { AdminContactMessage } from "@/types/message";
+import type { CreateStockMovementValues, InventoryRow, InventorySummary, StockMovement } from "@/types/inventory";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -507,4 +508,66 @@ export async function updateMessage(
 ): Promise<AdminContactMessage> {
   const res = await authorizedFetch(`/messages/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
   return parseOrThrow(res, "ویرایش پیام ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Inventory (§8, §13)
+// ---------------------------------------------------------------------------
+
+export interface InventoryListParams {
+  page?: number;
+  pageSize?: number;
+  category?: string;
+  isLow?: string;
+}
+
+export async function listInventory(params: InventoryListParams): Promise<PaginatedResponse<InventoryRow>> {
+  const res = await authorizedFetch(`/inventory/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت موجودی ناموفق بود.");
+}
+
+export async function getInventorySummary(): Promise<InventorySummary> {
+  const res = await authorizedFetch("/inventory/summary/");
+  return parseOrThrow(res, "دریافت خلاصه موجودی ناموفق بود.");
+}
+
+export async function updateStockAlert(
+  productId: number,
+  data: { reorderPoint: number; isActive: boolean },
+): Promise<{ reorderPoint: number; isActive: boolean }> {
+  const res = await authorizedFetch(`/inventory/${productId}/alert/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ذخیره هشدار موجودی ناموفق بود.");
+}
+
+export interface StockMovementListParams {
+  page?: number;
+  pageSize?: number;
+  product?: string;
+  type?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export async function listStockMovements(params: StockMovementListParams): Promise<PaginatedResponse<StockMovement>> {
+  const res = await authorizedFetch(`/stock-movements/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت کاردکس ناموفق بود.");
+}
+
+export async function createStockMovement(data: CreateStockMovementValues): Promise<StockMovement> {
+  const res = await authorizedFetch("/stock-movements/", { method: "POST", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ثبت حرکت انبار ناموفق بود.");
+}
+
+export async function downloadStockMovementsExport(params: StockMovementListParams): Promise<void> {
+  const res = await authorizedFetch(`/stock-movements/export/${buildQuery({ ...params, format: "xlsx" })}`);
+  if (!res.ok) throw new Error(await readErrorDetail(res, "خروجی اکسل ناموفق بود."));
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "stock-movements.xlsx";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
