@@ -36,6 +36,10 @@ export function formatJalaliDateTime(input: string | Date): string {
   return `${formatJalaliDate(date)} · ${hours}:${minutes}`;
 }
 
+export function formatPercent(value: number): string {
+  return `${(value * 100).toLocaleString("fa-IR", { maximumFractionDigits: 1 })}٪`;
+}
+
 export function formatRelativeTime(input: string | Date): string {
   const date = typeof input === "string" ? new Date(input) : input;
   const seconds = Math.round((Date.now() - date.getTime()) / 1000);

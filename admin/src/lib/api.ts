@@ -28,6 +28,13 @@ import type {
   TopProductsBy,
 } from "@/types/report";
 import type { DashboardSummary } from "@/types/dashboard";
+import type {
+  SearchConsoleIndexStatus,
+  SearchConsolePageRow,
+  SearchConsolePerformance,
+  SearchConsoleQueryRow,
+  SearchConsoleSitemapStatus,
+} from "@/types/searchConsole";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -809,4 +816,40 @@ export async function getDashboard(): Promise<DashboardSummary> {
 export async function markDashboardSeen(): Promise<{ lastDashboardVisit: string }> {
   const res = await authorizedFetch("/dashboard/mark-seen/", { method: "POST" });
   return parseOrThrow(res, "ثبت بازدید ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Search Console (§4 bonus)
+// ---------------------------------------------------------------------------
+
+/** Every search-console endpoint returns 503 until the client sets up Google
+ * Search Console credentials and the nightly sync runs at least once — that
+ * is a normal "not connected" state, not an error, so it resolves to null
+ * instead of throwing. Any other non-2xx status still throws normally. */
+async function fetchSearchConsole<T>(path: string, fallback: string): Promise<T | null> {
+  const res = await authorizedFetch(path);
+  if (res.status === 503) return null;
+  return parseOrThrow<T>(res, fallback);
+}
+
+export async function getSearchConsolePerformance(
+  params: ReportDateRange,
+): Promise<SearchConsolePerformance | null> {
+  return fetchSearchConsole(`/search-console/performance/${buildQuery(params)}`, "دریافت عملکرد سرچ کنسول ناموفق بود.");
+}
+
+export async function getSearchConsoleQueries(params: ReportDateRange): Promise<SearchConsoleQueryRow[] | null> {
+  return fetchSearchConsole(`/search-console/queries/${buildQuery(params)}`, "دریافت عبارت‌های جستجو ناموفق بود.");
+}
+
+export async function getSearchConsolePages(params: ReportDateRange): Promise<SearchConsolePageRow[] | null> {
+  return fetchSearchConsole(`/search-console/pages/${buildQuery(params)}`, "دریافت صفحات ناموفق بود.");
+}
+
+export async function getSearchConsoleIndexStatus(): Promise<SearchConsoleIndexStatus | null> {
+  return fetchSearchConsole("/search-console/index-status/", "دریافت وضعیت ایندکس ناموفق بود.");
+}
+
+export async function getSearchConsoleSitemapStatus(): Promise<SearchConsoleSitemapStatus | null> {
+  return fetchSearchConsole("/search-console/sitemap-status/", "دریافت وضعیت سایت‌مپ ناموفق بود.");
 }
