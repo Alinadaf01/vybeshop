@@ -1,3 +1,5 @@
+import json
+
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
@@ -61,6 +63,22 @@ class AdminApiCredentialApiTests(AdminApiTestMixin, APITestCase):
         )
         cred = ApiCredential.objects.get(pk=response.data["id"])
         self.assertTrue(cred.has_valid_credentials())
+
+    def test_credentials_key_names_survive_camelcase_parsing(self):
+        # Regression: the global camelCase JSON parser underscoreizes nested
+        # dict keys by default — {"apiKey": "x"} in the request body would
+        # silently become {"api_key": "x"} on disk, which
+        # kavenegar_client.py's data.get("apiKey") would never find, quietly
+        # breaking every SMS send. JSON_UNDERSCOREIZE.ignore_fields must
+        # exempt "credentials" from that transform.
+        response = self.client.post(
+            reverse("admin-settings-credential-list"),
+            {"service": "kavenegar", "credentials": {"apiKey": "REAL-KEY-123"}, "isActive": True},
+            format="json",
+        )
+        cred = ApiCredential.objects.get(pk=response.data["id"])
+        stored = json.loads(cred.credentials)
+        self.assertEqual(stored.get("apiKey"), "REAL-KEY-123")
 
     def test_delete_credential(self):
         cred = ApiCredential.objects.create(service="kavenegar", credentials='{"apiKey": "x"}')

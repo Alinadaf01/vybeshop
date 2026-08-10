@@ -152,6 +152,12 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseFormParser",
         "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
     ),
+    # `credentials` (ApiCredential) holds provider-defined keys like "apiKey"
+    # or "merchantId" verbatim inside a JSON blob — the camelCase parser
+    # underscoreizes nested dict keys by default, which would silently store
+    # "api_key" instead and break every client that reads credentials back
+    # with `data.get("apiKey")` (kavenegar_client.py, orders/providers/*).
+    "JSON_UNDERSCOREIZE": {"ignore_fields": ("credentials",)},
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",

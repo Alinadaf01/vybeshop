@@ -20,6 +20,7 @@ class AdminSiteSettingsSerializer(serializers.ModelSerializer):
             "trust_badge_label", "trust_badge_image", "trust_badge_url", "payment_gateway_label",
             "logo_light", "logo_dark", "favicon", "default_og_image",
             "google_analytics_id", "google_tag_manager_id",
+            "owner_notification_phone", "notify_owner_new_order",
         ]
 
 
@@ -35,17 +36,23 @@ class AdminSiteSettingsView(RetrieveUpdateAPIView):
 class AdminApiCredentialSerializer(serializers.ModelSerializer):
     """`credentials` is intentionally absent from `fields` for reads — it's
     accepted on write via a separate write-only field so it never appears
-    in a response body (ADMIN-API-CONTRACT.md §12, mirrors §0(د))."""
+    in a response body (ADMIN-API-CONTRACT.md §12, mirrors §0(د)).
+    `is_configured` is the read-side stand-in: enough for the panel to show
+    a "تنظیم شده" badge without ever exposing the secret itself."""
 
     id = serializers.SerializerMethodField()
     credentials = serializers.JSONField(write_only=True, required=False)
+    is_configured = serializers.SerializerMethodField()
 
     class Meta:
         model = ApiCredential
-        fields = ["id", "service", "label", "is_active", "is_sandbox", "order", "credentials"]
+        fields = ["id", "service", "label", "is_active", "is_sandbox", "order", "is_configured", "credentials"]
 
     def get_id(self, obj: ApiCredential) -> str:
         return str(obj.pk)
+
+    def get_is_configured(self, obj: ApiCredential) -> bool:
+        return obj.has_valid_credentials()
 
     def to_internal_value(self, data):
         attrs = super().to_internal_value(data)
