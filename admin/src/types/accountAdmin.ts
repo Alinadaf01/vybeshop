@@ -3,9 +3,12 @@ export interface ResetPasswordResponse {
 }
 
 export interface ImpersonateResponse {
-  access: string;
-  refresh: string;
-  user: { id: string; phone: string; firstName: string; lastName: string };
+  ticket: string;
+  expiresInSeconds: number;
+  /** Ready-made storefront link carrying the ticket as a query param — the
+   * ticket is fine to travel in a URL (single-use, 60s-lived); the real
+   * session token it's exchanged for never is. */
+  url: string;
 }
 
 export interface ForceLogoutResponse {

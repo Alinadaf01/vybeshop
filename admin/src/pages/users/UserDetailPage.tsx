@@ -16,6 +16,7 @@ import { useToast } from "@/lib/ToastContext";
 import { usePermissions } from "@/lib/usePermissions";
 import { ResetPasswordResultModal } from "@/pages/users/ResetPasswordResultModal";
 import { ImpersonateResultModal } from "@/pages/users/ImpersonateResultModal";
+import type { ImpersonateResponse } from "@/types/accountAdmin";
 
 export default function UserDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +25,7 @@ export default function UserDetailPage() {
   const { isSuperuser } = usePermissions();
   const [confirmAction, setConfirmAction] = useState<"reset-password" | "impersonate" | "force-logout" | null>(null);
   const [resetPasswordResult, setResetPasswordResult] = useState<string | null>(null);
-  const [impersonateResult, setImpersonateResult] = useState<{ access: string; refresh: string } | null>(null);
+  const [impersonateResult, setImpersonateResult] = useState<ImpersonateResponse | null>(null);
 
   const { data: user, isPending, isError, refetch } = useQuery({ queryKey: ["user", id], queryFn: () => getUser(id!) });
   const { data: roles } = useQuery({ queryKey: ["roles"], queryFn: listRoles });
@@ -68,7 +69,7 @@ export default function UserDetailPage() {
   const impersonateMutation = useMutation({
     mutationFn: () => impersonateUser(id!),
     onSuccess: (data) => {
-      setImpersonateResult({ access: data.access, refresh: data.refresh });
+      setImpersonateResult(data);
       setConfirmAction(null);
     },
     onError: (error: unknown) => toast.showError(error instanceof Error ? error.message : "ورود به‌جای کاربر ناموفق بود."),
@@ -223,7 +224,7 @@ export default function UserDetailPage() {
       />
 
       <ResetPasswordResultModal password={resetPasswordResult} onClose={() => setResetPasswordResult(null)} />
-      <ImpersonateResultModal tokens={impersonateResult} userPhone={user.phone} onClose={() => setImpersonateResult(null)} />
+      <ImpersonateResultModal result={impersonateResult} userPhone={user.phone} onClose={() => setImpersonateResult(null)} />
     </div>
   );
 }
