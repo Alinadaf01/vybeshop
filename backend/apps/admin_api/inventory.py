@@ -1,15 +1,16 @@
-import io
-
 import django_filters
-import openpyxl
 from django.db.models import F
-from django.http import HttpResponse
+from django.utils.dateparse import parse_date
 from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.catalog.models import Product
+from apps.documents.excel import COUNT_FORMAT, Column, build_workbook
+from apps.documents.persian import format_jalali_date
+from apps.documents.responses import xlsx_filename, xlsx_response
+from apps.documents.stock_ledger import TYPE_LABELS
 from apps.inventory.models import StockAlert, StockMovement
 
 from .activity import log_admin_action
@@ -163,31 +164,60 @@ class AdminStockMovementListCreateView(ListAPIView):
 
 
 class AdminStockMovementExportView(APIView):
+    """Respects the same filters the stock-ledger table has active (§6: 'هر
+    خروجی باید فیلترهای فعال جدول را رعایت کند') — same filterset the list
+    view itself uses, applied to the same base queryset."""
+
     permission_classes = [require_section("stock_ledger")]
+
+    _COLUMNS = [
+        Column("date", "تاریخ"),
+        Column("product", "محصول"),
+        Column("sku", "کد کالا"),
+        Column("type", "نوع تراکنش"),
+        Column("quantity", "مقدار", COUNT_FORMAT),
+        Column("balance_after", "مانده پس از تراکنش", COUNT_FORMAT),
+        Column("reference", "مرجع"),
+        Column("note", "یادداشت"),
+        Column("user", "کاربر"),
+    ]
 
     def get(self, request):
         base_qs = StockMovement.objects.select_related("user", "product").order_by("-created_at")
         qs = AdminStockMovementFilter(request.query_params, queryset=base_qs).qs
 
-        workbook = openpyxl.Workbook()
-        sheet = workbook.active
-        sheet.title = "Stock Movements"
-        sheet.append(["ID", "Product", "Type", "Quantity", "Balance After", "Reference", "Note", "User", "Created At"])
-        for movement in qs:
-            sheet.append([
-                movement.pk, movement.product.name, movement.type, movement.quantity, movement.balance_after,
-                movement.reference, movement.note, movement.user.get_full_name() if movement.user else "",
-                movement.created_at.strftime("%Y-%m-%d %H:%M"),
-            ])
+        bits = []
+        date_from = parse_date(request.query_params.get("dateFrom", "")) if request.query_params.get("dateFrom") else None
+        date_to = parse_date(request.query_params.get("dateTo", "")) if request.query_params.get("dateTo") else None
+        if date_from:
+            bits.append(f"از {format_jalali_date(date_from)}")
+        if date_to:
+            bits.append(f"تا {format_jalali_date(date_to)}")
+        filter_summary = " ".join(bits) or "همه بازه‌ها"
 
-        buffer = io.BytesIO()
-        workbook.save(buffer)
-        buffer.seek(0)
-        response = HttpResponse(
-            buffer.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        rows = [
+            {
+                "date": format_jalali_date(movement.created_at),
+                "product": movement.product.name,
+                "sku": movement.product.sku,
+                "type": TYPE_LABELS.get(movement.type, movement.type),
+                "quantity": movement.quantity,
+                "balance_after": movement.balance_after,
+                "reference": movement.reference,
+                "note": movement.note,
+                "user": movement.user.get_full_name() if movement.user else "",
+            }
+            for movement in qs
+        ]
+        workbook = build_workbook(
+            sheet_name="کاردکس انبار",
+            report_title="کاردکس انبار",
+            columns=self._COLUMNS,
+            rows=rows,
+            filter_summary=filter_summary,
+            generated_by=request.user.get_full_name(),
         )
-        response["Content-Disposition"] = 'attachment; filename="stock-movements.xlsx"'
-        return response
+        return xlsx_response(workbook, xlsx_filename("stock-movements"))
 
 
 class AdminStockLedgerPdfView(APIView):

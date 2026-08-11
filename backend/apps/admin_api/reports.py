@@ -1,13 +1,12 @@
-import io
-
-import openpyxl
 from django.db.models import Count, F, IntegerField, Sum
 from django.db.models.functions import TruncDate, TruncMonth, TruncWeek
-from django.http import HttpResponse
 from django.utils.dateparse import parse_date
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.documents.excel import COUNT_FORMAT, TOMAN_FORMAT, Column, build_workbook
+from apps.documents.persian import format_jalali_date
+from apps.documents.responses import xlsx_filename, xlsx_response
 from apps.orders.models import Cart, Order, OrderItem, Payment, Return
 from apps.users.models import User
 
@@ -53,8 +52,17 @@ class AdminSalesReportView(APIView):
         return Response({"series": series, "average_order_value": average_order_value})
 
 
+_GROUP_BY_LABELS = {"day": "روزانه", "week": "هفتگی", "month": "ماهانه"}
+
+
 class AdminSalesReportExportView(APIView):
     permission_classes = [require_section("reports")]
+
+    _COLUMNS = [
+        Column("period", "دوره"),
+        Column("total", "مبلغ فروش", TOMAN_FORMAT),
+        Column("order_count", "تعداد سفارش", COUNT_FORMAT),
+    ]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -62,28 +70,36 @@ class AdminSalesReportExportView(APIView):
         trunc = _TRUNC.get(group_by, TruncDate)
 
         qs = _paid_orders_in_range(from_date, to_date)
-        rows = (
+        db_rows = (
             qs.annotate(period=trunc("paid_at"))
             .values("period")
             .annotate(total=Sum("total"), order_count=Count("id"))
             .order_by("period")
         )
+        rows = [
+            {"period": format_jalali_date(row["period"]), "total": row["total"], "order_count": row["order_count"]}
+            for row in db_rows
+        ]
 
-        workbook = openpyxl.Workbook()
-        sheet = workbook.active
-        sheet.title = "Sales"
-        sheet.append(["Period", "Total", "Order Count"])
-        for row in rows:
-            sheet.append([row["period"].isoformat(), row["total"], row["order_count"]])
+        bits = [f"تفکیک: {_GROUP_BY_LABELS.get(group_by, group_by)}"]
+        if from_date:
+            bits.append(f"از {format_jalali_date(from_date)}")
+        if to_date:
+            bits.append(f"تا {format_jalali_date(to_date)}")
 
-        buffer = io.BytesIO()
-        workbook.save(buffer)
-        buffer.seek(0)
-        response = HttpResponse(
-            buffer.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        workbook = build_workbook(
+            sheet_name="گزارش فروش",
+            report_title="گزارش فروش دوره‌ای",
+            columns=self._COLUMNS,
+            rows=rows,
+            filter_summary=" ".join(bits),
+            generated_by=request.user.get_full_name(),
+            totals={
+                "total": sum(row["total"] for row in rows),
+                "order_count": sum(row["order_count"] for row in rows),
+            },
         )
-        response["Content-Disposition"] = 'attachment; filename="sales-report.xlsx"'
-        return response
+        return xlsx_response(workbook, xlsx_filename("sales-report"))
 
 
 class AdminSalesReportPdfView(APIView):
