@@ -10,7 +10,7 @@ from .models import (
     SearchConsoleQuery,
     SearchConsoleSitemapStatus,
 )
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 _NOT_READY = {"detail": "داده سرچ کنسول هنوز آماده نیست — کش شبانه اجرا نشده یا اطلاعات ورود تنظیم نشده است."}
 
@@ -22,7 +22,7 @@ def _date_range(request):
 
 
 class AdminSearchConsolePerformanceView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("search_console")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -47,7 +47,7 @@ class AdminSearchConsolePerformanceView(APIView):
 
 
 class AdminSearchConsoleQueriesView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("search_console")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -64,7 +64,7 @@ class AdminSearchConsoleQueriesView(APIView):
 
 
 class AdminSearchConsolePagesView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("search_console")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -81,7 +81,7 @@ class AdminSearchConsolePagesView(APIView):
 
 
 class AdminSearchConsoleIndexStatusView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("search_console")]
 
     def get(self, request):
         obj = SearchConsoleIndexStatus.load()
@@ -91,7 +91,7 @@ class AdminSearchConsoleIndexStatusView(APIView):
 
 
 class AdminSearchConsoleSitemapStatusView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("search_console")]
 
     def get(self, request):
         obj = SearchConsoleSitemapStatus.load()

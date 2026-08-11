@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from apps.catalog.models import Category
 
 from .activity import AdminActivityLogMixin
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminCategorySerializer(serializers.ModelSerializer):
@@ -51,13 +51,13 @@ class AdminCategoryImageWriteMixin:
 
 
 class AdminCategoryListCreateView(AdminCategoryImageWriteMixin, AdminActivityLogMixin, ListCreateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("categories")]
     serializer_class = AdminCategorySerializer
     queryset = Category.objects.all()
 
 
 class AdminCategoryDetailView(AdminCategoryImageWriteMixin, AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("categories")]
     serializer_class = AdminCategorySerializer
     queryset = Category.objects.all()
 

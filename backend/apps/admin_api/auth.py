@@ -7,6 +7,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import User
 
+from .permissions import IsAdminStaff
+
 
 class AdminLoginSerializer(serializers.Serializer):
     phone = serializers.CharField()
@@ -18,7 +20,7 @@ class AdminUserBriefSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "phone", "first_name", "last_name", "is_staff"]
+        fields = ["id", "phone", "first_name", "last_name", "is_staff", "is_superuser", "must_change_password"]
 
     def get_id(self, obj: User) -> str:
         return str(obj.pk)
@@ -50,3 +52,25 @@ class AdminLoginView(APIView):
                 "user": AdminUserBriefSerializer(user).data,
             }
         )
+
+
+class AdminChangePasswordView(APIView):
+    """Self-service — also how a user clears must_change_password after a
+    superuser reset (§7.6-۱). Requires the current password even in the
+    forced-reset case: the user already knows it (it's the one-time value
+    just shown to them), and this stops a still-open old session from being
+    able to silently relock the account."""
+
+    permission_classes = [IsAdminStaff]
+
+    def post(self, request):
+        current_password = request.data.get("current_password", "")
+        new_password = request.data.get("new_password", "")
+        if not request.user.check_password(current_password):
+            return Response({"current_password": "رمز فعلی اشتباه است."}, status=status.HTTP_400_BAD_REQUEST)
+        if len(new_password) < 8:
+            return Response({"new_password": "رمز جدید باید حداقل ۸ کاراکتر باشد."}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.set_password(new_password)
+        request.user.must_change_password = False
+        request.user.save(update_fields=["password", "must_change_password"])
+        return Response({"detail": "رمز عبور با موفقیت تغییر کرد."})

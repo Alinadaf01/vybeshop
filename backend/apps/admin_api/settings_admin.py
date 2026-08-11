@@ -7,7 +7,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, Re
 from apps.settings.models import ApiCredential, ShippingMethod, SiteSettings
 
 from .activity import AdminActivityLogMixin
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminSiteSettingsSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class AdminSiteSettingsSerializer(serializers.ModelSerializer):
 
 
 class AdminSiteSettingsView(RetrieveUpdateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("settings")]
     serializer_class = AdminSiteSettingsSerializer
     # Multipart for the image fields (logos, favicon, trust badge) *plus*
     # JSON — the panel only switches to multipart when an image file is
@@ -68,7 +68,7 @@ class AdminApiCredentialSerializer(serializers.ModelSerializer):
 
 
 class AdminApiCredentialListCreateView(AdminActivityLogMixin, ListCreateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("credentials")]
     serializer_class = AdminApiCredentialSerializer
     pagination_class = None
     queryset = ApiCredential.objects.all()
@@ -76,7 +76,7 @@ class AdminApiCredentialListCreateView(AdminActivityLogMixin, ListCreateAPIView)
 
 
 class AdminApiCredentialDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("credentials")]
     serializer_class = AdminApiCredentialSerializer
     queryset = ApiCredential.objects.all()
     activity_log_exclude_fields = {"credentials"}
@@ -94,13 +94,13 @@ class AdminShippingMethodSerializer(serializers.ModelSerializer):
 
 
 class AdminShippingMethodListCreateView(AdminActivityLogMixin, ListCreateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("settings")]
     serializer_class = AdminShippingMethodSerializer
     pagination_class = None
     queryset = ShippingMethod.objects.all()
 
 
 class AdminShippingMethodDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("settings")]
     serializer_class = AdminShippingMethodSerializer
     queryset = ShippingMethod.objects.all()

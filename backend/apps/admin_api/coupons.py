@@ -4,7 +4,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from apps.content.models import Coupon
 
 from .activity import AdminActivityLogMixin
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminCouponSerializer(serializers.ModelSerializer):
@@ -24,12 +24,12 @@ class AdminCouponSerializer(serializers.ModelSerializer):
 
 
 class AdminCouponListCreateView(AdminActivityLogMixin, ListCreateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("coupons")]
     serializer_class = AdminCouponSerializer
     queryset = Coupon.objects.all()
 
 
 class AdminCouponDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("coupons")]
     serializer_class = AdminCouponSerializer
     queryset = Coupon.objects.all()

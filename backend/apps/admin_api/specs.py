@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from apps.catalog.models import Attribute, AttributeValue, Product, ProductAttribute
 
 from .activity import AdminActivityLogMixin, log_admin_action
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminAttributeSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class AdminAttributeSerializer(serializers.ModelSerializer):
 
 
 class AdminAttributeListCreateView(AdminActivityLogMixin, ListCreateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("specs")]
     serializer_class = AdminAttributeSerializer
     pagination_class = None
 
@@ -36,7 +36,7 @@ class AdminAttributeListCreateView(AdminActivityLogMixin, ListCreateAPIView):
 
 
 class AdminAttributeDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("specs")]
     serializer_class = AdminAttributeSerializer
     queryset = Attribute.objects.all()
 
@@ -56,7 +56,7 @@ class AdminAttributeValueListCreateView(APIView):
     """The 'promote a custom value to a reusable dropdown entry' action —
     see ADMIN-API-CONTRACT.md §5."""
 
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("specs")]
 
     def get(self, request, attribute_id):
         values = AttributeValue.objects.filter(attribute_id=attribute_id)
@@ -94,7 +94,7 @@ class AdminProductSpecsView(APIView):
     attribute/value ids to pre-populate its spec inputs, not just text to
     display."""
 
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("specs")]
 
     def get(self, request, product_id):
         rows = ProductAttribute.objects.filter(product_id=product_id).select_related("attribute", "value_option")

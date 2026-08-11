@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from . import (
+    account_admin,
     activity_log_views,
     auth,
     blog,
@@ -16,6 +17,7 @@ from . import (
     reports,
     returns,
     reviews,
+    roles,
     search_console,
     settings_admin,
     specs,
@@ -26,6 +28,12 @@ urlpatterns = [
     # Auth
     path("admin/auth/login/", auth.AdminLoginView.as_view(), name="admin-login"),
     path("admin/auth/refresh/", TokenRefreshView.as_view(), name="admin-refresh"),
+    path("admin/auth/change-password/", auth.AdminChangePasswordView.as_view(), name="admin-change-password"),
+    path("admin/me/permissions/", roles.AdminMyPermissionsView.as_view(), name="admin-my-permissions"),
+    # Roles & permissions (§7.5)
+    path("admin/roles/", roles.AdminRoleListCreateView.as_view(), name="admin-role-list"),
+    path("admin/roles/sections/", roles.AdminRoleSectionsView.as_view(), name="admin-role-sections"),
+    path("admin/roles/<int:pk>/", roles.AdminRoleDetailView.as_view(), name="admin-role-detail"),
     # Dashboard
     path("admin/dashboard/", dashboard.AdminDashboardView.as_view(), name="admin-dashboard"),
     path("admin/dashboard/mark-seen/", dashboard.AdminDashboardMarkSeenView.as_view(), name="admin-dashboard-mark-seen"),
@@ -76,6 +84,10 @@ urlpatterns = [
     path("admin/users/<int:pk>/", users.AdminUserDetailView.as_view(), name="admin-user-detail"),
     path("admin/users/<int:user_id>/addresses/", users.AdminUserAddressListView.as_view(), name="admin-user-addresses"),
     path("admin/users/<int:user_id>/statement.pdf", users.AdminCustomerStatementPdfView.as_view(), name="admin-user-statement-pdf"),
+    # Password management (§7.6) — all superuser-only
+    path("admin/users/<int:user_id>/reset-password/", account_admin.AdminResetPasswordView.as_view(), name="admin-user-reset-password"),
+    path("admin/users/<int:user_id>/impersonate/", account_admin.AdminImpersonateView.as_view(), name="admin-user-impersonate"),
+    path("admin/users/<int:user_id>/force-logout/", account_admin.AdminForceLogoutView.as_view(), name="admin-user-force-logout"),
     # Messages
     path("admin/messages/", contact_messages.AdminMessageListView.as_view(), name="admin-message-list"),
     path("admin/messages/<int:pk>/", contact_messages.AdminMessageDetailView.as_view(), name="admin-message-detail"),

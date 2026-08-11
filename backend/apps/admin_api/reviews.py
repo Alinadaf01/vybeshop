@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from apps.content.models import ProductReview
 
 from .activity import AdminActivityLogMixin
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminProductReviewSerializer(serializers.ModelSerializer):
@@ -34,13 +34,13 @@ class AdminReviewFilter(django_filters.FilterSet):
 
 
 class AdminReviewListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reviews")]
     serializer_class = AdminProductReviewSerializer
     filterset_class = AdminReviewFilter
     queryset = ProductReview.objects.select_related("user", "product")
 
 
 class AdminReviewDetailView(AdminActivityLogMixin, RetrieveUpdateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reviews")]
     serializer_class = AdminProductReviewSerializer
     queryset = ProductReview.objects.select_related("user", "product")

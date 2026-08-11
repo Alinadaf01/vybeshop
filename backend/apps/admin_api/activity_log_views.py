@@ -4,7 +4,7 @@ from rest_framework.generics import ListAPIView
 
 from apps.analytics.models import AdminActivityLog
 
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminActivityLogSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class AdminActivityLogFilter(django_filters.FilterSet):
 
 
 class AdminActivityLogListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("activity_log")]
     serializer_class = AdminActivityLogSerializer
     filterset_class = AdminActivityLogFilter
     queryset = AdminActivityLog.objects.select_related("user")

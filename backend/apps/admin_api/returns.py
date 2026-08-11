@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from apps.orders.models import InvalidOrderTransition, Return
 
 from .activity import log_admin_action
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminReturnSerializer(serializers.ModelSerializer):
@@ -32,14 +32,14 @@ class AdminReturnFilter(django_filters.FilterSet):
 
 
 class AdminReturnListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("returns")]
     serializer_class = AdminReturnSerializer
     filterset_class = AdminReturnFilter
     queryset = Return.objects.select_related("order").order_by("-created_at")
 
 
 class AdminReturnDetailView(RetrieveAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("returns")]
     serializer_class = AdminReturnSerializer
     queryset = Return.objects.select_related("order")
 
@@ -54,7 +54,7 @@ def _return_transition(return_obj: Return, method_name: str) -> Response:
 
 
 class AdminReturnApproveView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("returns", action="edit")]
 
     def post(self, request, pk):
         return_obj = Return.objects.get(pk=pk)
@@ -65,7 +65,7 @@ class AdminReturnApproveView(APIView):
 
 
 class AdminReturnRejectView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("returns", action="edit")]
 
     def post(self, request, pk):
         return_obj = Return.objects.get(pk=pk)
@@ -76,7 +76,7 @@ class AdminReturnRejectView(APIView):
 
 
 class AdminReturnMarkReceivedView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("returns", action="edit")]
 
     def post(self, request, pk):
         return_obj = Return.objects.get(pk=pk)
@@ -87,7 +87,7 @@ class AdminReturnMarkReceivedView(APIView):
 
 
 class AdminReturnMarkRefundedView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("returns", action="edit")]
 
     def post(self, request, pk):
         return_obj = Return.objects.get(pk=pk)

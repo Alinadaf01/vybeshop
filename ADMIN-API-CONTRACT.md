@@ -25,12 +25,16 @@ All models referenced here are already implemented in `backend/apps/*/models.py`
 ### `POST /api/admin/auth/login/`
 
 Request: `{ phone: string; password: string }`
-Response `200`: `{ access: string; refresh: string; user: { id, phone, firstName, lastName, isStaff } }`
+Response `200`: `{ access: string; refresh: string; user: { id, phone, firstName, lastName, isStaff, isSuperuser, mustChangePassword } }`
 `401` if credentials invalid or user is not staff.
+
+`mustChangePassword: true` means a superuser reset this account's password (see [Password & account management](#password--account-management-بخش-۷۶) below) — the frontend force-redirects to a change-password screen before anything else in the panel is reachable.
 
 ### `POST /api/admin/auth/refresh/`
 
 Request: `{ refresh: string }` → Response: `{ access: string }`
+
+### `POST /api/admin/auth/change-password/` — see [Password & account management](#password--account-management-بخش-۷۶)
 
 ---
 
@@ -304,6 +308,7 @@ Filters: `search` (phone/name), `isVerified`.
 interface AdminUser {
   id: number; phone: string; firstName: string; lastName: string; email: string | null;
   isVerified: boolean; isActive: boolean; isStaff: boolean; createdAt: string;
+  role: string | null; roleName: string | null; // AdminRole id/name — null for non-staff or staff with no role assigned
   addresses: { id, title, province, city, line, postalCode, receiverName, receiverPhone, isDefault }[];
   orderCount: number;
 }
@@ -315,10 +320,19 @@ interface AdminUser {
 interface AdminCreateUserInput {
   phone: string; firstName?: string; lastName?: string; email?: string;
   isVerified?: boolean; // staff-created users can be set verified directly, bypassing OTP entirely
+  isStaff?: boolean; roleId?: string; // roleId required when isStaff is true
 }
 ```
 
 ### `PATCH /api/admin/users/{id}/`
+
+Same shape as create, all fields optional. Changing `roleId` on your own account is blocked (`403`, superuser exempt) — see [role self-escalation guardrails](#roles-crud-section-roles). Demoting/deactivating/de-staffing the last remaining مدیر کل or superuser is blocked with `400`.
+
+### Password & account management for a specific user — see [§7.6 below](#password--account-management-بخش-۷۶)
+
+- `POST /api/admin/users/{id}/reset-password/`
+- `POST /api/admin/users/{id}/impersonate/`
+- `POST /api/admin/users/{id}/force-logout/`
 
 ### `GET /api/admin/users/{id}/addresses/`
 
@@ -498,4 +512,95 @@ Only `approved` reviews are ever included in the public product-detail average/d
 
 ## Permission model
 
-Every route in this document requires `is_staff = true` at minimum — enforced by a single global DRF permission class once phase B6 wires these up, not per-view. Finer-grained roles (e.g. read-only staff vs. full admin) are **out of scope for A0/B6**; revisit only if the client asks for staff-level separation.
+Every route in this document requires `is_staff = true` at minimum. On top of that, each view is gated by a **section + action** permission (`require_section("<section>", action="<action>")` in `apps/admin_api/permissions.py`) — built on Django's own `Group`/`Permission` tables, not a parallel system. `action` defaults from the HTTP method (`GET`→`view`, `POST`→`create`, `PUT`/`PATCH`→`edit`, `DELETE`→`delete`) and falls back to `edit` then `view` if the resolved action doesn't exist for that section (e.g. a mixed GET+POST view on a section with no `create` action). **`request.user.is_superuser` always bypasses every section check.**
+
+Sections (20 total) and the actions each one actually has — not every section has all four:
+
+| Section key | Label | Actions |
+|---|---|---|
+| `products` | محصولات | view, create, edit, delete |
+| `categories` | دسته‌بندی‌ها | view, create, edit, delete |
+| `specs` | مشخصات محصولات | view, create, edit, delete |
+| `pricing` | اصلاح قیمت | view, edit |
+| `cost_price` | قیمت تمام‌شده محصول | view |
+| `orders` | سفارشات | view, edit |
+| `inventory` | موجودی | view, edit |
+| `stock_ledger` | کاردکس | view, create |
+| `returns` | مرجوعی‌ها | view, edit |
+| `messages` | پیام‌ها | view, edit |
+| `reviews` | نظرات | view, edit |
+| `blog` | بلاگ | view, create, edit, delete |
+| `coupons` | کدهای تخفیف | view, create, edit, delete |
+| `reports` | گزارش‌های فروش و سود | view |
+| `settings` | تنظیمات سایت | view, edit |
+| `credentials` | کلیدهای API | view, create, edit, delete |
+| `users` | کاربران | view, create, edit |
+| `roles` | مدیریت نقش‌ها و دسترسی | view, edit |
+| `activity_log` | لاگ فعالیت | view |
+| `search_console` | سرچ کنسول | view |
+
+`credentials`, `reports`, `cost_price`, `pricing`, `roles`, `activity_log` are **sensitive sections** — never pre-checked when a new role is created via the UI (enforcement is server-side convention in the roles UI, not a hard backend block on granting them). Dashboard has no section — every staff member sees it, its zone counts already reflect the underlying sections' own gating.
+
+`AdminProductSerializer` and the inventory serializers additionally strip `cost_price` / `stock_value` / `total_stock_value` from the response body for users without `cost_price:view`, even though the surrounding endpoint's own section (`products`, `inventory`) may still be viewable — a field-level check layered on top of the endpoint-level one.
+
+### Default roles
+
+Seeded by a data migration (`apps/admin_api/migrations/0003_default_roles.py`), `is_system = true` (can't be deleted; renaming/re-granting is otherwise unrestricted like any role):
+
+| Role | Grants |
+|---|---|
+| مدیر کل | every section, every action it has |
+| مدیر محصول | products, categories, specs, blog (full CRUD) + reviews (view, edit) |
+| مدیر سفارشات | orders, inventory, stock_ledger, returns, messages (view/edit per their available actions) |
+| پشتیبانی | orders (view), users (view), messages (view, edit) |
+| حسابدار | reports (view) only |
+
+### `GET /api/admin/me/permissions/`
+
+Any authenticated staff user (not gated by a section — this endpoint answers "what am I allowed"). Response:
+```ts
+interface MyPermissions { isSuperuser: boolean; grants: Record<string, string[]> } // grants: { [sectionKey]: actionKey[] }
+```
+Frontend uses this to hide nav items/buttons the server would reject anyway — **UX only, not a security boundary**; every endpoint still checks server-side regardless of what the frontend shows.
+
+### Roles CRUD (section: `roles`)
+
+- `GET /api/admin/roles/` — list, no pagination. `AdminRole { id: string; name: string; description: string; isSystem: boolean; grants: Record<string, string[]> }`
+- `POST /api/admin/roles/` — `{ name, description?, grants: Record<string, string[]> }` → `201` with the created role. `400` if `name` empty/duplicate, or `grants` references an unknown section/action.
+- `GET /api/admin/roles/{id}/` — single role.
+- `PATCH /api/admin/roles/{id}/` — same body shape as create, all fields optional; omitted `grants` leaves existing grants untouched. `403` if you try to edit the role your own account is a member of (superuser exempt).
+- `DELETE /api/admin/roles/{id}/` — `400` if `isSystem`; `403` if it's your own role (superuser exempt). `204` on success.
+- `GET /api/admin/roles/sections/` — static catalog the checkbox-matrix UI renders from: `Array<{ key: string; label: string; actions: string[]; sensitive: boolean }>`.
+
+**Guardrails enforced server-side, not just hidden in the UI:** a user can never edit or delete the role their own account belongs to, and demoting/deactivating/de-staffing the last remaining مدیر کل-group-member (or last superuser) is blocked with `400` — both exempt for superusers.
+
+---
+
+## Password & account management (بخش ۷.۶)
+
+All three endpoints below are **superuser-only** (`IsSuperuser`, stricter than any section grant — a role with a `users:edit` grant still can't touch another staff member's password), and every action is written to the activity log. There is deliberately **no "view password" capability** — passwords are hashed and never recoverable, only replaceable.
+
+### `POST /api/admin/users/{id}/reset-password/`
+
+Staff targets only (`400` if the target isn't `is_staff`). Generates a random 14-character password, sets it, flags `must_change_password = true` on the target, and returns the new password **exactly once** — never stored or logged in plain text anywhere, including the activity log entry itself.
+Response `200`: `{ password: string }`
+
+The target's next successful login response carries `user.mustChangePassword: true`; the admin frontend force-redirects to a change-password screen (outside the normal sidebar layout) until `POST /api/admin/auth/change-password/` clears the flag — even the freshly-issued temp password must be re-entered as `current_password` there, so an already-open stale session can't silently re-lock the account.
+
+### `POST /api/admin/users/{id}/impersonate/`
+
+Non-staff targets only (`400` if the target is `is_staff` — this is for reproducing a **customer's** reported issue, not for one staff member to act as another). Issues a fresh, real JWT pair scoped to the target user.
+Response `200`: `{ access: string; refresh: string; user: { id, phone, firstName, lastName } }`
+
+These tokens are for the **storefront's** own auth storage, not the admin panel — `admin_api` endpoints reject non-staff users outright, so an impersonation session cannot be used to browse the admin panel itself. The admin frontend surfaces both tokens with a copy button and this caveat spelled out; pasting them into the storefront's own localStorage is a manual step today (a dedicated `/impersonate` consumer route on the storefront is tracked as follow-up work, not built in this pass).
+
+### `POST /api/admin/users/{id}/force-logout/`
+
+Blacklists every `OutstandingToken` belonging to the target user (via `rest_framework_simplejwt.token_blacklist`, installed as a real Django app — every `RefreshToken.for_user()` call automatically creates an `OutstandingToken` row, no extra wiring needed).
+Response `200`: `{ tokensRevoked: number }`
+
+**Known, accepted limitation:** this revokes the ability to mint new access tokens via refresh; any access token already issued and not yet expired remains valid until its own natural expiry (≤30 minutes in this project's JWT settings). This matches the spec's literal wording ("ابطال refresh token"), not a stronger "kill every live request this instant" guarantee.
+
+### `POST /api/admin/auth/change-password/`
+
+Self-service, any authenticated staff user, not superuser-gated — this is also how a user clears `must_change_password` after a superuser reset. `{ current_password: string; new_password: string }` → `400` on wrong current password or a new password under 8 characters; `200 { detail: string }` on success.

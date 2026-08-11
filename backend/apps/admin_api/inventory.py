@@ -13,7 +13,13 @@ from apps.catalog.models import Product
 from apps.inventory.models import StockAlert, StockMovement
 
 from .activity import log_admin_action
-from .permissions import IsAdminStaff
+from .permissions import require_section
+from .sections import perm_string
+
+
+def _can_view_cost_price(request) -> bool:
+    user = getattr(request, "user", None)
+    return bool(user and (user.is_superuser or user.has_perm(perm_string("cost_price", "view"))))
 
 
 class AdminInventoryRowSerializer(serializers.Serializer):
@@ -35,6 +41,10 @@ class AdminInventoryRowSerializer(serializers.Serializer):
         return bool(alert and alert.is_triggered)
 
     def get_stock_value(self, obj: Product) -> int | None:
+        # cost_price-derived — same "cost_price" permission as the product
+        # serializer's own field (§7.5 sensitive sections).
+        if not _can_view_cost_price(self.context.get("request")):
+            return None
         return obj.stock_count * obj.cost_price if obj.cost_price is not None else None
 
 
@@ -53,24 +63,24 @@ class AdminInventoryFilter(django_filters.FilterSet):
 
 
 class AdminInventoryListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("inventory")]
     serializer_class = AdminInventoryRowSerializer
     filterset_class = AdminInventoryFilter
     queryset = Product.objects.select_related("stock_alert")
 
 
 class AdminInventorySummaryView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("inventory")]
 
     def get(self, request):
-        products = Product.objects.all()
-        total_stock_value = None
-        priced = products.exclude(cost_price=None)
-        if priced.exists():
-            total_stock_value = sum(p.stock_count * p.cost_price for p in priced)
         low_stock_count = StockAlert.objects.filter(
             is_active=True, product__stock_count__lte=F("reorder_point")
         ).count()
+        total_stock_value = None
+        if _can_view_cost_price(request):
+            priced = Product.objects.exclude(cost_price=None)
+            if priced.exists():
+                total_stock_value = sum(p.stock_count * p.cost_price for p in priced)
         return Response({"total_stock_value": total_stock_value, "low_stock_count": low_stock_count})
 
 
@@ -81,7 +91,7 @@ class StockAlertSerializer(serializers.ModelSerializer):
 
 
 class AdminInventoryAlertView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("inventory")]
 
     def patch(self, request, product_id):
         product = Product.objects.get(pk=product_id)
@@ -132,7 +142,7 @@ class CreateStockMovementSerializer(serializers.Serializer):
 
 
 class AdminStockMovementListCreateView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("stock_ledger")]
     serializer_class = AdminStockMovementSerializer
     filterset_class = AdminStockMovementFilter
     queryset = StockMovement.objects.select_related("user").order_by("-created_at")
@@ -153,7 +163,7 @@ class AdminStockMovementListCreateView(ListAPIView):
 
 
 class AdminStockMovementExportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("stock_ledger")]
 
     def get(self, request):
         base_qs = StockMovement.objects.select_related("user", "product").order_by("-created_at")
@@ -184,7 +194,7 @@ class AdminStockLedgerPdfView(APIView):
     """Same filters as AdminStockMovementListCreateView — BACKEND-TASK.md
     §3.6: 'همان فیلترهای فعال را روی سند اعمال کند'."""
 
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("stock_ledger")]
 
     def get(self, request):
         from apps.documents.responses import pdf_filename, pdf_response
@@ -205,7 +215,7 @@ class AdminStockLedgerPdfView(APIView):
 
 
 class AdminStocktakePdfView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("inventory")]
 
     def get(self, request):
         from apps.documents.responses import pdf_filename, pdf_response

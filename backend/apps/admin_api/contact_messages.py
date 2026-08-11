@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from apps.content.models import ContactMessage
 
 from .activity import AdminActivityLogMixin
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminContactMessageSerializer(serializers.ModelSerializer):
@@ -33,13 +33,13 @@ class AdminMessageFilter(django_filters.FilterSet):
 
 
 class AdminMessageListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("messages")]
     serializer_class = AdminContactMessageSerializer
     filterset_class = AdminMessageFilter
     queryset = ContactMessage.objects.all()
 
 
 class AdminMessageDetailView(AdminActivityLogMixin, RetrieveUpdateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("messages")]
     serializer_class = AdminContactMessageSerializer
     queryset = ContactMessage.objects.all()

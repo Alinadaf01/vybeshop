@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from apps.orders.models import InvalidOrderTransition, Order
 
 from .activity import log_admin_action
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 ORDER_PREFETCH = ("items", "payments", "status_logs")
 
@@ -82,14 +82,14 @@ class AdminOrderFilter(django_filters.FilterSet):
 
 
 class AdminOrderListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders")]
     serializer_class = AdminOrderSerializer
     filterset_class = AdminOrderFilter
     queryset = Order.objects.select_related("user").prefetch_related(*ORDER_PREFETCH)
 
 
 class AdminOrderDetailView(RetrieveAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders")]
     serializer_class = AdminOrderSerializer
     queryset = Order.objects.select_related("user").prefetch_related(*ORDER_PREFETCH)
 
@@ -107,7 +107,7 @@ class AdminOrderInvoicePdfView(APIView):
     """Same document and cache as the customer-facing invoice — see
     apps/documents/invoice.py."""
 
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders")]
 
     def get(self, request, pk):
         from apps.documents.invoice import get_invoice_pdf
@@ -123,7 +123,7 @@ class AdminOrderInvoicePdfView(APIView):
 
 
 class AdminOrderPackingSlipPdfView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders")]
 
     def get(self, request, pk):
         from apps.documents.packing_slip import render_packing_slip_pdf
@@ -135,7 +135,7 @@ class AdminOrderPackingSlipPdfView(APIView):
 
 
 class AdminDailyShippingListPdfView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders")]
 
     def get(self, request):
         from apps.documents.daily_shipping_list import render_daily_shipping_list_pdf
@@ -156,7 +156,7 @@ class AdminDailyShippingListPdfView(APIView):
 
 
 class AdminOrderMarkPaidView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders", action="edit")]
 
     def post(self, request, pk):
         order = Order.objects.get(pk=pk)
@@ -167,7 +167,7 @@ class AdminOrderMarkPaidView(APIView):
 
 
 class AdminOrderStartProcessingView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders", action="edit")]
 
     def post(self, request, pk):
         order = Order.objects.get(pk=pk)
@@ -178,7 +178,7 @@ class AdminOrderStartProcessingView(APIView):
 
 
 class AdminOrderMarkShippedView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders", action="edit")]
 
     def post(self, request, pk):
         order = Order.objects.get(pk=pk)
@@ -190,7 +190,7 @@ class AdminOrderMarkShippedView(APIView):
 
 
 class AdminOrderMarkDeliveredView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders", action="edit")]
 
     def post(self, request, pk):
         order = Order.objects.get(pk=pk)
@@ -201,7 +201,7 @@ class AdminOrderMarkDeliveredView(APIView):
 
 
 class AdminOrderCancelView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("orders", action="edit")]
 
     def post(self, request, pk):
         order = Order.objects.get(pk=pk)

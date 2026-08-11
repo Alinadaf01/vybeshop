@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from apps.orders.models import Cart, Order, OrderItem, Payment, Return
 from apps.users.models import User
 
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 _TRUNC = {"day": TruncDate, "week": TruncWeek, "month": TruncMonth}
 
@@ -32,7 +32,7 @@ def _paid_orders_in_range(from_date, to_date):
 
 
 class AdminSalesReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -54,7 +54,7 @@ class AdminSalesReportView(APIView):
 
 
 class AdminSalesReportExportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -87,7 +87,7 @@ class AdminSalesReportExportView(APIView):
 
 
 class AdminSalesReportPdfView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from apps.documents.responses import pdf_filename, pdf_response
@@ -101,7 +101,7 @@ class AdminSalesReportPdfView(APIView):
 
 
 class AdminTopProductsReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -131,7 +131,7 @@ class AdminTopProductsReportView(APIView):
 
 
 class AdminByCategoryReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -155,7 +155,7 @@ class AdminByCategoryReportView(APIView):
 
 
 class AdminConversionReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -171,7 +171,7 @@ class AdminConversionReportView(APIView):
 
 
 class AdminAbandonedCartsReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         # Checkout empties the cart server-side (see CheckoutView), so a
@@ -191,7 +191,7 @@ class AdminAbandonedCartsReportView(APIView):
 
 
 class AdminCustomersReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -211,7 +211,7 @@ class AdminCustomersReportView(APIView):
 
 
 class AdminByGatewayReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -229,7 +229,7 @@ class AdminByGatewayReportView(APIView):
 
 
 class AdminReturnRateReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)
@@ -248,7 +248,7 @@ class AdminReturnRateReportView(APIView):
 
 
 class AdminGrossMarginReportView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("reports")]
 
     def get(self, request):
         from_date, to_date = _date_range(request)

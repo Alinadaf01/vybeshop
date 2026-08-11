@@ -5,7 +5,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from apps.content.models import BlogPost
 
 from .activity import AdminActivityLogMixin
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminBlogPostSerializer(serializers.ModelSerializer):
@@ -32,14 +32,14 @@ class AdminBlogPostSerializer(serializers.ModelSerializer):
 
 
 class AdminBlogPostListCreateView(AdminActivityLogMixin, ListCreateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("blog")]
     serializer_class = AdminBlogPostSerializer
     parser_classes = [CamelCaseMultiPartParser, CamelCaseFormParser, CamelCaseJSONParser]
     queryset = BlogPost.objects.all()
 
 
 class AdminBlogPostDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("blog")]
     serializer_class = AdminBlogPostSerializer
     parser_classes = [CamelCaseMultiPartParser, CamelCaseFormParser, CamelCaseJSONParser]
     queryset = BlogPost.objects.all()

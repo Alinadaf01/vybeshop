@@ -52,6 +52,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Per-admin, not global — the dashboard's "since your last visit" feed
     # (BACKEND-TASK.md §6, ناحیه ۴) needs each staff member's own watermark.
     last_dashboard_visit = models.DateTimeField(blank=True, null=True)
+    # §7.6 — set when a superuser resets this user's password; forces a
+    # change-password step on the very next login instead of letting the
+    # one-time generated password linger indefinitely.
+    must_change_password = models.BooleanField(default=False)
 
     objects = UserManager()
 

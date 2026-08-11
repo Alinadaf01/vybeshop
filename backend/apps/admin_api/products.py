@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from apps.catalog.models import ColorOption, Product, ProductImage
 
 from .activity import AdminActivityLogMixin, log_admin_action
-from .permissions import IsAdminStaff
+from .permissions import require_section
+from .sections import perm_string
 
 PRODUCT_PREFETCH = ("images", "colors", "attributes__attribute", "attributes__value_option")
 
@@ -86,6 +87,17 @@ class AdminProductSerializer(serializers.ModelSerializer):
     def get_id(self, obj: Product) -> str:
         return str(obj.pk)
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # §7.5 "بخش‌های حساس" — cost_price is its own permission, separate
+        # from ordinary product view access (مدیر محصول sees products but
+        # never the margin they're sold at).
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        if user and not (user.is_superuser or user.has_perm(perm_string("cost_price", "view"))):
+            data.pop("cost_price", None)
+        return data
+
     def get_dimensions(self, obj: Product) -> dict:
         return {"w": obj.width_mm, "h": obj.height_mm, "d": obj.depth_mm}
 
@@ -145,14 +157,14 @@ class AdminProductFilter(django_filters.FilterSet):
 
 
 class AdminProductListCreateView(AdminActivityLogMixin, ListCreateAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("products")]
     serializer_class = AdminProductSerializer
     filterset_class = AdminProductFilter
     queryset = Product.objects.select_related("category").prefetch_related(*PRODUCT_PREFETCH)
 
 
 class AdminProductDetailView(AdminActivityLogMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("products")]
     serializer_class = AdminProductSerializer
     queryset = Product.objects.select_related("category").prefetch_related(*PRODUCT_PREFETCH)
 
@@ -173,7 +185,7 @@ class AdminPriceListPdfView(APIView):
     """Same filters as AdminProductListCreateView, per BACKEND-TASK.md §3.6:
     'همان فیلترهای فعال را روی سند اعمال کند'."""
 
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("products")]
 
     def get(self, request):
         from apps.documents.price_list import render_price_list_pdf
@@ -186,7 +198,7 @@ class AdminPriceListPdfView(APIView):
 
 
 class AdminProductImageCreateView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("products")]
     parser_classes = [CamelCaseMultiPartParser, CamelCaseFormParser]
 
     def post(self, request, product_id):
@@ -208,7 +220,7 @@ class AdminProductImageDetailView(APIView):
     edits; the file itself is immutable once uploaded — delete + re-add
     to replace it."""
 
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("products")]
 
     def patch(self, request, product_id, image_id):
         image = ProductImage.objects.get(pk=image_id, product_id=product_id)
@@ -225,7 +237,7 @@ class AdminProductImageDetailView(APIView):
 
 
 class AdminColorOptionListCreateView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("products")]
 
     def get(self, request, product_id):
         colors = ColorOption.objects.filter(product_id=product_id)
@@ -240,7 +252,7 @@ class AdminColorOptionListCreateView(APIView):
 
 
 class AdminColorOptionDetailView(APIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("products")]
 
     def patch(self, request, product_id, color_id):
         color = ColorOption.objects.get(pk=color_id, product_id=product_id)

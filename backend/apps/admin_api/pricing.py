@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from apps.catalog.models import PriceHistory, Product
 
 from .activity import log_admin_action
-from .permissions import IsAdminStaff
+from .permissions import require_section
 
 
 class AdminProductPriceSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class AdminProductPriceFilter(django_filters.FilterSet):
 
 
 class AdminProductPriceListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("pricing")]
     serializer_class = AdminProductPriceSerializer
     filterset_class = AdminProductPriceFilter
     queryset = Product.objects.all()
@@ -74,7 +74,8 @@ def _compute_new_price(old_price: int, input_data: dict) -> int:
 
 
 class AdminBulkPriceEditView(APIView):
-    permission_classes = [IsAdminStaff]
+    # POST here is a bulk *edit*, not a create — pricing has no "create" action.
+    permission_classes = [require_section("pricing", action="edit")]
 
     def post(self, request):
         serializer = BulkPriceEditSerializer(data=request.data)
@@ -127,7 +128,7 @@ class AdminPriceHistorySerializer(serializers.ModelSerializer):
 
 
 class AdminPriceHistoryListView(ListAPIView):
-    permission_classes = [IsAdminStaff]
+    permission_classes = [require_section("pricing")]
     serializer_class = AdminPriceHistorySerializer
 
     def get_queryset(self):
