@@ -11,12 +11,20 @@ per-order documents; list-style admin exports that could be slow run through
 Celery (see apps/documents/tasks.py) so that cost never blocks a web worker.
 """
 
+from functools import lru_cache
 from pathlib import Path
 
 from django.template.loader import render_to_string
+from django.utils.html import escape
 from playwright.sync_api import sync_playwright
 
 PUBLIC_FONTS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "public" / "fonts"
+BRAND_DIR = Path(__file__).resolve().parent.parent.parent.parent / "public" / "brand"
+
+# The footer template renders in an isolated Playwright document that can't
+# inherit the page's <style> (see _footer_template below), so this one color
+# it needs is duplicated from the palette in base.html rather than shared.
+TITANIUM = "#7A7D82"
 
 
 def peyda_font_uri(weight_filename: str) -> str:
@@ -27,14 +35,36 @@ def jetbrains_mono_font_uri(weight_filename: str) -> str:
     return (PUBLIC_FONTS_DIR / "jetbrains-mono" / weight_filename).as_uri()
 
 
-def file_uri(path) -> str | None:
-    """as_uri() for a Django FileField/ImageField value, or None if unset."""
-    if not path:
-        return None
-    try:
-        return Path(path.path).as_uri()
-    except (ValueError, FileNotFoundError):
-        return None
+@lru_cache(maxsize=1)
+def vybe_wordmark_svg() -> str:
+    """Inline, single-path `fill="currentColor"` markup — used instead of the
+    uploaded SiteSettings logo image, whose colors we don't control and could
+    violate the fixed five-color palette. Colored via CSS `color:` on the
+    wrapping element, same trick as the storefront's VybeWordmark.tsx."""
+    return (BRAND_DIR / "vybe-wordmark.svg").read_text(encoding="utf-8")
+
+
+def _footer_template(*, generated_at: str) -> str:
+    """Runs in its own isolated document (Playwright header/footer templates
+    don't inherit the page's <style>), so fonts are re-declared here from the
+    same local font files. `.pageNumber`/`.totalPages` are Chromium-provided
+    classes it fills in per printed page — this is the only reliable way to
+    get a *repeating* footer with live page numbers; plain HTML content only
+    renders once, at its position in the flow."""
+    return f"""
+    <style>
+      @font-face {{ font-family: "Peyda"; src: url("{peyda_font_uri('Peyda-Regular.woff2')}") format("woff2"); font-weight: 400; }}
+      @font-face {{ font-family: "JetBrains Mono"; src: url("{jetbrains_mono_font_uri('JetBrainsMono-Regular.woff2')}") format("woff2"); font-weight: 400; }}
+    </style>
+    <div style="width:100%; margin:0 18mm; display:grid; grid-template-columns:1fr 1fr 1fr;
+                font-family:'Peyda',sans-serif; font-size:8pt; color:{TITANIUM}; direction:rtl;">
+      <span style="text-align:start;">vybeshop.ir</span>
+      <span style="text-align:center; font-family:'JetBrains Mono',monospace; direction:ltr;">
+        صفحه <span class="pageNumber"></span> از <span class="totalPages"></span>
+      </span>
+      <span style="text-align:end;">{escape(generated_at)}</span>
+    </div>
+    """
 
 
 def render_pdf(template_name: str, context: dict, *, landscape: bool = False) -> bytes:
@@ -48,7 +78,10 @@ def render_pdf(template_name: str, context: dict, *, landscape: bool = False) ->
                 format="A4",
                 landscape=landscape,
                 print_background=True,
-                margin={"top": "14mm", "bottom": "16mm", "left": "12mm", "right": "12mm"},
+                margin={"top": "18mm", "bottom": "18mm", "left": "18mm", "right": "18mm"},
+                display_header_footer=True,
+                header_template="<div></div>",
+                footer_template=_footer_template(generated_at=context.get("generated_at", "")),
             )
         finally:
             browser.close()

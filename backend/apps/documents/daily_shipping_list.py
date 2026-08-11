@@ -14,7 +14,7 @@ def build_daily_shipping_list_context(orders: QuerySet, *, target_date: datetime
     ctx = base_context(
         doc_title="لیست ارسال روزانه",
         generated_by_name=generated_by_name,
-        filter_summary=f"تاریخ: {format_jalali_date(target_date)}",
+        doc_date=format_jalali_date(target_date),
     )
     ctx["rows"] = [
         {

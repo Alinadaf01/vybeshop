@@ -12,7 +12,7 @@ def build_packing_slip_context(order: Order, *, generated_by_name: str) -> dict:
     ctx = base_context(
         doc_title="برگه بسته‌بندی",
         generated_by_name=generated_by_name,
-        filter_summary=f"شماره سفارش: {order.number}",
+        doc_number=order.number,
     )
     ctx.update(
         {

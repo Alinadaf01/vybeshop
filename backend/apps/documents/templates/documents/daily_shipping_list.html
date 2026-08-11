@@ -4,28 +4,28 @@
 <table>
   <thead>
     <tr>
-      <th style="width:26px;">#</th>
-      <th>شماره سفارش</th>
+      <th style="width:4%;">#</th>
+      <th style="width:12%;">شماره سفارش</th>
       <th>گیرنده</th>
-      <th>تلفن</th>
+      <th style="width:13%;">تلفن</th>
       <th>آدرس</th>
-      <th>تعداد اقلام</th>
-      <th style="width:110px;">کد رهگیری</th>
+      <th class="num" style="width:9%;">تعداد اقلام</th>
+      <th style="width:15%;">کد رهگیری</th>
     </tr>
   </thead>
   <tbody>
     {% for row in rows %}
     <tr>
-      <td class="mono">{{ forloop.counter }}</td>
+      <td class="mono num">{{ forloop.counter }}</td>
       <td class="mono">{{ row.number }}</td>
       <td>{{ row.receiver_name }}</td>
       <td class="mono">{{ row.receiver_phone }}</td>
-      <td style="font-size:10px;">{{ row.address_line }}</td>
-      <td class="mono">{{ row.item_count }}</td>
+      <td style="font-size:8pt;">{{ row.address_line }}</td>
+      <td class="mono num">{{ row.item_count }}</td>
       <td></td>
     </tr>
     {% empty %}
-    <tr><td colspan="7" class="muted" style="text-align:center; padding:20px;">هیچ سفارش آماده ارسالی برای این تاریخ یافت نشد.</td></tr>
+    <tr><td colspan="7" class="muted" style="text-align:center; padding:8mm 0;">هیچ سفارش آماده ارسالی برای این تاریخ یافت نشد.</td></tr>
     {% endfor %}
   </tbody>
 </table>
