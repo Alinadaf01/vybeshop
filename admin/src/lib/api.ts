@@ -413,6 +413,26 @@ export const markOrderShipped = (id: string, trackingCode: string) =>
 export const markOrderDelivered = (id: string) => orderAction(id, "mark-delivered");
 export const cancelOrder = (id: string, reason?: string) => orderAction(id, "cancel", { reason });
 
+async function downloadOrderPdf(id: string, kind: "invoice" | "packing-slip", orderNumber: string): Promise<void> {
+  const res = await authorizedFetch(`/orders/${id}/${kind}.pdf`);
+  if (!res.ok) throw new Error(await readErrorDetail(res, "دریافت فایل ناموفق بود."));
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${kind}-${orderNumber}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// Exactly the same PDF the customer receives — this hits the same
+// admin-order-invoice-pdf endpoint, not a separate admin-only template.
+export const downloadOrderInvoice = (id: string, orderNumber: string) => downloadOrderPdf(id, "invoice", orderNumber);
+export const downloadOrderPackingSlip = (id: string, orderNumber: string) =>
+  downloadOrderPdf(id, "packing-slip", orderNumber);
+
 // ---------------------------------------------------------------------------
 // Settings (§12)
 // ---------------------------------------------------------------------------

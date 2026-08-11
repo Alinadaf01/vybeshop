@@ -1,10 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { FileText, Package } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Chip } from "@/components/ui/Chip";
+import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/Stateviews";
 import { OrderStatusActions } from "@/pages/orders/OrderStatusActions";
+import { useOrderDocuments } from "@/pages/orders/useOrderDocuments";
 import { getOrder } from "@/lib/api";
 import { formatPrice, formatJalaliDateTime } from "@/lib/formatters";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/types/order";
@@ -24,6 +27,7 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = { pending: "در انتظ�
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: order, isPending, isError, refetch } = useQuery({ queryKey: ["order", id], queryFn: () => getOrder(id!) });
+  const documents = useOrderDocuments(order ?? { id: id!, number: "", paidAt: null });
 
   if (isError) return <ErrorState description="دریافت سفارش ناموفق بود." onRetry={() => refetch()} />;
   if (isPending || !order) {
@@ -42,9 +46,28 @@ export default function OrderDetailPage() {
         title={`سفارش #${order.number}`}
         description={`ثبت‌شده در ${formatJalaliDateTime(order.createdAt)}`}
         actions={
-          <Chip tone={STATUS_TONE[order.status]} dot>
-            {ORDER_STATUS_LABELS[order.status]}
-          </Chip>
+          <>
+            {documents.canDownload && (
+              <>
+                <Button variant="secondary" size="sm" disabled={documents.isDownloadingInvoice} onClick={documents.downloadInvoice}>
+                  <FileText className="size-4" strokeWidth={1.8} />
+                  {documents.isDownloadingInvoice ? "در حال آماده‌سازی…" : "دانلود فاکتور"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={documents.isDownloadingPackingSlip}
+                  onClick={documents.downloadPackingSlip}
+                >
+                  <Package className="size-4" strokeWidth={1.8} />
+                  {documents.isDownloadingPackingSlip ? "در حال آماده‌سازی…" : "برگه بسته‌بندی"}
+                </Button>
+              </>
+            )}
+            <Chip tone={STATUS_TONE[order.status]} dot>
+              {ORDER_STATUS_LABELS[order.status]}
+            </Chip>
+          </>
         }
       />
 

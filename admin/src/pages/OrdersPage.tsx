@@ -88,10 +88,11 @@ export default function OrdersPage() {
                     <th className="px-4 py-3 font-medium">تاریخ</th>
                     <th className="px-4 py-3 font-medium">مبلغ</th>
                     <th className="px-4 py-3 font-medium">وضعیت</th>
+                    <th className="px-2 py-3 font-medium" aria-hidden="true" />
                   </tr>
                 </thead>
                 {isPending ? (
-                  <TableSkeleton rows={6} cols={5} />
+                  <TableSkeleton rows={6} cols={6} />
                 ) : (
                   <tbody className="divide-y divide-white/[0.04]">
                     {orders.map((order) => (
