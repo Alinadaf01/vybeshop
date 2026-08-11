@@ -15,22 +15,25 @@
     "category": "desktop-stands",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       },
       {
+        "id": "color-titanium-grey",
         "name": "خاکستری تیتانیوم",
         "hex": "#8A8D92",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 90,
       "h": 60,
@@ -47,8 +50,8 @@
     "sku": "VYBE-STA-002",
     "slug": "vybe-stand-pro",
     "name": "VYBE Stand Pro",
-    "shortDescription": "پایه رومیزی آلومینیومی با تنظیم زاویه",
-    "description": "VYBE Stand Pro از یک بلوک آلومینیوم CNC‌شده ساخته شده و زاویه نمایش را بین ۲۰ تا ۷۰ درجه تنظیم می‌کند. مناسب برای گوشی و تبلت تا وزن ۵۰۰ گرم، با پایه سیلیکونی ضدلغزش.",
+    "shortDescription": "پایه رومیزی چاپی با تنظیم زاویه",
+    "description": "VYBE Stand Pro با بدنه‌ی PETG چاپ‌شده و مفصل اصطکاکی دقیق، زاویه نمایش را بین ۲۰ تا ۷۰ درجه تنظیم می‌کند. مناسب برای گوشی و تبلت تا وزن ۵۰۰ گرم، با پایه سیلیکونی ضدلغزش.",
     "price": 890000,
     "images": [
       "/images/products/vybe-stand-pro/1.jpg",
@@ -58,17 +61,19 @@
     "category": "desktop-stands",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-silver-oos",
         "name": "نقره‌ای",
         "hex": "#C4C8CD",
         "inStock": false
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 110,
       "h": 95,
@@ -86,7 +91,7 @@
     "slug": "vybe-fold-desk",
     "name": "VYBE Fold Desk",
     "shortDescription": "پایه تاشوی رومیزی برای گوشی و تبلت",
-    "description": "VYBE Fold Desk با یک حرکت تا می‌شود و در کیف یا کشو جا می‌گیرد. لولای فلزی داخلی زاویه انتخابی را نگه می‌دارد و از هر دو گوشی و تبلت پشتیبانی می‌کند.",
+    "description": "VYBE Fold Desk با یک حرکت تا می‌شود و در کیف یا کشو جا می‌گیرد. لولای اصطکاکی PETG داخلی زاویه انتخابی را نگه می‌دارد و از هر دو گوشی و تبلت پشتیبانی می‌کند.",
     "price": 450000,
     "images": [
       "/images/products/vybe-fold-desk/1.jpg",
@@ -95,17 +100,19 @@
     "category": "desktop-stands",
     "colors": [
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       }
     ],
-    "material": "نایلون تقویت‌شده با فایبر کربن",
+    "material": "PETG",
     "dimensions": {
       "w": 85,
       "h": 12,
@@ -132,17 +139,19 @@
     "category": "charging-docks",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 70,
       "h": 75,
@@ -170,22 +179,25 @@
     "category": "charging-docks",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       },
       {
+        "id": "color-silver",
         "name": "نقره‌ای",
         "hex": "#C4C8CD",
         "inStock": true
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 160,
       "h": 90,
@@ -212,22 +224,25 @@
     "category": "charging-docks",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       },
       {
+        "id": "color-titanium-grey",
         "name": "خاکستری تیتانیوم",
         "hex": "#8A8D92",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 130,
       "h": 70,
@@ -254,17 +269,19 @@
     "category": "phone-mounts",
     "colors": [
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       },
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       }
     ],
-    "material": "نایلون تقویت‌شده با فایبر کربن",
+    "material": "PETG",
     "dimensions": {
       "w": 60,
       "h": 95,
@@ -291,11 +308,13 @@
     "category": "phone-mounts",
     "colors": [
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       },
       {
+        "id": "color-silver",
         "name": "نقره‌ای",
         "hex": "#C4C8CD",
         "inStock": true
@@ -329,6 +348,7 @@
     "category": "phone-mounts",
     "colors": [
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
@@ -361,22 +381,25 @@
     "category": "wall-hooks",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       },
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 40,
       "h": 55,
@@ -394,7 +417,7 @@
     "slug": "vybe-hook-wall",
     "name": "VYBE Hook Wall",
     "shortDescription": "قلاب دیواری بزرگ برای استفاده سنگین",
-    "description": "VYBE Hook Wall نسخه بزرگ‌تر خانواده Hook است، با پایه فلزی داخلی که تا ۵ کیلوگرم را تحمل می‌کند. برای نصب دائمی با پیچ یا چسب صنعتی طراحی شده.",
+    "description": "VYBE Hook Wall نسخه بزرگ‌تر خانواده Hook است و با پیچ‌های فلزی تقویتی تا ۵ کیلوگرم را تحمل می‌کند. برای نصب دائمی با پیچ یا چسب صنعتی طراحی شده.",
     "price": 240000,
     "images": [
       "/images/products/vybe-hook-wall/1.jpg",
@@ -403,17 +426,19 @@
     "category": "wall-hooks",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-titanium-grey",
         "name": "خاکستری تیتانیوم",
         "hex": "#8A8D92",
         "inStock": true
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 50,
       "h": 70,
@@ -440,17 +465,19 @@
     "category": "wall-hooks",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 180,
       "h": 45,
@@ -477,17 +504,19 @@
     "category": "modular-grid",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 300,
       "h": 10,
@@ -514,17 +543,19 @@
     "category": "modular-grid",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-titanium-grey",
         "name": "خاکستری تیتانیوم",
         "hex": "#8A8D92",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 200,
       "h": 150,
@@ -551,22 +582,25 @@
     "category": "modular-grid",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       },
       {
+        "id": "color-silver",
         "name": "نقره‌ای",
         "hex": "#C4C8CD",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 120,
       "h": 20,
@@ -593,17 +627,19 @@
     "category": "travel-folding",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 55,
       "h": 4,
@@ -630,22 +666,25 @@
     "category": "travel-folding",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       },
       {
+        "id": "color-titanium-grey",
         "name": "خاکستری تیتانیوم",
         "hex": "#8A8D92",
         "inStock": true
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 50,
       "h": 3,
@@ -663,7 +702,7 @@
     "slug": "vybe-fold-tripod",
     "name": "VYBE Fold Tripod",
     "shortDescription": "سه‌پایه تاشوی سبک برای عکاسی سفر",
-    "description": "VYBE Fold Tripod سه پایه فلزی قابل‌جمع‌شدن دارد که در حالت باز، پایه‌ای پایدار برای گوشی یا دوربین کوچک ایجاد می‌کند. مناسب برای عکاسی و فیلم‌برداری سفر.",
+    "description": "VYBE Fold Tripod سه پایه تاشوی سبک دارد که در حالت باز، پایه‌ای پایدار برای گوشی یا دوربین کوچک ایجاد می‌کند. مناسب برای عکاسی و فیلم‌برداری سفر.",
     "price": 420000,
     "images": [
       "/images/products/vybe-fold-tripod/1.jpg",
@@ -673,17 +712,19 @@
     "category": "travel-folding",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 45,
       "h": 180,
@@ -710,17 +751,19 @@
     "category": "magnetic-mounts",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 80,
       "h": 90,
@@ -747,17 +790,19 @@
     "category": "magnetic-mounts",
     "colors": [
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       },
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       }
     ],
-    "material": "آلومینیوم CNC شده",
+    "material": "PETG",
     "dimensions": {
       "w": 55,
       "h": 80,
@@ -784,22 +829,25 @@
     "category": "magnetic-mounts",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       },
       {
+        "id": "color-silver",
         "name": "نقره‌ای",
         "hex": "#C4C8CD",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 65,
       "h": 95,
@@ -826,16 +874,19 @@
     "category": "accessories",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-ice-white",
         "name": "سفید یخی",
         "hex": "#F2F2F0",
         "inStock": true
       },
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
@@ -868,17 +919,19 @@
     "category": "accessories",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 20,
       "h": 25,
@@ -905,17 +958,19 @@
     "category": "accessories",
     "colors": [
       {
+        "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
       },
       {
+        "id": "color-silver",
         "name": "نقره‌ای",
         "hex": "#C4C8CD",
         "inStock": true
       }
     ],
-    "material": "پلی‌کربنات مقاوم",
+    "material": "PLA+ مات",
     "dimensions": {
       "w": 30,
       "h": 30,
@@ -925,6 +980,29 @@
     "layerHeight": 0.2,
     "inStock": true,
     "stockCount": 256,
+    "specs": []
+  },
+  {
+    "id": "prod-25",
+    "sku": "VYBE-TEST-NOIMG",
+    "slug": "test-product-no-image",
+    "name": "VYBE Test — بدون تصویر",
+    "shortDescription": "محصول تستی بدون تصویر برای بازبینی رگرسیون کرش Image.tsx",
+    "description": "این محصول عمداً بدون عکس است تا رفتار صفحه محصول در نبود تصویر تست شود.",
+    "price": 100000,
+    "images": [],
+    "category": "accessories",
+    "colors": [],
+    "material": "PLA+ مات",
+    "dimensions": {
+      "w": 10,
+      "h": 10,
+      "d": 10
+    },
+    "weight": 10,
+    "layerHeight": 0.2,
+    "inStock": true,
+    "stockCount": 1,
     "specs": []
   }
 ]
