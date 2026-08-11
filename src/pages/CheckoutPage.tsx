@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AlertCircle, AlertTriangle } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -260,6 +261,7 @@ export default function CheckoutPage() {
 
               {addressesLoadError && (
                 <div className="flex flex-col items-start gap-3">
+                  <AlertCircle aria-hidden="true" size={48} strokeWidth={1.5} className="text-danger-ink" />
                   <p className="m-0 text-body text-danger-ink">{c.address.loadError}</p>
                   <Button variant="secondary" onClick={() => refetchAddresses()}>
                     {c.address.retry}
@@ -409,6 +411,7 @@ export default function CheckoutPage() {
 
               {shippingLoadError && (
                 <div className="flex flex-col items-start gap-3">
+                  <AlertCircle aria-hidden="true" size={48} strokeWidth={1.5} className="text-danger-ink" />
                   <p className="m-0 text-body text-danger-ink">{c.shipping.loadError}</p>
                   <Button variant="secondary" onClick={() => refetchShipping()}>
                     {c.shipping.retry}
@@ -475,6 +478,7 @@ export default function CheckoutPage() {
 
               {gatewaysLoadError && (
                 <div className="flex flex-col items-start gap-3">
+                  <AlertCircle aria-hidden="true" size={48} strokeWidth={1.5} className="text-danger-ink" />
                   <p className="m-0 text-body text-danger-ink">{c.payment.loadError}</p>
                   <Button variant="secondary" onClick={() => refetchGateways()}>
                     {c.payment.retry}
@@ -484,6 +488,7 @@ export default function CheckoutPage() {
 
               {!gatewaysLoadError && gateways && gateways.length === 0 && (
                 <div className="flex flex-col items-start gap-3 rounded-lg border border-danger-ink bg-white p-4">
+                  <AlertTriangle aria-hidden="true" size={32} strokeWidth={1.5} className="text-danger-ink" />
                   <span className="text-body font-medium text-danger-ink">{c.payment.unavailableHeading}</span>
                   <p className="m-0 text-small text-gray-800">{c.payment.unavailableBody}</p>
                   <Link

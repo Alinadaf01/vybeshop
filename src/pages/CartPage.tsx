@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ShoppingBag } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Button } from "@/components/ui/Button";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
@@ -85,6 +86,7 @@ export default function CartPage() {
 
       {cart && cart.items.length === 0 && (
         <EmptyState
+          icon={ShoppingBag}
           title={c.empty.heading}
           description={c.empty.body}
           action={

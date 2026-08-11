@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FileText } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -53,6 +54,7 @@ export default function BlogPage() {
           <ErrorState description="دریافت مطالب ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && posts.length === 0 ? (
           <EmptyState
+            icon={FileText}
             title="مطلبی یافت نشد"
             description="هنوز مطلبی ثبت نشده."
             action={<Button onClick={() => setFormTarget("new")}>+ افزودن مطلب</Button>}

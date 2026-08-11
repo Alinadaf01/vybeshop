@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Warehouse } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Select } from "@/components/ui/Field";
 import { Chip } from "@/components/ui/Chip";
@@ -79,7 +80,7 @@ export default function InventoryPage() {
         {isError ? (
           <ErrorState description="دریافت موجودی ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && rows.length === 0 ? (
-          <EmptyState title="محصولی یافت نشد" description="با فیلترهای فعلی محصولی پیدا نشد." />
+          <EmptyState icon={Warehouse} title="محصولی یافت نشد" description="با فیلترهای فعلی محصولی پیدا نشد." />
         ) : (
           <>
             <div className="overflow-x-auto">

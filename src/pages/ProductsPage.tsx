@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { SearchX } from "lucide-react";
 import { getProducts, type ProductOrdering } from "@/lib/api";
 import { categories } from "@/data/categories";
 import { getProductsByCategory, products as allProducts } from "@/data/products";
@@ -269,6 +270,7 @@ export default function ProductsPage() {
             </>
           ) : (
             <EmptyState
+              icon={SearchX}
               title={c.empty.title}
               description={c.empty.description}
               action={

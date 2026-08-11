@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { RotateCcw } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Chip } from "@/components/ui/Chip";
 import { Button } from "@/components/ui/Button";
@@ -68,7 +69,7 @@ export default function ReturnsPage() {
         {isError ? (
           <ErrorState description="دریافت مرجوعی‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && returns.length === 0 ? (
-          <EmptyState title="مرجوعی‌ای یافت نشد" description="هنوز درخواست مرجوعی‌ای ثبت نشده." />
+          <EmptyState icon={RotateCcw} title="مرجوعی‌ای یافت نشد" description="هنوز درخواست مرجوعی‌ای ثبت نشده." />
         ) : (
           <>
             <div className="overflow-x-auto">

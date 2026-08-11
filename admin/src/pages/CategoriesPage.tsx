@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FolderTree } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -69,6 +70,7 @@ export default function CategoriesPage() {
           <ErrorState description="دریافت دسته‌بندی‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && rows.length === 0 ? (
           <EmptyState
+            icon={FolderTree}
             title="هنوز دسته‌بندی‌ای ثبت نشده"
             description="اولین دسته‌بندی فروشگاه را ایجاد کنید تا محصولات بتوانند به آن اختصاص یابند."
             action={<Button onClick={() => setFormState({ open: true, category: null })}>+ دسته‌بندی جدید</Button>}

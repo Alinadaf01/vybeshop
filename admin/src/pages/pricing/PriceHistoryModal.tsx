@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { History } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { EmptyState, ErrorState } from "@/components/ui/Stateviews";
 import { listPriceHistory } from "@/lib/api";
@@ -22,7 +23,7 @@ export function PriceHistoryModal({ product, onClose }: { product: ProductPriceR
       ) : isError ? (
         <ErrorState description="دریافت تاریخچه قیمت ناموفق بود." onRetry={() => refetch()} />
       ) : entries.length === 0 ? (
-        <EmptyState title="تاریخچه‌ای یافت نشد" description="برای این محصول هنوز تغییر قیمتی ثبت نشده." />
+        <EmptyState icon={History} title="تاریخچه‌ای یافت نشد" description="برای این محصول هنوز تغییر قیمتی ثبت نشده." />
       ) : (
         <div className="flex max-h-96 flex-col gap-3 overflow-y-auto">
           {entries.map((entry) => (

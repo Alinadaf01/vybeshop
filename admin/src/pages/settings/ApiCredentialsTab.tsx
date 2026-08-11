@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -47,6 +48,7 @@ export function ApiCredentialsTab() {
           <ErrorState description="دریافت کلیدهای API ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && rows.length === 0 ? (
           <EmptyState
+            icon={KeyRound}
             title="هنوز کلیدی ثبت نشده"
             description="برای فعال کردن پیامک یا درگاه پرداخت، کلید مربوطه را اضافه کنید."
             action={<Button onClick={() => setFormState({ open: true, credential: null })}>+ کلید جدید</Button>}

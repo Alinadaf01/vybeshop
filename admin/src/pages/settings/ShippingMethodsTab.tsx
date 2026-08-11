@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Truck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -48,6 +49,7 @@ export function ShippingMethodsTab() {
           <ErrorState description="دریافت روش‌های ارسال ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && rows.length === 0 ? (
           <EmptyState
+            icon={Truck}
             title="هنوز روش ارسالی ثبت نشده"
             action={<Button onClick={() => setFormState({ open: true, method: null })}>+ روش ارسال جدید</Button>}
           />

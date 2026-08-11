@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Mail } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Select } from "@/components/ui/Field";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -37,7 +38,7 @@ export default function MessagesPage() {
         {isError ? (
           <ErrorState description="دریافت پیام‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && messages.length === 0 ? (
-          <EmptyState title="پیامی یافت نشد" description="هنوز پیامی از فرم تماس دریافت نشده." />
+          <EmptyState icon={Mail} title="پیامی یافت نشد" description="هنوز پیامی از فرم تماس دریافت نشده." />
         ) : (
           <>
             <div className="overflow-x-auto">

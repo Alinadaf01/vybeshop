@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AlertCircle, Heart, MapPin, PackageOpen } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -278,6 +279,7 @@ export default function AccountPage() {
 
             {ordersLoadError && (
               <div className="flex flex-col items-start gap-3 rounded-xl border border-gray-100 bg-white p-12">
+                <AlertCircle aria-hidden="true" size={48} strokeWidth={1.5} className="text-danger-ink" />
                 <p className="m-0 text-body text-danger-ink">{c.orders.loadError}</p>
                 <Button variant="secondary" onClick={() => refetchOrders()}>
                   {c.orders.retry}
@@ -287,6 +289,7 @@ export default function AccountPage() {
 
             {!ordersLoading && !ordersLoadError && visibleOrders.length === 0 && (
               <div className="flex flex-col items-start gap-3 rounded-xl border border-gray-100 bg-white p-12">
+                <PackageOpen aria-hidden="true" size={48} strokeWidth={1.5} className="text-silver" />
                 <h3 className="m-0 text-h3 font-semibold">{c.orders.empty.heading}</h3>
                 <p className="m-0 text-body leading-[1.7] text-gray-800">{c.orders.empty.body}</p>
                 <Link to="/products" className="inline-flex h-12 items-center rounded-md bg-graphite px-6 text-body font-medium text-fog-white no-underline hover:bg-ink">
@@ -517,9 +520,15 @@ export default function AccountPage() {
             </div>
 
             {addressesLoading && <p className="m-0 text-body text-gray-800">در حال بارگذاری…</p>}
-            {addressesLoadError && <p className="m-0 text-body text-danger-ink">دریافت آدرس‌ها ناموفق بود.</p>}
+            {addressesLoadError && (
+              <p className="m-0 flex items-center gap-2 text-body text-danger-ink">
+                <AlertCircle aria-hidden="true" size={20} strokeWidth={1.5} />
+                دریافت آدرس‌ها ناموفق بود.
+              </p>
+            )}
             {addresses && addresses.length === 0 && (
-              <p className="m-0 rounded-lg border border-gray-100 bg-white p-4 text-small text-gray-800">
+              <p className="m-0 flex items-center gap-2 rounded-lg border border-gray-100 bg-white p-4 text-small text-gray-800">
+                <MapPin aria-hidden="true" size={20} strokeWidth={1.5} className="shrink-0 text-silver" />
                 {c.addresses.empty}
               </p>
             )}
@@ -680,6 +689,7 @@ export default function AccountPage() {
 
             {favoritesLoadError && (
               <div className="flex flex-col items-start gap-3 rounded-xl border border-gray-100 bg-white p-12">
+                <AlertCircle aria-hidden="true" size={48} strokeWidth={1.5} className="text-danger-ink" />
                 <p className="m-0 text-body text-danger-ink">{fc.account.loadError}</p>
                 <Button variant="secondary" onClick={() => refetchFavorites()}>
                   {fc.account.retry}
@@ -689,6 +699,7 @@ export default function AccountPage() {
 
             {!favoritesLoading && !favoritesLoadError && favorites && favorites.length === 0 && (
               <EmptyState
+                icon={Heart}
                 title={fc.account.empty.heading}
                 description={fc.account.empty.body}
                 action={

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { ShoppingCart } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Input, Select } from "@/components/ui/Field";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -76,7 +77,7 @@ export default function OrdersPage() {
         {isError ? (
           <ErrorState description="دریافت سفارش‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && orders.length === 0 ? (
-          <EmptyState title="سفارشی یافت نشد" description="با فیلترهای فعلی سفارشی پیدا نشد." />
+          <EmptyState icon={ShoppingCart} title="سفارشی یافت نشد" description="با فیلترهای فعلی سفارشی پیدا نشد." />
         ) : (
           <>
             <div className="overflow-x-auto">

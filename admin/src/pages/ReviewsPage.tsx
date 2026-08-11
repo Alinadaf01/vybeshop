@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Star } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Select } from "@/components/ui/Field";
 import { Chip } from "@/components/ui/Chip";
@@ -48,7 +49,7 @@ export default function ReviewsPage() {
         {isError ? (
           <ErrorState description="دریافت نظرات ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && reviews.length === 0 ? (
-          <EmptyState title="نظری یافت نشد" description="با فیلترهای فعلی نظری پیدا نشد." />
+          <EmptyState icon={Star} title="نظری یافت نشد" description="با فیلترهای فعلی نظری پیدا نشد." />
         ) : (
           <>
             <div className="overflow-x-auto">

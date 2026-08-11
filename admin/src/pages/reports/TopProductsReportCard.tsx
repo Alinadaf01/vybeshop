@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bar } from "react-chartjs-2";
+import { BarChart3 } from "lucide-react";
 import { Select } from "@/components/ui/Field";
 import { getTopProductsReport } from "@/lib/api";
 import { CHART_COLORS, baseChartOptions } from "@/lib/chartTheme";
@@ -35,7 +36,7 @@ export function TopProductsReportCard({ from, to }: { from: string; to: string }
       ) : isError ? (
         <ReportError onRetry={() => refetch()} />
       ) : top.length === 0 ? (
-        <EmptyState title="داده‌ای یافت نشد" description="در این بازه محصولی فروخته نشده." />
+        <EmptyState icon={BarChart3} title="داده‌ای یافت نشد" description="در این بازه محصولی فروخته نشده." />
       ) : (
         <div className="h-72">
           <Bar

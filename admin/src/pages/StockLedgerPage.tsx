@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { ClipboardList } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Field";
@@ -103,7 +104,7 @@ export default function StockLedgerPage() {
         {isError ? (
           <ErrorState description="دریافت کاردکس ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && movements.length === 0 ? (
-          <EmptyState title="حرکتی یافت نشد" description="با فیلترهای فعلی حرکتی ثبت نشده." />
+          <EmptyState icon={ClipboardList} title="حرکتی یافت نشد" description="با فیلترهای فعلی حرکتی ثبت نشده." />
         ) : (
           <>
             <div className="overflow-x-auto">

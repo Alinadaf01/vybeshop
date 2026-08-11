@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Ticket } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -54,6 +55,7 @@ export default function CouponsPage() {
           <ErrorState description="دریافت کوپن‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && coupons.length === 0 ? (
           <EmptyState
+            icon={Ticket}
             title="کوپنی یافت نشد"
             description="هنوز کوپنی ثبت نشده."
             action={<Button onClick={() => setFormTarget("new")}>+ افزودن کوپن</Button>}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Package } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Field";
@@ -131,6 +132,7 @@ export default function ProductsPage() {
           <ErrorState description="دریافت محصولات ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && products.length === 0 ? (
           <EmptyState
+            icon={Package}
             title="محصولی یافت نشد"
             description="با فیلترهای فعلی محصولی پیدا نشد، یا هنوز محصولی ثبت نشده."
             action={<Button onClick={() => navigate("/products/new")}>+ افزودن محصول</Button>}

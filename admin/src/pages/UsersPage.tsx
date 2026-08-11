@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Users } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Field";
@@ -61,6 +62,7 @@ export default function UsersPage() {
           <ErrorState description="دریافت کاربران ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && users.length === 0 ? (
           <EmptyState
+            icon={Users}
             title="کاربری یافت نشد"
             description="با فیلترهای فعلی کاربری پیدا نشد."
             action={<Button onClick={() => setFormOpen(true)}>+ کاربر جدید</Button>}

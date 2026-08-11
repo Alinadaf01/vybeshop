@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pie } from "react-chartjs-2";
+import { PieChart } from "lucide-react";
 import { getByCategoryReport } from "@/lib/api";
 import { baseChartOptions } from "@/lib/chartTheme";
 import { formatPrice } from "@/lib/formatters";
@@ -23,7 +24,7 @@ export function ByCategoryReportCard({ from, to }: { from: string; to: string })
       ) : isError ? (
         <ReportError onRetry={() => refetch()} />
       ) : rows.length === 0 ? (
-        <EmptyState title="داده‌ای یافت نشد" description="در این بازه فروشی ثبت نشده." />
+        <EmptyState icon={PieChart} title="داده‌ای یافت نشد" description="در این بازه فروشی ثبت نشده." />
       ) : (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="mx-auto size-56 shrink-0">

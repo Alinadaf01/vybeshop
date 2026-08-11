@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ListChecks } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Field";
@@ -84,6 +85,7 @@ export default function SpecsPage() {
           <ErrorState description="دریافت مشخصات ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && rows.length === 0 ? (
           <EmptyState
+            icon={ListChecks}
             title="مشخصه‌ای یافت نشد"
             description="برای این دسته‌بندی هنوز مشخصه‌ای تعریف نشده. مشخصه جدید بسازید تا در فرم محصول قابل انتخاب باشد."
             action={<Button onClick={() => setFormState({ open: true, attribute: null })}>+ مشخصه جدید</Button>}

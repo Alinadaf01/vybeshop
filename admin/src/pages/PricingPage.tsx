@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Tag } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Field";
@@ -84,7 +85,7 @@ export default function PricingPage() {
         {isError ? (
           <ErrorState description="دریافت قیمت‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && rows.length === 0 ? (
-          <EmptyState title="محصولی یافت نشد" description="با فیلترهای فعلی محصولی پیدا نشد." />
+          <EmptyState icon={Tag} title="محصولی یافت نشد" description="با فیلترهای فعلی محصولی پیدا نشد." />
         ) : (
           <>
             <div className="overflow-x-auto">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Shield } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -46,7 +47,7 @@ export default function RolesPage() {
         {isError ? (
           <ErrorState description="دریافت نقش‌ها ناموفق بود." onRetry={() => refetch()} />
         ) : !isPending && (roles ?? []).length === 0 ? (
-          <EmptyState title="نقشی یافت نشد" />
+          <EmptyState icon={Shield} title="نقشی یافت نشد" />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[42rem] text-start text-sm">

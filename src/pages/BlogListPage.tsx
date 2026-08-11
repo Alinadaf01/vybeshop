@@ -1,5 +1,6 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { FileText } from "lucide-react";
 import { getBlogPosts } from "@/lib/api";
 import { blogPosts } from "@/data/blog";
 import type { BlogCategory } from "@/types/blog";
@@ -183,6 +184,7 @@ export default function BlogListPage() {
           </>
         ) : (
           <EmptyState
+            icon={FileText}
             title={c.empty.title}
             description={c.empty.description}
             action={
