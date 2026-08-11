@@ -51,7 +51,7 @@ export function Footer() {
   return (
     <footer className="bg-graphite px-5 py-14 text-fog-white md:py-20 xl:px-10">
       <div className="mx-auto max-w-page">
-        <div className="flex flex-col gap-2 border-b border-edge pb-12">
+        <div className="flex flex-col items-center gap-2 border-b border-edge pb-12 text-center">
           <VybeWordmark className="h-8 w-auto p-1" />
           <p className="mt-2 text-body-large text-silver">طراحی‌شده برای ارتقای روزمرگی.</p>
         </div>
