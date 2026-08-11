@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -34,6 +35,11 @@ class AdminLoginView(APIView):
     not just relied on at the permission-class layer downstream."""
 
     permission_classes = [AllowAny]
+    # No account-lockout mechanism exists, so this is the only brute-force
+    # guard on the admin password (§7.5 security review) — public-facing
+    # panel, worth being stricter than the storefront's own endpoints.
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "admin_login"
 
     def post(self, request):
         serializer = AdminLoginSerializer(data=request.data)

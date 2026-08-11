@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from apps.catalog.models import ColorOption, Product
@@ -107,6 +108,12 @@ class CheckoutView(APIView):
     # pages to reproduce a reported bug but must not actually place an
     # order on the customer's behalf.
     permission_classes = [IsAuthenticated, IsNotImpersonating]
+    # Authenticated (needs a real, OTP-verified account first) but still
+    # worth a per-user cap — placing orders triggers a payment-gateway
+    # redirect and stock reservation, both worth rate-limiting against
+    # scripted abuse (§7.5 security review).
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "checkout"
 
     def post(self, request):
         input_serializer = CheckoutInputSerializer(data=request.data)

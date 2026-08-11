@@ -179,6 +179,18 @@ REST_FRAMEWORK = {
     # before the view even runs when no renderer declares that format —
     # disable the override so it doesn't collide with our unrelated use.
     "URL_FORMAT_OVERRIDE": None,
+    # Scoped, not global — only the handful of views that set their own
+    # `throttle_scope` (§7.5 security review: admin login, contact form,
+    # checkout, OTP request/verify) are throttled at all. Rates are per
+    # client IP for anonymous endpoints (ScopedRateThrottle falls back to IP
+    # when there's no authenticated user), per user once authenticated.
+    "DEFAULT_THROTTLE_RATES": {
+        "otp_request": "8/hour",
+        "otp_verify": "20/hour",
+        "admin_login": "10/min",
+        "contact_form": "5/hour",
+        "checkout": "20/hour",
+    },
 }
 
 SPECTACULAR_SETTINGS = {
@@ -218,6 +230,48 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+# DRF throttling (§7.5 security review) stores its per-client counters in
+# Django's cache framework. Without an explicit CACHES setting, Django falls
+# back to an in-process LocMemCache — fine for one dev process, but under
+# multiple production workers each process gets its own counter, so an
+# attacker effectively gets (rate limit × worker count) instead of the
+# configured rate. Shares the same Redis instance Celery already uses.
+# Same "test in sys.argv" carve-out as CELERY_TASK_ALWAYS_EAGER above — the
+# test suite shouldn't need a running Redis to exercise throttled views.
+if "test" in sys.argv:
+    CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        }
+    }
+
 
 # django-encrypted-model-fields — used by apps.settings.ApiCredential
 FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY", default="")
+
+
+# Production hardening (§7.5 security review) — gated on DEBUG rather than
+# always-on because most of these break local `runserver` over plain HTTP
+# (SECURE_SSL_REDIRECT would redirect-loop, the *_COOKIE_SECURE flags would
+# silently stop cookies from being set at all without HTTPS).
+if not DEBUG:
+    if SECRET_KEY == "django-insecure-dev-key-change-me":
+        raise RuntimeError(
+            "SECRET_KEY is still the dev default with DEBUG=False — set a real "
+            "SECRET_KEY env var before running in production."
+        )
+    SECURE_SSL_REDIRECT = True
+    # Nginx (see DEPLOY.md, §8) terminates TLS and proxies plain HTTP to
+    # Django — without this, Django can't tell the original request was
+    # HTTPS and SECURE_SSL_REDIRECT above would redirect-loop forever. Nginx
+    # config must set `X-Forwarded-Proto` for this to be trustworthy.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True

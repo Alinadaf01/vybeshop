@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
@@ -25,6 +26,13 @@ def _generate_code() -> str:
 
 
 class RequestOtpView(APIView):
+    # Complements OTPCode's own per-phone rate limit (RATE_LIMIT_COUNT/
+    # RATE_LIMIT_MINUTES below) — that guards one phone number against
+    # itself, this guards against one IP spraying requests across many
+    # different phone numbers (§7.5 security review).
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "otp_request"
+
     def post(self, request):
         serializer = OtpRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -46,6 +54,12 @@ class RequestOtpView(APIView):
 
 
 class VerifyOtpView(APIView):
+    # Complements OTPCode.MAX_ATTEMPTS (per-code guess limit) with an
+    # IP-level cap so one client can't just keep requesting fresh codes to
+    # reset that counter (§7.5 security review).
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "otp_verify"
+
     def post(self, request):
         serializer = OtpVerifySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

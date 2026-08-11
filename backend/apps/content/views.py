@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from apps.catalog.models import Product
@@ -41,6 +42,11 @@ def _client_ip(request) -> str | None:
 class ContactMessageCreateView(CreateAPIView):
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageInputSerializer
+    # No auth on this endpoint by design (anyone can contact the store), so
+    # an IP-based cap is the only thing standing between it and spam
+    # (§7.5 security review).
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "contact_form"
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
