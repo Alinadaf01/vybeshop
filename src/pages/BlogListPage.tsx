@@ -44,6 +44,11 @@ export default function BlogListPage() {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["blog-posts", { category, page }],
     queryFn: () => getBlogPosts({ category, page, pageSize: PAGE_SIZE }),
+    // Matches the prefetch in src/entry-server.tsx for the default (no
+    // filter) case — without this, React Query treats hydrated data as
+    // immediately stale and refetches right after mount, which would defeat
+    // the point of dehydrating it into the prerendered HTML.
+    staleTime: 60_000,
   });
 
   const pageCount = data ? Math.ceil(data.count / PAGE_SIZE) : 0;

@@ -12,18 +12,27 @@ import { Reveal } from "@/components/home/Reveal";
 import { Seo } from "@/components/seo/Seo";
 import { homeContent } from "@/content/home";
 
+// Matches the prefetch in src/entry-server.tsx — without a staleTime, React
+// Query treats hydrated data as immediately stale and refetches on mount
+// anyway, which defeats the point of dehydrating it into the prerendered
+// HTML in the first place (§7.1: "...تا هیدریشن دوباره فچ/فلش نکند").
+const PRERENDERED_STALE_TIME = 60_000;
+
 export default function HomePage() {
   const { data: productsPage } = useQuery({
     queryKey: ["products", "home"],
     queryFn: () => getProducts({ pageSize: 24 }),
+    staleTime: PRERENDERED_STALE_TIME,
   });
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: () => getCategories(),
+    staleTime: PRERENDERED_STALE_TIME,
   });
   const { data: blogPage } = useQuery({
     queryKey: ["blogPosts", "home"],
     queryFn: () => getBlogPosts({ pageSize: 3 }),
+    staleTime: PRERENDERED_STALE_TIME,
   });
 
   const products = productsPage?.results ?? [];

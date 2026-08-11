@@ -1,10 +1,11 @@
 // Runs after `vite build` (client) and `vite build --ssr src/entry-server.tsx`.
 // For every route in listAllRoutes(): injects real <title>/meta/OG/JSON-LD into
 // a copy of dist/index.html so link-preview bots (Telegram, Instagram, etc.)
-// that don't execute JS still see correct metadata. For the 4 fully-static
-// routes (about/contact/catalog/categories) it also swaps in prerendered body
-// markup; every other route keeps the plain CSR shell (see design/HANDOFF.md
-// and the F6 render-decision discussion for why only those 4 get body prerender).
+// that don't execute JS still see correct metadata. For the fully-static
+// routes (home/about/contact/catalog/categories/blog) it also swaps in
+// prerendered body markup plus a dehydrated React Query cache; every other
+// route keeps the plain CSR shell (see design/HANDOFF.md and the F6
+// render-decision discussion for why only those routes get body prerender).
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
@@ -67,7 +68,7 @@ async function main() {
   let skipped = 0;
 
   for (const routePath of routes) {
-    const { head, body } = await renderRoute(routePath);
+    const { head, body, dehydratedState } = await renderRoute(routePath);
     if (!head) {
       skipped++;
       continue;
@@ -78,6 +79,13 @@ async function main() {
     html = html.replace("</head>", `    ${tagsHtml}\n  </head>`);
     if (body) {
       html = html.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
+      if (dehydratedState) {
+        // Read by main.tsx via hydrate(queryClient, ...) before the app
+        // mounts, so useQuery resolves from cache on first paint instead of
+        // showing a loading skeleton and then popping in real data.
+        const stateScript = `<script>window.__REACT_QUERY_STATE__=${escapeJsonForScriptTag(dehydratedState)}</script>`;
+        html = html.replace("</body>", `    ${stateScript}\n  </body>`);
+      }
       staticBodyCount++;
     } else {
       headOnlyCount++;
