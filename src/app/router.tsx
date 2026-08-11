@@ -24,6 +24,7 @@ import AboutPage from "@/pages/AboutPage";
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
 const AuthPage = lazy(() => import("@/pages/AuthPage"));
+const ImpersonatePage = lazy(() => import("@/pages/ImpersonatePage"));
 const AccountPage = lazy(() => import("@/pages/AccountPage"));
 const CartPage = lazy(() => import("@/pages/CartPage"));
 const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
       { path: "contact", element: withSuspense(<ContactPage />) },
       { path: "search", element: withSuspense(<SearchPage />) },
       { path: "auth", element: withSuspense(<AuthPage />) },
+      { path: "impersonate", element: withSuspense(<ImpersonatePage />) },
       { path: "cart", element: withSuspense(<CartPage />) },
       {
         path: "checkout",

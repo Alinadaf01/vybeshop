@@ -2,9 +2,13 @@ import type { AuthTokens, AuthUser } from "@/types/auth";
 
 const STORAGE_KEY = "vybe-auth";
 
-interface StoredAuth {
+export interface StoredAuth {
   tokens: AuthTokens;
   user: AuthUser;
+  /** Present only for a support-mode (impersonated) session — tokens.refresh
+   * is "" in that case, since there's nothing to renew with; this is just
+   * the ISO timestamp the client-side session timer counts down to. */
+  impersonationExpiresAt?: string | null;
 }
 
 // localStorage doesn't exist in Node — AuthProvider's initial state reads

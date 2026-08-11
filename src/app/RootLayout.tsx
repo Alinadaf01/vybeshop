@@ -3,6 +3,7 @@ import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { Footer } from "@/components/layout/Footer";
+import { SupportModeBanner } from "@/components/layout/SupportModeBanner";
 import { reportPageView } from "@/lib/api";
 
 export function RootLayout() {
@@ -24,6 +25,7 @@ export function RootLayout() {
       >
         رفتن به محتوای اصلی
       </a>
+      <SupportModeBanner />
       <Header onMenuOpen={() => setMenuOpen(true)} />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       {/* tabIndex=-1: not in tab order, but makes the skip link above actually

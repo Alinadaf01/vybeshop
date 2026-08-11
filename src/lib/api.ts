@@ -12,7 +12,7 @@ import type { ContactMessage, ContactMessageInput } from "@/types/contact";
 import type { PaginatedResponse } from "@/types/api";
 import type { SiteSettings } from "@/data/siteSettings";
 import type { CatalogFile } from "@/data/catalog";
-import type { AuthUser, OtpVerifyResponse } from "@/types/auth";
+import type { AuthUser, ImpersonateConsumeResponse, OtpVerifyResponse } from "@/types/auth";
 import type { Address, AddressInput } from "@/types/address";
 import type { Cart } from "@/types/cart";
 import type { Order, OrderSummary, PaymentGatewayCode } from "@/types/order";
@@ -345,6 +345,29 @@ export async function verifyOtp(phone: string, code: string): Promise<OtpVerifyR
   }
   if (!res.ok) throw new Error(await readErrorDetail(res, "کد وارد‌شده اشتباه یا منقضی است."));
   return res.json();
+}
+
+/** Exchanges a short-lived, single-use admin-issued ticket (see /impersonate)
+ * for a real, restricted support session. No fake-data fallback — there's no
+ * sensible offline behavior for this, it should just fail clearly. */
+export async function consumeImpersonationTicket(ticket: string): Promise<ImpersonateConsumeResponse> {
+  let res: Response;
+  try {
+    res = await apiFetch("/auth/impersonate/consume/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ticket }),
+    });
+  } catch {
+    throw new Error("اتصال به سرور ممکن نشد.");
+  }
+  if (!res.ok) throw new Error(await readErrorDetail(res, "بلیط نامعتبر یا منقضی‌شده است."));
+  return res.json();
+}
+
+export async function endImpersonationSession(): Promise<void> {
+  const res = await authorizedFetch("/auth/impersonate/end/", { method: "POST" });
+  if (!res.ok) throw new Error("پایان‌دادن به نشست پشتیبانی ناموفق بود.");
 }
 
 async function refreshAccessToken(refreshToken: string): Promise<string> {
