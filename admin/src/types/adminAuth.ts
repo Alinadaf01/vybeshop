@@ -4,6 +4,8 @@ export interface AdminUser {
   firstName: string;
   lastName: string;
   isStaff: boolean;
+  isSuperuser: boolean;
+  mustChangePassword: boolean;
 }
 
 export interface AdminTokens {

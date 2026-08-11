@@ -19,6 +19,8 @@ export interface AdminUserListItem {
   isVerified: boolean;
   isActive: boolean;
   isStaff: boolean;
+  role: string | null;
+  roleName: string | null;
   createdAt: string;
 }
 
@@ -33,6 +35,8 @@ export interface CreateUserFormValues {
   lastName: string;
   email: string;
   isVerified: boolean;
+  isStaff: boolean;
+  roleId: string | null;
 }
 
 export interface UpdateUserFormValues {
@@ -42,4 +46,5 @@ export interface UpdateUserFormValues {
   isVerified: boolean;
   isActive: boolean;
   isStaff: boolean;
+  roleId: string | null;
 }

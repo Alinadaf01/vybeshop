@@ -7,6 +7,7 @@ interface AdminAuthContextValue {
   isAuthenticated: boolean;
   login: (response: AdminLoginResponse) => void;
   logout: () => void;
+  markPasswordChanged: () => void;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
@@ -25,6 +26,15 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       logout: () => {
         clearStoredAdminAuth();
         setUser(null);
+      },
+      markPasswordChanged: () => {
+        setUser((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev, mustChangePassword: false };
+          const stored = loadStoredAdminAuth();
+          if (stored) saveStoredAdminAuth({ ...stored, user: next });
+          return next;
+        });
       },
     }),
     [user],

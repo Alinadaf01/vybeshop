@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { AdminLayout } from "@/app/AdminLayout";
 import { RequireStaffAuth } from "@/app/RequireStaffAuth";
 import LoginPage from "@/pages/LoginPage";
+import ChangePasswordPage from "@/pages/ChangePasswordPage";
 import DashboardPage from "@/pages/DashboardPage";
 import OrdersPage from "@/pages/OrdersPage";
 import OrderDetailPage from "@/pages/orders/OrderDetailPage";
@@ -23,6 +24,7 @@ import BlogPage from "@/pages/BlogPage";
 import CouponsPage from "@/pages/CouponsPage";
 import ReturnsPage from "@/pages/ReturnsPage";
 import SearchConsolePage from "@/pages/SearchConsolePage";
+import RolesPage from "@/pages/RolesPage";
 import ActivityLogPage from "@/pages/ActivityLogPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
@@ -31,6 +33,7 @@ export const router = createBrowserRouter([
   {
     element: <RequireStaffAuth />,
     children: [
+      { path: "/change-password", element: <ChangePasswordPage /> },
       {
         path: "/",
         element: <AdminLayout />,
@@ -58,6 +61,7 @@ export const router = createBrowserRouter([
           { path: "coupons", element: <CouponsPage /> },
           { path: "returns", element: <ReturnsPage /> },
           { path: "search-console", element: <SearchConsolePage /> },
+          { path: "roles", element: <RolesPage /> },
           { path: "activity-log", element: <ActivityLogPage /> },
           { path: "*", element: <NotFoundPage /> },
         ],

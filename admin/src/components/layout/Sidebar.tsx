@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { navGroups } from "@/app/navigation";
 import { cn } from "@/lib/cn";
+import { usePermissions } from "@/lib/usePermissions";
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -10,6 +11,11 @@ interface SidebarProps {
 }
 
 export function Sidebar({ mobileOpen, onMobileClose, collapsed, onToggleCollapsed }: SidebarProps) {
+  const { can } = usePermissions();
+  const visibleGroups = navGroups
+    .map((group) => ({ ...group, items: group.items.filter((item) => can(item.section)) }))
+    .filter((group) => group.items.length > 0);
+
   return (
     <>
       {mobileOpen && (
@@ -55,7 +61,7 @@ export function Sidebar({ mobileOpen, onMobileClose, collapsed, onToggleCollapse
         </div>
 
         <nav className="flex-1 space-y-6 overflow-y-auto px-4 pb-4">
-          {navGroups.map((group) => (
+          {visibleGroups.map((group) => (
             <div key={group.label}>
               {!collapsed && (
                 <p className="mb-2 truncate px-4 text-[11px] font-semibold tracking-wide text-slate-600">

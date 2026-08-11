@@ -35,6 +35,8 @@ import type {
   SearchConsoleQueryRow,
   SearchConsoleSitemapStatus,
 } from "@/types/searchConsole";
+import type { AdminRole, AdminRoleFormValues, AdminSection, MyPermissions } from "@/types/role";
+import type { ForceLogoutResponse, ImpersonateResponse, ResetPasswordResponse } from "@/types/accountAdmin";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -852,4 +854,65 @@ export async function getSearchConsoleIndexStatus(): Promise<SearchConsoleIndexS
 
 export async function getSearchConsoleSitemapStatus(): Promise<SearchConsoleSitemapStatus | null> {
   return fetchSearchConsole("/search-console/sitemap-status/", "دریافت وضعیت سایت‌مپ ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Roles & permissions (§7.5)
+// ---------------------------------------------------------------------------
+
+export async function listRoles(): Promise<AdminRole[]> {
+  const res = await authorizedFetch("/roles/");
+  return parseOrThrow(res, "دریافت نقش‌ها ناموفق بود.");
+}
+
+export async function listSections(): Promise<AdminSection[]> {
+  const res = await authorizedFetch("/roles/sections/");
+  return parseOrThrow(res, "دریافت فهرست بخش‌ها ناموفق بود.");
+}
+
+export async function createRole(data: AdminRoleFormValues): Promise<AdminRole> {
+  const res = await authorizedFetch("/roles/", { method: "POST", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ایجاد نقش ناموفق بود.");
+}
+
+export async function updateRole(id: string, data: Partial<AdminRoleFormValues>): Promise<AdminRole> {
+  const res = await authorizedFetch(`/roles/${id}/`, { method: "PATCH", body: JSON.stringify(data) });
+  return parseOrThrow(res, "ویرایش نقش ناموفق بود.");
+}
+
+export async function deleteRole(id: string): Promise<void> {
+  const res = await authorizedFetch(`/roles/${id}/`, { method: "DELETE" });
+  await throwIfError(res, "حذف نقش ناموفق بود.");
+}
+
+export async function getMyPermissions(): Promise<MyPermissions> {
+  const res = await authorizedFetch("/me/permissions/");
+  return parseOrThrow(res, "دریافت مجوزها ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Password management (§7.6) — all superuser-only server-side
+// ---------------------------------------------------------------------------
+
+export async function resetPassword(userId: string): Promise<ResetPasswordResponse> {
+  const res = await authorizedFetch(`/users/${userId}/reset-password/`, { method: "POST" });
+  return parseOrThrow(res, "بازنشانی رمز ناموفق بود.");
+}
+
+export async function impersonateUser(userId: string): Promise<ImpersonateResponse> {
+  const res = await authorizedFetch(`/users/${userId}/impersonate/`, { method: "POST" });
+  return parseOrThrow(res, "ورود به‌جای کاربر ناموفق بود.");
+}
+
+export async function forceLogout(userId: string): Promise<ForceLogoutResponse> {
+  const res = await authorizedFetch(`/users/${userId}/force-logout/`, { method: "POST" });
+  return parseOrThrow(res, "خروج اجباری ناموفق بود.");
+}
+
+export async function changeOwnPassword(currentPassword: string, newPassword: string): Promise<void> {
+  const res = await authorizedFetch("/auth/change-password/", {
+    method: "POST",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+  await throwIfError(res, "تغییر رمز عبور ناموفق بود.");
 }
