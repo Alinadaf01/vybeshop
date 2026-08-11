@@ -26,7 +26,7 @@ export function RootLayout() {
         رفتن به محتوای اصلی
       </a>
       <SupportModeBanner />
-      <Header onMenuOpen={() => setMenuOpen(true)} />
+      <Header menuOpen={menuOpen} onMenuToggle={() => setMenuOpen((open) => !open)} />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       {/* tabIndex=-1: not in tab order, but makes the skip link above actually
           move keyboard/screen-reader focus here (not just scroll position). */}

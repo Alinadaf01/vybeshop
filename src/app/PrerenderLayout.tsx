@@ -29,7 +29,7 @@ export function PrerenderLayout({ children, queryClient }: { children: ReactNode
           >
             رفتن به محتوای اصلی
           </a>
-          <Header onMenuOpen={() => {}} />
+          <Header menuOpen={false} onMenuToggle={() => {}} />
           <MobileMenu open={false} onClose={() => {}} />
           <main id="main-content" className="flex-1">
             {children}

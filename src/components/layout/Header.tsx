@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { navLinks } from "@/app/navigation";
 import { VybeWordmark } from "@/components/brand/VybeWordmark";
@@ -9,10 +10,52 @@ import { useSkipSeo } from "@/lib/prerenderContext";
 import { getCart } from "@/lib/api";
 
 export interface HeaderProps {
-  onMenuOpen: () => void;
+  menuOpen: boolean;
+  onMenuToggle: () => void;
 }
 
-export function Header({ onMenuOpen }: HeaderProps) {
+// Icon + mono label side by side on desktop (8px gap per the brand book),
+// icon-only with a 44x44 touch target on mobile — same bordered pill either way.
+function HeaderIconButton({
+  icon: Icon,
+  label,
+  ariaLabel,
+  ...rest
+}: {
+  icon: typeof Search;
+  label: string;
+  ariaLabel: string;
+} & (
+  | { as?: "button"; onClick: () => void }
+  | { as: "link"; to: string }
+)) {
+  const className = cn(
+    "flex size-11 shrink-0 items-center justify-center gap-2 rounded-sm border border-edge text-silver no-underline transition-colors duration-fast hover:text-white",
+    "lg:h-auto lg:w-auto lg:px-2 lg:py-1.5",
+  );
+  const content = (
+    <>
+      <Icon aria-hidden="true" size={20} strokeWidth={1.5} />
+      <span dir="ltr" className="hidden font-mono text-micro lg:inline">
+        {label}
+      </span>
+    </>
+  );
+  if (rest.as === "link") {
+    return (
+      <Link to={rest.to} aria-label={ariaLabel} className={className}>
+        {content}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" onClick={rest.onClick} aria-label={ariaLabel} className={className}>
+      {content}
+    </button>
+  );
+}
+
+export function Header({ menuOpen, onMenuToggle }: HeaderProps) {
   const [opaque, setOpaque] = useState(true);
   const location = useLocation();
   const { isAuthenticated } = useAuth();
@@ -102,43 +145,34 @@ export function Header({ onMenuOpen }: HeaderProps) {
       </nav>
 
       <div className="ms-auto flex shrink-0 items-center gap-5">
-        <button
-          type="button"
-          className="rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver hover:text-white"
-        >
-          SEARCH
-        </button>
+        <HeaderIconButton as="link" to="/search" icon={Search} label="SEARCH" ariaLabel="جستجو" />
         <div className="relative flex items-center">
-          <Link
-            to="/cart"
-            className="rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver no-underline hover:text-white"
-          >
-            CART
-          </Link>
+          <HeaderIconButton as="link" to="/cart" icon={ShoppingBag} label="CART" ariaLabel="سبد خرید" />
           {cartCount > 0 && (
             <span
               dir="ltr"
-              className="absolute -start-1.5 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite"
+              className="pointer-events-none absolute -start-1.5 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-cyan px-1 font-mono text-micro text-graphite"
             >
               {cartCount}
             </span>
           )}
         </div>
-        <Link
+        <HeaderIconButton
+          as="link"
           to={isAuthenticated ? "/account" : "/auth"}
-          className="hidden rounded-sm border border-edge px-2 py-1.5 font-mono text-micro text-silver no-underline hover:text-white sm:block"
-        >
-          ACCOUNT
-        </Link>
+          icon={User}
+          label="ACCOUNT"
+          ariaLabel="حساب کاربری"
+        />
       </div>
 
       <button
         type="button"
-        onClick={onMenuOpen}
-        aria-label="باز کردن منو"
-        className="order-last size-11 rounded-md border border-edge bg-transparent font-mono text-micro text-fog-white lg:hidden"
+        onClick={onMenuToggle}
+        aria-label={menuOpen ? "بستن منو" : "باز کردن منو"}
+        className="order-last grid size-11 shrink-0 place-items-center rounded-md border border-edge bg-transparent text-fog-white lg:hidden"
       >
-        MENU
+        {menuOpen ? <X aria-hidden="true" size={20} strokeWidth={1.5} /> : <Menu aria-hidden="true" size={20} strokeWidth={1.5} />}
       </button>
     </header>
   );

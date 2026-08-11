@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
+import { Search, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { navLinks } from "@/app/navigation";
 import { useDialog } from "@/lib/useDialog";
@@ -50,9 +51,9 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
           type="button"
           onClick={onClose}
           aria-label="بستن منو"
-          className="size-11 rounded-md border border-edge bg-transparent text-body text-fog-white"
+          className="grid size-11 place-items-center rounded-md border border-edge bg-transparent text-fog-white"
         >
-          &#10005;
+          <X aria-hidden="true" size={20} strokeWidth={1.5} />
         </button>
         <VybeWordmark aria-hidden="true" className="h-8 w-auto p-1" />
       </div>
@@ -73,12 +74,13 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
       </nav>
 
       <div className="flex flex-col gap-4 border-t border-edge p-5">
-        <div className="flex items-center gap-2 rounded-md border border-edge p-3">
-          <span dir="ltr" className="font-mono text-micro text-titanium">
-            SEARCH
-          </span>
-          <span className="text-small text-titanium">جستجوی محصول</span>
-        </div>
+        <Link
+          to="/search"
+          className="flex items-center gap-2 rounded-md border border-edge p-3 text-titanium no-underline"
+        >
+          <Search aria-hidden="true" size={20} strokeWidth={1.5} />
+          <span className="text-small">جستجوی محصول</span>
+        </Link>
         <div dir="ltr" className="flex gap-4 font-mono text-micro text-silver">
           {socialLinks.map((label) => (
             <span key={label}>{label}</span>
