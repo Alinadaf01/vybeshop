@@ -1,0 +1,117 @@
+# Production Compose (§8 deploy prep) — prepared, not executed, as part of
+# this task. See DEPLOY.md for the actual step-by-step deploy process.
+#
+# Frontend builds (storefront, admin) are NOT containerized here — they're
+# static output (`npm run build` -> dist/) that Nginx serves directly from a
+# bind mount, built on the host or in CI before `docker compose up`. Only
+# the backend needs a real runtime container.
+#
+# Always invoke with `--env-file .env.production` (DEPLOY.md's commands all
+# do). `env_file:` below only injects vars into the container's own
+# runtime — it does NOT feed the `${POSTGRES_PASSWORD}`-style substitution
+# used directly in this YAML file, which Compose only reads from the shell
+# environment or a file passed via --env-file (confirmed with
+# `docker compose config` — omitting the flag fails with "required variable
+# POSTGRES_PASSWORD is missing a value" even though .env.production exists).
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vybeshop}
+      POSTGRES_USER: ${POSTGRES_USER:-vybeshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a real password in .env.production}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vybeshop}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file: .env.production
+    volumes:
+      - static:/app/staticfiles
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Overrides the Dockerfile's own CMD — migrate/collectstatic need the
+    # real database up first, which only Compose (not the image build) can
+    # guarantee via depends_on/healthcheck.
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 60"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/site-settings/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  celery-worker:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file: .env.production
+    volumes:
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A config worker --loglevel=info --concurrency=2
+
+  celery-beat:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file: .env.production
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A config beat --loglevel=info
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./dist:/var/www/storefront:ro
+      - ./admin/dist:/var/www/admin:ro
+      - static:/var/www/static:ro
+      - media:/var/www/media:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  redisdata:
+  static:
+  media:

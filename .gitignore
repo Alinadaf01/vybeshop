@@ -32,6 +32,11 @@ Thumbs.db
 .claude/settings.local.json
 .vercel
 .env*
+# Templates are meant to be committed — only the *filled-in* files (which
+# .env* above already catches) should ever be gitignored.
+!.env.example
+!*/.env.example
+!.env.production.example
 
 # python / django backend
 backend/.venv
@@ -40,3 +45,6 @@ backend/**/__pycache__
 backend/staticfiles
 backend/media
 backend/db.sqlite3
+
+# deploy (§8) — SSL certs and any local override of the prod compose file
+certbot/
