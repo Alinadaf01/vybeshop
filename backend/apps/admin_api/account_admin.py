@@ -1,13 +1,13 @@
 import secrets
 import string
 
+from django.conf import settings
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from rest_framework_simplejwt.tokens import RefreshToken
 
-from apps.users.models import User
+from apps.users.models import ImpersonationTicket, User
 
 from .activity import log_admin_action
 
@@ -52,10 +52,19 @@ class AdminResetPasswordView(APIView):
 
 
 class AdminImpersonateView(APIView):
-    """§7.6-۲. Issues a fresh token pair for the target customer account so
-    support staff can reproduce a reported issue from the customer's own
-    session. Restricted to non-staff targets — impersonating another staff
-    member isn't what this is for. Always logged; superuser-only."""
+    """§7.6-۲ (redesigned) — never returns a real JWT to the admin panel.
+    Issues a short-lived (60s), single-use ImpersonationTicket instead, and
+    a ready-made storefront link carrying it as a query param. The ticket
+    itself is fine to travel through a URL / browser history / server log —
+    it's worthless the instant it's consumed or a moment later, whichever
+    comes first — but the powerful session token it exchanges for never is,
+    and never appears in a URL (see ImpersonateConsumeView).
+
+    Restricted to non-staff targets — impersonating another staff member
+    isn't what this is for. The actual "session started" activity-log entry
+    is written when the ticket is redeemed (apps.users.views), not here —
+    a ticket the admin requests but never uses shouldn't read as a support
+    session that happened."""
 
     permission_classes = [IsSuperuser]
 
@@ -64,24 +73,12 @@ class AdminImpersonateView(APIView):
         if target.is_staff:
             return Response({"detail": "ورود به‌جای کاربران staff مجاز نیست."}, status=400)
 
-        refresh = RefreshToken.for_user(target)
-        log_admin_action(
-            user=request.user,
-            action="impersonate",
-            model_name="User",
-            object_id=target.pk,
-            changes={"impersonated_phone": target.phone},
-        )
+        ticket = ImpersonationTicket.issue(target_user=target, issued_by=request.user)
         return Response(
             {
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
-                "user": {
-                    "id": str(target.pk),
-                    "phone": target.phone,
-                    "firstName": target.first_name,
-                    "lastName": target.last_name,
-                },
+                "ticket": ticket.token,
+                "expiresInSeconds": ImpersonationTicket.TICKET_LIFETIME_SECONDS,
+                "url": f"{settings.FRONTEND_BASE_URL}/impersonate?ticket={ticket.token}",
             }
         )
 

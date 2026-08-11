@@ -1,3 +1,5 @@
+import secrets
+
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import PermissionsMixin
@@ -139,3 +141,34 @@ class OTPCode(models.Model):
             self.used_at = timezone.now()
         self.save(update_fields=["attempts", "used_at"])
         return ok
+
+
+class ImpersonationTicket(models.Model):
+    """§7.6-۲ (redesigned) — the admin panel never receives a real JWT for the
+    impersonated session directly; it gets one of these, single-use and
+    60-seconds-lived. The storefront's /impersonate route is the only thing
+    that ever exchanges it for a real (restricted) access token, via POST —
+    so the powerful credential itself never sits in a URL, browser history,
+    server access log, or Referer header. A leaked ticket is worthless
+    within a moment, which is the whole point."""
+
+    TICKET_LIFETIME_SECONDS = 60
+
+    token = models.CharField(max_length=64, unique=True, db_index=True)
+    target_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+    issued_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="+")
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(blank=True, null=True)
+
+    @classmethod
+    def issue(cls, *, target_user: "User", issued_by: "User") -> "ImpersonationTicket":
+        return cls.objects.create(
+            token=secrets.token_urlsafe(32),
+            target_user=target_user,
+            issued_by=issued_by,
+            expires_at=timezone.now() + timezone.timedelta(seconds=cls.TICKET_LIFETIME_SECONDS),
+        )
+
+    def is_valid(self) -> bool:
+        return self.used_at is None and timezone.now() < self.expires_at

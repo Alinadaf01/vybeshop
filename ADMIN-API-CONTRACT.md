@@ -589,10 +589,18 @@ The target's next successful login response carries `user.mustChangePassword: tr
 
 ### `POST /api/admin/users/{id}/impersonate/`
 
-Non-staff targets only (`400` if the target is `is_staff` — this is for reproducing a **customer's** reported issue, not for one staff member to act as another). Issues a fresh, real JWT pair scoped to the target user.
-Response `200`: `{ access: string; refresh: string; user: { id, phone, firstName, lastName } }`
+Non-staff targets only (`400` if the target is `is_staff` — this is for reproducing a **customer's** reported issue, not for one staff member to act as another). **Never returns a real JWT.** Issues a short-lived, single-use `ImpersonationTicket` instead:
+```ts
+interface ImpersonateTicketResponse {
+  ticket: string;
+  expiresInSeconds: number; // 60 — the ticket itself, not the session
+  url: string; // `${FRONTEND_BASE_URL}/impersonate?ticket=...`, ready to hand to the agent
+}
+```
 
-These tokens are for the **storefront's** own auth storage, not the admin panel — `admin_api` endpoints reject non-staff users outright, so an impersonation session cannot be used to browse the admin panel itself. The admin frontend surfaces both tokens with a copy button and this caveat spelled out; pasting them into the storefront's own localStorage is a manual step today (a dedicated `/impersonate` consumer route on the storefront is tracked as follow-up work, not built in this pass).
+A bearer token in a URL survives browser history, server access logs, and the `Referer` header — this ticket does too, but it's worthless the instant it's redeemed or a moment later, whichever comes first, so that's an acceptable place for it to travel. The admin frontend renders `url` as a direct link (`ImpersonateResultModal.tsx`), not a copy-token block.
+
+The storefront's own `/impersonate?ticket=...` route is the only thing that ever redeems the ticket, via `POST /api/auth/impersonate/consume/` (public — see `API-CONTRACT.md`), which is where the real, restricted session token is minted and where the "support session started" `AdminActivityLog` entry (`action: "impersonate_start"`) is actually written — not at ticket-issue time, since a ticket the admin requests but never uses shouldn't read as a session that happened. That session token: carries an `impersonated: true` claim, has no refresh token (dies at its own 30-minute expiry, cannot be renewed), and is rejected by every `admin_api` endpoint outright (`is_staff` check) — it can only ever be used against the public storefront API, and even there `IsNotImpersonating` blocks checkout and address deletion (see `API-CONTRACT.md`'s "Support-mode" section for the exact restriction list). Ending the session (`POST /api/auth/impersonate/end/`, also public) writes a matching `action: "impersonate_end"` entry.
 
 ### `POST /api/admin/users/{id}/force-logout/`
 

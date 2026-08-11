@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APITestCase
+from rest_framework_simplejwt.tokens import AccessToken
 
 from apps.catalog.models import Category, Product
 from apps.content.models import Coupon
@@ -363,6 +364,42 @@ class CheckoutApiTests(APITestCase):
         )
         coupon.refresh_from_db()
         self.assertEqual(coupon.used_count, 1)
+
+
+class ImpersonatedCheckoutRestrictionTests(APITestCase):
+    """A support-mode (impersonated) session can browse the cart and
+    checkout page to reproduce a reported bug but must not place a real
+    order on the customer's behalf — see apps.users.permissions."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(phone="09121110090", is_verified=True)
+        self.address = Address.objects.create(
+            user=self.user, province="تهران", city="تهران", line="خیابان ولیعصر",
+            postal_code="1234567890", receiver_name="Ali", receiver_phone="09121110090",
+        )
+        self.shipping = ShippingMethod.objects.create(name="پست پیشتاز", cost=50000, free_above=500000)
+        category = Category.objects.create(slug="impersonation-test", name="Impersonation Test")
+        self.product = Product.objects.create(
+            sku="IMP-001", slug="imp-product", name="Impersonation Product", price=100000, category=category
+        )
+        StockMovement.objects.record(self.product, "purchase", 10, reference="PO-IMP")
+        Cart.objects.create(user=self.user)
+
+        impersonated_token = AccessToken.for_user(self.user)
+        impersonated_token["impersonated"] = True
+        self.client.force_authenticate(user=self.user, token=impersonated_token)
+
+    def test_impersonated_session_can_still_add_to_cart(self):
+        response = self.client.post(reverse("cart-item-create"), {"productId": self.product.pk, "quantity": 1}, format="json")
+        self.assertEqual(response.status_code, 201)
+
+    def test_impersonated_session_cannot_checkout(self):
+        self.client.post(reverse("cart-item-create"), {"productId": self.product.pk, "quantity": 1}, format="json")
+        response = self.client.post(
+            reverse("checkout"), {"addressId": self.address.pk, "shippingMethodId": self.shipping.pk}, format="json"
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(Order.objects.filter(user=self.user).exists())
 
 
 class OrderHistoryApiTests(APITestCase):

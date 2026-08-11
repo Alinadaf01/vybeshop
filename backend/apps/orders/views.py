@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from apps.catalog.models import ColorOption, Product
 from apps.settings.models import ShippingMethod
 from apps.users.models import Address
+from apps.users.permissions import IsNotImpersonating
 
 from .models import Cart, CartItem, Order
 from .serializers import (
@@ -102,7 +103,10 @@ class CartItemUpdateDeleteView(APIView):
 
 
 class CheckoutView(APIView):
-    permission_classes = [IsAuthenticated]
+    # A support-mode (impersonated) session can browse the cart/checkout
+    # pages to reproduce a reported bug but must not actually place an
+    # order on the customer's behalf.
+    permission_classes = [IsAuthenticated, IsNotImpersonating]
 
     def post(self, request):
         input_serializer = CheckoutInputSerializer(data=request.data)

@@ -1,12 +1,15 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APITestCase
+from rest_framework_simplejwt.tokens import AccessToken
 
+from apps.analytics.models import AdminActivityLog
 from apps.catalog.models import Category, Product
 from apps.inventory.models import StockMovement
 from apps.notifications.models import SmsLog
 from apps.orders.models import Cart, CartItem
-from apps.users.models import Address, OTPCode, User
+from apps.users.models import Address, ImpersonationTicket, OTPCode, User
 
 
 class OtpFlowTests(APITestCase):
@@ -123,6 +126,92 @@ class AddressTests(APITestCase):
         self.client.force_authenticate(user=None)
         response = self.client.get(reverse("address-list"))
         self.assertEqual(response.status_code, 401)
+
+
+class ImpersonationFlowTests(APITestCase):
+    def setUp(self):
+        self.admin = User.objects.create_superuser(phone="09121110080", password="admin-pass-123")
+        self.customer = User.objects.create_user(phone="09121110081", is_verified=True)
+
+    def test_consume_valid_ticket_issues_restricted_access_token(self):
+        ticket = ImpersonationTicket.issue(target_user=self.customer, issued_by=self.admin)
+        response = self.client.post(reverse("impersonate-consume"), {"ticket": ticket.token}, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("access", response.data)
+        self.assertNotIn("refresh", response.data)
+        self.assertEqual(response.data["user"]["phone"], self.customer.phone)
+        self.assertEqual(response.data["expiresInSeconds"], 30 * 60)
+
+        access = AccessToken(response.data["access"])
+        self.assertTrue(access["impersonated"])
+        self.assertEqual(access["impersonatorId"], self.admin.pk)
+        self.assertTrue(
+            AdminActivityLog.objects.filter(
+                user=self.admin, action="impersonate_start", object_id=str(self.customer.pk)
+            ).exists()
+        )
+
+    def test_ticket_is_single_use(self):
+        ticket = ImpersonationTicket.issue(target_user=self.customer, issued_by=self.admin)
+        first = self.client.post(reverse("impersonate-consume"), {"ticket": ticket.token}, format="json")
+        second = self.client.post(reverse("impersonate-consume"), {"ticket": ticket.token}, format="json")
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(second.status_code, 400)
+
+    def test_expired_ticket_rejected(self):
+        ticket = ImpersonationTicket.issue(target_user=self.customer, issued_by=self.admin)
+        ticket.expires_at = timezone.now() - timezone.timedelta(seconds=1)
+        ticket.save(update_fields=["expires_at"])
+        response = self.client.post(reverse("impersonate-consume"), {"ticket": ticket.token}, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_unknown_ticket_rejected(self):
+        response = self.client.post(reverse("impersonate-consume"), {"ticket": "does-not-exist"}, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_end_session_logs_and_requires_impersonated_token(self):
+        ticket = ImpersonationTicket.issue(target_user=self.customer, issued_by=self.admin)
+        consume = self.client.post(reverse("impersonate-consume"), {"ticket": ticket.token}, format="json")
+
+        response = self.client.post(reverse("impersonate-end"), HTTP_AUTHORIZATION=f"Bearer {consume.data['access']}")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            AdminActivityLog.objects.filter(
+                user=self.admin, action="impersonate_end", object_id=str(self.customer.pk)
+            ).exists()
+        )
+
+    def test_end_session_rejects_a_normal_login_token(self):
+        OTPCode.issue("09121110082", "555555")
+        login = self.client.post(reverse("otp-verify"), {"phone": "09121110082", "code": "555555"}, format="json")
+        response = self.client.post(reverse("impersonate-end"), HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+        self.assertEqual(response.status_code, 400)
+
+    def test_impersonated_session_cannot_delete_address(self):
+        address = Address.objects.create(
+            user=self.customer, province="تهران", city="تهران", line="...",
+            postal_code="1234567890", receiver_name="A", receiver_phone="09121110081",
+        )
+        ticket = ImpersonationTicket.issue(target_user=self.customer, issued_by=self.admin)
+        consume = self.client.post(reverse("impersonate-consume"), {"ticket": ticket.token}, format="json")
+
+        response = self.client.delete(
+            reverse("address-detail", args=[address.pk]), HTTP_AUTHORIZATION=f"Bearer {consume.data['access']}"
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Address.objects.filter(pk=address.pk).exists())
+
+    def test_impersonated_session_can_still_read_addresses(self):
+        Address.objects.create(
+            user=self.customer, province="تهران", city="تهران", line="...",
+            postal_code="1234567890", receiver_name="A", receiver_phone="09121110081",
+        )
+        ticket = ImpersonationTicket.issue(target_user=self.customer, issued_by=self.admin)
+        consume = self.client.post(reverse("impersonate-consume"), {"ticket": ticket.token}, format="json")
+
+        response = self.client.get(reverse("address-list"), HTTP_AUTHORIZATION=f"Bearer {consume.data['access']}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
 
 
 class AdminManualUserCreationTests(TestCase):

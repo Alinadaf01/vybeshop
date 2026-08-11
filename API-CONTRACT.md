@@ -320,6 +320,30 @@ Requires `Authorization: Bearer <access>`. `GET` returns the same `user` shape a
 
 `401` for missing/invalid/expired token on any authenticated endpoint in this contract.
 
+### Support-mode (admin impersonation) — `/impersonate` route
+
+The admin panel's "ورود به‌جای این کاربر" action links here as `/impersonate?ticket=<token>` — a short-lived (60s), single-use ticket, never the session token itself. This is the storefront's own route (not part of this API contract's JSON surface), and it's the only thing that ever calls the two endpoints below:
+
+#### `POST /api/auth/impersonate/consume/`
+
+Request: `{ ticket: string }` — no auth header. Exchanges the ticket for a real but restricted session.
+
+Response `200`:
+```ts
+interface ImpersonateConsumeResponse {
+  access: string; // no refresh token — the session simply expires at expiresInSeconds, it cannot be renewed
+  user: { id, phone, firstName, lastName, email, isVerified, createdAt };
+  expiresInSeconds: number; // 1800 (30 minutes)
+}
+```
+Response `400`: `{ detail: string }` — ticket unknown, already used, or its own 60-second window elapsed.
+
+The returned access token carries an `impersonated: true` claim. Every endpoint in this contract still works normally under it **except** three that require `IsNotImpersonating` in addition to `IsAuthenticated` and reject with `403` if the token is impersonated: `POST /api/checkout/` (placing an order) and `DELETE /api/addresses/{id}/` (deleting an address). A support session can read and browse everything else — including adding to cart, viewing orders, editing (not deleting) addresses — to reproduce a reported bug, just not act on the customer's behalf.
+
+#### `POST /api/auth/impersonate/end/`
+
+Requires `Authorization: Bearer <access>` where that token carries `impersonated: true` (`400` otherwise). Logs the end of the support session to `AdminActivityLog` (attributed to the admin who issued the ticket, via the token's `impersonatorId` claim) and returns `200 { detail: string }`. Best-effort — if this never fires (tab closed), the session still dies on its own at the access token's natural 30-minute expiry, since there's no refresh token to extend it.
+
 ---
 
 ## Addresses

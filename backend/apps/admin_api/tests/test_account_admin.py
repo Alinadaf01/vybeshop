@@ -4,7 +4,7 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.analytics.models import AdminActivityLog
-from apps.users.models import User
+from apps.users.models import ImpersonationTicket, User
 
 from .base import AdminApiTestMixin
 
@@ -98,10 +98,15 @@ class AdminImpersonateApiTests(AdminApiTestMixin, APITestCase):
     def test_superuser_can_impersonate_customer(self):
         response = self.client.post(reverse("admin-user-impersonate", args=[self.customer.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertIn("access", response.data)
-        self.assertIn("refresh", response.data)
-        self.assertEqual(response.data["user"]["phone"], self.customer.phone)
-        self.assertTrue(AdminActivityLog.objects.filter(model_name="User", action="impersonate").exists())
+        self.assertIn("ticket", response.data)
+        self.assertEqual(response.data["expiresInSeconds"], ImpersonationTicket.TICKET_LIFETIME_SECONDS)
+        self.assertIn(response.data["ticket"], response.data["url"])
+        ticket = ImpersonationTicket.objects.get(token=response.data["ticket"])
+        self.assertEqual(ticket.target_user, self.customer)
+        self.assertEqual(ticket.issued_by, self.superuser)
+        # Issuing a ticket is not itself a logged support session — only
+        # redeeming it (apps.users.views.ImpersonateConsumeView) is.
+        self.assertFalse(AdminActivityLog.objects.filter(action="impersonate_start").exists())
 
     def test_cannot_impersonate_staff_user(self):
         staff = self.make_staff(phone="09121110075")
