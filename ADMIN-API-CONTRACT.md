@@ -468,6 +468,38 @@ Only `approved` reviews are ever included in the public product-detail average/d
 
 ## Bonus sections (not in the original 14, added per §8 of `BACKEND-TASK.md`)
 
+### Homepage management (HOMEPAGE-ADMIN-TASK.md, section: `homepage`)
+
+Lets the owner swap the home page's hero image/copy and the two product-showcase blocks below it without a redeploy. Public-facing shape is `GET /api/homepage/` (see `API-CONTRACT.md`); these are the write endpoints.
+
+- `GET/PATCH /api/admin/homepage/hero/` — singleton, same pattern as `settings/site/`. Multipart when uploading `image`/`imageMobile`, plain JSON otherwise.
+  ```ts
+  interface AdminHeroSection {
+    image: string | null; imageMobile: string | null; imageAlt: string;
+    title: string; subtitle: string; caption: string; ctaLabel: string; ctaUrl: string; isActive: boolean;
+  }
+  ```
+
+- `GET/POST /api/admin/homepage/showcases/`, `GET/PATCH/DELETE /api/admin/homepage/showcases/{id}/` — no pagination envelope (bounded to 2 rows in practice).
+  ```ts
+  interface AdminHomeShowcase {
+    id: string; order: number; product: number | null;
+    productDetail: { id: string; name: string; sku: string; slug: string; isActive: boolean; thumbnail: string } | null; // read-only
+    image: string | null; imageAlt: string; title: string; description: string;
+    specs: { label: string; value: string }[]; ctaLabel: string; ctaUrl: string;
+    theme: "light" | "dark"; isActive: boolean;
+    // read-only, fallback-applied — what the storefront will actually render:
+    resolvedImage: string; resolvedTitle: string; resolvedCtaUrl: string;
+  }
+  ```
+  `product` is optional — a block can point at a category/campaign page instead of a specific product. When set, `resolvedTitle`/`resolvedImage`/`resolvedCtaUrl` auto-fill from the product unless the corresponding manual field is also set (manual always wins). `productDetail` stays populated even if the linked product is inactive (so the admin can see what's linked and why it isn't auto-filling) — but the `resolved*` fields stop trusting an inactive product's data, and a **deleted** product clears the FK (`on_delete=SET_NULL`) without deleting the showcase row itself, so a block can never break from a missing product. **Max two active rows — 400 on a third `isActive: true`, server-side, not just a UI limit.**
+
+- `GET/POST /api/admin/homepage/community-tiles/`, `GET/PATCH/DELETE /api/admin/homepage/community-tiles/{id}/` — no pagination envelope (bounded to 6 rows).
+  ```ts
+  interface AdminCommunityTile { id: string; order: number; image: string | null; imageAlt: string; linkUrl: string; isActive: boolean; }
+  ```
+  **Max six active rows — 400 on a seventh `isActive: true`, same server-side enforcement.**
+
 ### Blog management
 
 - `GET/POST /api/admin/blog/`, `GET/PATCH/DELETE /api/admin/blog/{id}/`
@@ -514,10 +546,11 @@ Only `approved` reviews are ever included in the public product-detail average/d
 
 Every route in this document requires `is_staff = true` at minimum. On top of that, each view is gated by a **section + action** permission (`require_section("<section>", action="<action>")` in `apps/admin_api/permissions.py`) — built on Django's own `Group`/`Permission` tables, not a parallel system. `action` defaults from the HTTP method (`GET`→`view`, `POST`→`create`, `PUT`/`PATCH`→`edit`, `DELETE`→`delete`) and falls back to `edit` then `view` if the resolved action doesn't exist for that section (e.g. a mixed GET+POST view on a section with no `create` action). **`request.user.is_superuser` always bypasses every section check.**
 
-Sections (20 total) and the actions each one actually has — not every section has all four:
+Sections (21 total) and the actions each one actually has — not every section has all four:
 
 | Section key | Label | Actions |
 |---|---|---|
+| `homepage` | صفحه اصلی | view, create, edit, delete |
 | `products` | محصولات | view, create, edit, delete |
 | `categories` | دسته‌بندی‌ها | view, create, edit, delete |
 | `specs` | مشخصات محصولات | view, create, edit, delete |
@@ -550,7 +583,7 @@ Seeded by a data migration (`apps/admin_api/migrations/0003_default_roles.py`), 
 | Role | Grants |
 |---|---|
 | مدیر کل | every section, every action it has |
-| مدیر محصول | products, categories, specs, blog (full CRUD) + reviews (view, edit) |
+| مدیر محصول | products, categories, specs, blog, homepage (full CRUD) + reviews (view, edit) |
 | مدیر سفارشات | orders, inventory, stock_ledger, returns, messages (view/edit per their available actions) |
 | پشتیبانی | orders (view), users (view), messages (view, edit) |
 | حسابدار | reports (view) only |

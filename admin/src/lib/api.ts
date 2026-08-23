@@ -37,6 +37,7 @@ import type {
 } from "@/types/searchConsole";
 import type { AdminRole, AdminRoleFormValues, AdminSection, MyPermissions } from "@/types/role";
 import type { ForceLogoutResponse, ImpersonateResponse, ResetPasswordResponse } from "@/types/accountAdmin";
+import type { CommunityTileData, HeroFormValues, HeroSectionData, HomeShowcaseData, ShowcaseFormValues } from "@/types/homepage";
 
 // No fake-data phase here, unlike the storefront's src/lib/api.ts — B6's
 // real /api/admin/ endpoints already exist, so every function below always
@@ -935,4 +936,91 @@ export async function changeOwnPassword(currentPassword: string, newPassword: st
     body: JSON.stringify({ currentPassword, newPassword }),
   });
   await throwIfError(res, "تغییر رمز عبور ناموفق بود.");
+}
+
+// ---------------------------------------------------------------------------
+// Homepage management (HOMEPAGE-ADMIN-TASK.md)
+// ---------------------------------------------------------------------------
+
+export async function getHeroSection(): Promise<HeroSectionData> {
+  const res = await authorizedFetch("/homepage/hero/");
+  return parseOrThrow(res, "دریافت اطلاعات هیرو ناموفق بود.");
+}
+
+export async function updateHeroSection(
+  data: Partial<HeroFormValues>,
+  imageFiles?: Partial<Record<"image" | "imageMobile", File>>,
+): Promise<HeroSectionData> {
+  const hasFiles = imageFiles && Object.values(imageFiles).some(Boolean);
+  let init: RequestInit;
+  if (hasFiles) {
+    const form = buildFormData(data);
+    for (const [key, file] of Object.entries(imageFiles ?? {})) {
+      if (file) form.append(key, file);
+    }
+    init = { method: "PATCH", body: form };
+  } else {
+    init = { method: "PATCH", body: JSON.stringify(data) };
+  }
+  const res = await authorizedFetch("/homepage/hero/", init);
+  return parseOrThrow(res, "ذخیره هیرو ناموفق بود.");
+}
+
+export async function listHomeShowcases(): Promise<HomeShowcaseData[]> {
+  const res = await authorizedFetch("/homepage/showcases/");
+  return parseOrThrow(res, "دریافت بلوک‌های نمایش ناموفق بود.");
+}
+
+export async function createHomeShowcase(data: ShowcaseFormValues, image?: File | null): Promise<HomeShowcaseData> {
+  const init: RequestInit = image
+    ? { method: "POST", body: buildFormData(data, image) }
+    : { method: "POST", body: JSON.stringify(data) };
+  const res = await authorizedFetch("/homepage/showcases/", init);
+  return parseOrThrow(res, "ایجاد بلوک نمایش ناموفق بود.");
+}
+
+export async function updateHomeShowcase(
+  id: string,
+  data: Partial<ShowcaseFormValues>,
+  image?: File | null,
+): Promise<HomeShowcaseData> {
+  const init: RequestInit = image
+    ? { method: "PATCH", body: buildFormData(data, image) }
+    : { method: "PATCH", body: JSON.stringify(data) };
+  const res = await authorizedFetch(`/homepage/showcases/${id}/`, init);
+  return parseOrThrow(res, "ذخیره بلوک نمایش ناموفق بود.");
+}
+
+export async function deleteHomeShowcase(id: string): Promise<void> {
+  const res = await authorizedFetch(`/homepage/showcases/${id}/`, { method: "DELETE" });
+  await throwIfError(res, "حذف بلوک نمایش ناموفق بود.");
+}
+
+export async function listCommunityTiles(): Promise<CommunityTileData[]> {
+  const res = await authorizedFetch("/homepage/community-tiles/");
+  return parseOrThrow(res, "دریافت کاشی‌های جامعه ناموفق بود.");
+}
+
+export async function createCommunityTile(order: number, image: File): Promise<CommunityTileData> {
+  const res = await authorizedFetch("/homepage/community-tiles/", {
+    method: "POST",
+    body: buildFormData({ order, isActive: true }, image),
+  });
+  return parseOrThrow(res, "افزودن کاشی ناموفق بود.");
+}
+
+export async function updateCommunityTile(
+  id: string,
+  data: Partial<Pick<CommunityTileData, "order" | "imageAlt" | "linkUrl" | "isActive">>,
+): Promise<CommunityTileData> {
+  const res = await authorizedFetch(`/homepage/community-tiles/${id}/`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+  return parseOrThrow(res, "ذخیره کاشی ناموفق بود.");
+}
+
+export async function deleteCommunityTile(id: string): Promise<void> {
+  const res = await authorizedFetch(`/homepage/community-tiles/${id}/`, { method: "DELETE" });
+  await throwIfError(res, "حذف کاشی ناموفق بود.");
 }

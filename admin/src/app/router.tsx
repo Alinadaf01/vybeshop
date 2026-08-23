@@ -8,6 +8,7 @@ import OrdersPage from "@/pages/OrdersPage";
 import OrderDetailPage from "@/pages/orders/OrderDetailPage";
 import ProductsPage from "@/pages/ProductsPage";
 import ProductFormPage from "@/pages/products/ProductFormPage";
+import HomepagePage from "@/pages/HomepagePage";
 import PricingPage from "@/pages/PricingPage";
 import CategoriesPage from "@/pages/CategoriesPage";
 import SpecsPage from "@/pages/SpecsPage";
@@ -46,6 +47,7 @@ export const router = createBrowserRouter([
           { path: "products/new", element: <ProductFormPage /> },
           { path: "products/:id", element: <ProductFormPage /> },
           { path: "pricing", element: <PricingPage /> },
+          { path: "homepage", element: <HomepagePage /> },
           { path: "categories", element: <CategoriesPage /> },
           { path: "specs", element: <SpecsPage /> },
           { path: "inventory", element: <InventoryPage /> },

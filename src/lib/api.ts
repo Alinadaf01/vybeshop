@@ -18,6 +18,7 @@ import type { Cart } from "@/types/cart";
 import type { Order, OrderSummary, PaymentGatewayCode } from "@/types/order";
 import type { PaymentGateway } from "@/types/payment";
 import type { ShippingMethod } from "@/types/shipping";
+import type { HomepageContent } from "@/types/homepage";
 
 const NETWORK_DELAY_MS = 350;
 
@@ -277,6 +278,23 @@ export async function getCatalog(): Promise<CatalogFile> {
     },
     () => delay(catalog),
   );
+}
+
+/** Unlike every other getX() above, this never throws and never falls back
+ * to fake data — HOMEPAGE-ADMIN-TASK.md §5's critical rule is that the home
+ * page must fall back to src/content/home.ts's static defaults on ANY
+ * failure (unreachable backend, 404/500, malformed JSON), not just when the
+ * backend is unconfigured. Returning null is the signal HomePage.tsx reads
+ * to mean "render the static page exactly as it looked before this
+ * feature existed." */
+export async function getHomepage(): Promise<HomepageContent | null> {
+  try {
+    const res = await apiFetch("/homepage/");
+    if (!res.ok) return null;
+    return (await res.json()) as HomepageContent;
+  } catch {
+    return null;
+  }
 }
 
 export async function submitContactMessage(

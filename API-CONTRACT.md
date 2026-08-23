@@ -192,6 +192,63 @@ Consumed by both the global footer (every page) and the contact page's info pane
 
 ---
 
+## Homepage content
+
+The home page's owner-editable sections — hero banner, two product-showcase blocks, up to six community photos (HOMEPAGE-ADMIN-TASK.md). Admin-managed via `/api/admin/homepage/*`; this is the read-only side the storefront consumes.
+
+### `GET /api/homepage/`
+
+No params, no pagination envelope.
+
+```ts
+interface HomepageContent {
+  hero: HeroSection | null;       // null = not configured yet, or explicitly turned off
+  showcases: HomeShowcase[];      // active only, ordered, at most 2
+  communityTiles: CommunityTile[]; // active only, ordered, at most 6
+}
+
+interface HeroSection {
+  image: string;        // "" if not uploaded yet
+  imageMobile: string;  // "" if not uploaded — storefront falls back to `image`
+  imageAlt: string;
+  title: string;
+  subtitle: string;
+  caption: string;      // mono, e.g. "PLA · FDM · 0.2MM LAYER"
+  ctaLabel: string;
+  ctaUrl: string;
+}
+
+interface HomeShowcase {
+  id: string;
+  order: number;               // 1 or 2
+  product: { slug: string; name: string } | null; // null if unlinked, or linked product is inactive
+  image: string;                // resolved — falls back to the linked product's own primary image
+  imageAlt: string;
+  title: string;                 // resolved — falls back to the linked product's name
+  description: string;
+  specs: { label: string; value: string }[];
+  ctaLabel: string;
+  ctaUrl: string;                // resolved — falls back to `/products/<slug>` when a product is linked
+  theme: "light" | "dark";
+}
+
+interface CommunityTile {
+  id: string;
+  order: number;   // 1–6
+  image: string;
+  imageAlt: string;
+  linkUrl: string;
+}
+```
+
+**Frontend fallback rule — the home page must never look empty or broken because of this endpoint:**
+- If the request fails outright (network error, 5xx), the frontend falls back entirely to its own static defaults (`src/content/home.ts`) for hero, showcases, and community images — exactly what shipped before this feature existed.
+- If the request succeeds: `hero: null` (never configured, or explicitly disabled) → same static hero fallback. `showcases: []` → falls back to the original two hardcoded product showcases. `communityTiles: []` → the community section simply doesn't render (this is a legitimate, intentional empty state, not an error).
+
+A showcase's `image`/`title`/`ctaUrl` are already the *resolved* values (product fallback baked in server-side) — the frontend never needs to replicate that logic itself.
+
+---
+
 ## Catalog
 
 A single downloadable-PDF record, not a list of products. Currently sourced from `src/data/catalog.ts`.

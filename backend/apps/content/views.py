@@ -11,12 +11,15 @@ from apps.catalog.models import Product
 from apps.catalog.serializers import ProductSerializer
 
 from .filters import BlogPostFilter
-from .models import BlogPost, CatalogFile, ContactMessage, Favorite
+from .models import BlogPost, CatalogFile, CommunityTile, ContactMessage, Favorite, HeroSection, HomeShowcase
 from .serializers import (
     BlogPostSerializer,
     CatalogFileSerializer,
     ContactMessageInputSerializer,
     ContactMessageOutputSerializer,
+    PublicCommunityTileSerializer,
+    PublicHeroSectionSerializer,
+    PublicHomeShowcaseSerializer,
 )
 
 
@@ -30,6 +33,26 @@ class BlogPostDetailView(RetrieveAPIView):
     queryset = BlogPost.objects.filter(is_published=True)
     serializer_class = BlogPostSerializer
     lookup_field = "slug"
+
+
+class HomepageContentView(APIView):
+    """GET /api/homepage/ — everything the home page's owner-editable
+    sections need in one call, no pagination envelope (HOMEPAGE-ADMIN-TASK.md
+    §2). `hero` is null both when it was never configured and when the
+    owner explicitly turned it off — either way the frontend falls back to
+    its own static default rather than showing an empty hero."""
+
+    def get(self, request):
+        hero = HeroSection.objects.filter(pk=1, is_active=True).first()
+        showcases = HomeShowcase.objects.filter(is_active=True).select_related("product").order_by("order")[:2]
+        tiles = CommunityTile.objects.filter(is_active=True).order_by("order")[:6]
+        return Response(
+            {
+                "hero": PublicHeroSectionSerializer(hero).data if hero else None,
+                "showcases": PublicHomeShowcaseSerializer(showcases, many=True).data,
+                "community_tiles": PublicCommunityTileSerializer(tiles, many=True).data,
+            }
+        )
 
 
 def _client_ip(request) -> str | None:

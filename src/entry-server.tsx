@@ -10,7 +10,7 @@ import CategoriesPage from "@/pages/CategoriesPage";
 import HomePage from "@/pages/HomePage";
 import BlogListPage from "@/pages/BlogListPage";
 import { getRouteHead, listAllRoutes, type RouteHead } from "@/lib/seoRoutes";
-import { getSiteSettings, getCatalog, getProducts, getCategories, getBlogPosts } from "@/lib/api";
+import { getSiteSettings, getCatalog, getProducts, getCategories, getBlogPosts, getHomepage } from "@/lib/api";
 
 export { listAllRoutes };
 
@@ -33,6 +33,11 @@ const ROUTE_PREFETCHES: Record<string, (queryClient: QueryClient) => Promise<voi
     qc.prefetchQuery({ queryKey: ["products", "home"], queryFn: () => getProducts({ pageSize: 24 }) }),
     qc.prefetchQuery({ queryKey: ["categories"], queryFn: () => getCategories() }),
     qc.prefetchQuery({ queryKey: ["blogPosts", "home"], queryFn: () => getBlogPosts({ pageSize: 3 }) }),
+    // Without this, the dehydrated cache is missing the "homepage" query key
+    // that HomePage.tsx reads, so hydration refetches it client-side and the
+    // hero/showcase/community sections flash from static defaults to real
+    // content on first load (HOMEPAGE-ADMIN-TASK.md §5: "این را حتماً تست کن").
+    qc.prefetchQuery({ queryKey: ["homepage"], queryFn: getHomepage }),
   ],
   "/blog": (qc) => [
     qc.prefetchQuery({

@@ -10,6 +10,7 @@ from . import (
     contact_messages,
     coupons,
     dashboard,
+    homepage,
     inventory,
     orders,
     pricing,
@@ -37,6 +38,12 @@ urlpatterns = [
     # Dashboard
     path("admin/dashboard/", dashboard.AdminDashboardView.as_view(), name="admin-dashboard"),
     path("admin/dashboard/mark-seen/", dashboard.AdminDashboardMarkSeenView.as_view(), name="admin-dashboard-mark-seen"),
+    # Homepage management
+    path("admin/homepage/hero/", homepage.AdminHeroSectionView.as_view(), name="admin-homepage-hero"),
+    path("admin/homepage/showcases/", homepage.AdminHomeShowcaseListCreateView.as_view(), name="admin-homepage-showcase-list"),
+    path("admin/homepage/showcases/<int:pk>/", homepage.AdminHomeShowcaseDetailView.as_view(), name="admin-homepage-showcase-detail"),
+    path("admin/homepage/community-tiles/", homepage.AdminCommunityTileListCreateView.as_view(), name="admin-homepage-tile-list"),
+    path("admin/homepage/community-tiles/<int:pk>/", homepage.AdminCommunityTileDetailView.as_view(), name="admin-homepage-tile-detail"),
     # Products
     path("admin/products/", products.AdminProductListCreateView.as_view(), name="admin-product-list"),
     path("admin/products/price-list.pdf", products.AdminPriceListPdfView.as_view(), name="admin-product-price-list-pdf"),

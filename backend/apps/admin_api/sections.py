@@ -9,6 +9,7 @@ staff member can see it, per the spec's own role table never mentioning it.
 """
 
 SECTIONS = [
+    ("homepage", "صفحه اصلی", ["view", "create", "edit", "delete"]),
     ("products", "محصولات", ["view", "create", "edit", "delete"]),
     ("categories", "دسته‌بندی‌ها", ["view", "create", "edit", "delete"]),
     ("specs", "مشخصات محصولات", ["view", "create", "edit", "delete"]),
@@ -61,13 +62,14 @@ DEFAULT_ROLES = {
         "grants": {key: list(actions) for key, _, actions in SECTIONS},
     },
     "مدیر محصول": {
-        "description": "محصولات، دسته‌بندی‌ها، مشخصات، بلاگ، نظرات — بدون قیمت تمام‌شده و گزارش فروش",
+        "description": "محصولات، دسته‌بندی‌ها، مشخصات، بلاگ، نظرات، صفحه اصلی — بدون قیمت تمام‌شده و گزارش فروش",
         "grants": {
             "products": ["view", "create", "edit", "delete"],
             "categories": ["view", "create", "edit", "delete"],
             "specs": ["view", "create", "edit", "delete"],
             "blog": ["view", "create", "edit", "delete"],
             "reviews": ["view", "edit"],
+            "homepage": ["view", "create", "edit", "delete"],
         },
     },
     "مدیر سفارشات": {
