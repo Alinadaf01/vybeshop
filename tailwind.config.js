@@ -115,10 +115,59 @@ export default {
         spin: {
           to: { transform: "rotate(360deg)" },
         },
+        // FIX-TASK.md §2 — کارت ورود، برگرفته از design/otp-template/
+        // (رنگ‌ها با برند جایگزین شدند، ولی خود حرکت‌ها همان‌هاست).
+        "card-enter": {
+          from: { opacity: "0", transform: "translateY(24px) scale(0.98)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "15%": { transform: "translateX(-10px)" },
+          "30%": { transform: "translateX(10px)" },
+          "45%": { transform: "translateX(-8px)" },
+          "60%": { transform: "translateX(8px)" },
+          "75%": { transform: "translateX(-4px)" },
+          "90%": { transform: "translateX(4px)" },
+        },
+        "pulse-ring": {
+          "0%, 100%": { boxShadow: "0 0 0 0 rgb(0 209 255 / 0.4)" },
+          "50%": { boxShadow: "0 0 0 8px rgb(0 209 255 / 0)" },
+        },
+        "success-pop": {
+          "0%": { opacity: "0", transform: "scale(0.5)" },
+          "70%": { transform: "scale(1.08)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        "success-ring": {
+          from: { opacity: "0", transform: "scale(0.8)" },
+          to: { opacity: "0", transform: "scale(1.15)" },
+        },
+        "mesh-shift": {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "0.8" },
+        },
+        "orb-float-1": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "33%": { transform: "translate(24px, -32px) scale(1.06)" },
+          "66%": { transform: "translate(-16px, 16px) scale(0.96)" },
+        },
+        "orb-float-2": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "50%": { transform: "translate(-28px, 28px) scale(1.1)" },
+        },
       },
       animation: {
         shimmer: "shimmer 1.4s linear infinite",
         spin: "spin 600ms linear infinite",
+        "card-enter": "card-enter 700ms cubic-bezier(0.22,1,0.36,1) forwards",
+        shake: "shake 550ms cubic-bezier(0.36,0.07,0.19,0.97) both",
+        "pulse-ring": "pulse-ring 2.5s cubic-bezier(0.4,0,0.2,1) infinite",
+        "success-pop": "success-pop 550ms cubic-bezier(0.22,1,0.36,1) forwards",
+        "success-ring": "success-ring 700ms cubic-bezier(0.4,0,0.2,1) forwards",
+        "mesh-shift": "mesh-shift 14s cubic-bezier(0.4,0,0.2,1) infinite",
+        "orb-float-1": "orb-float-1 18s cubic-bezier(0.4,0,0.2,1) infinite",
+        "orb-float-2": "orb-float-2 22s cubic-bezier(0.4,0,0.2,1) infinite",
       },
     },
   },

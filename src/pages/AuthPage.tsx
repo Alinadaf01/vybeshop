@@ -3,11 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { Input } from "@/components/ui/Input";
-import { Checkbox } from "@/components/ui/Checkbox";
+import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { Seo } from "@/components/seo/Seo";
 import { requestOtp, verifyOtp, updateMe, mergeFavorites } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
@@ -18,8 +15,31 @@ import { authContent as c } from "@/content/auth";
 type Step = "phone" | "otp" | "profile" | "done";
 const OTP_LENGTH = 6;
 
+// دو استایل مشترک برای فیلدهای متنی/چک‌باکس روی کارت تیره — Input/Checkbox
+// مشترک سایت برای زمینه روشن ساخته شده‌اند، برای همین اینجا (تنها جایی که
+// کارت تیره دارد) نسخه محلی می‌سازیم به‌جای دستکاری آن کامپوننت‌های مشترک.
+const darkFieldClass =
+  "h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 text-body text-fog-white outline-none transition-all duration-base placeholder:text-titanium hover:border-white/20 focus-visible:border-cyan/60 focus-visible:bg-cyan/[0.06] focus-visible:shadow-[0_0_0_3px_rgba(0,209,255,0.18)]";
+
 function formatPhoneDisplay(phone: string): string {
   return phone.replace(/(\d{4})(\d{3})(\d{4})/, "$1 $2 $3");
+}
+
+/** آیکون قفل با حلقه پالس سیان — سرصفحه مشترک مراحل شماره/کد/پروفایل. */
+function LoginIcon() {
+  return (
+    <div className="mb-6 flex justify-center">
+      <div className="rounded-2xl border-cyan/25 bg-cyan/[0.07] flex size-14 items-center justify-center border motion-safe:animate-pulse-ring motion-reduce:animate-none">
+        <svg className="size-7 text-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+          />
+        </svg>
+      </div>
+    </div>
+  );
 }
 
 export default function AuthPage() {
@@ -32,6 +52,7 @@ export default function AuthPage() {
   const [otpError, setOtpError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(0);
+  const [shake, setShake] = useState(false);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const phoneForm = useForm<PhoneFormValues>({
@@ -53,6 +74,14 @@ export default function AuthPage() {
   useEffect(() => {
     if (step === "otp") otpRefs.current[0]?.focus();
   }, [step]);
+
+  // FIX-TASK.md §2 — «لرزش کارت هنگام کد اشتباه»، بدون دست‌زدن به منطق تأیید.
+  useEffect(() => {
+    if (!otpError) return;
+    setShake(true);
+    const timeout = setTimeout(() => setShake(false), 550);
+    return () => clearTimeout(timeout);
+  }, [otpError]);
 
   async function onPhoneSubmit(values: PhoneFormValues) {
     try {
@@ -79,6 +108,15 @@ export default function AuthPage() {
 
   function handleOtpKeyDown(index: number, event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Backspace" && !otpDigits[index] && index > 0) otpRefs.current[index - 1]?.focus();
+    // ناوبری کیبورد بین خانه‌ها (FIX-TASK.md §2) — ردیف dir="ltr" است، پس
+    // معنای چپ/راست هم بر همان مبنا (استاندارد LTR) می‌ماند.
+    else if (event.key === "ArrowLeft" && index > 0) {
+      event.preventDefault();
+      otpRefs.current[index - 1]?.focus();
+    } else if (event.key === "ArrowRight" && index < OTP_LENGTH - 1) {
+      event.preventDefault();
+      otpRefs.current[index + 1]?.focus();
+    }
   }
 
   async function handleResend() {
@@ -141,189 +179,296 @@ export default function AuthPage() {
 
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const seconds = String(secondsLeft % 60).padStart(2, "0");
+  const isSuccess = step === "done";
 
   return (
-    <div className="mx-auto max-w-page px-5 xl:px-10">
+    <div
+      className={cn(
+        "relative isolate flex min-h-[70vh] items-center justify-center overflow-hidden px-4 py-14 transition-colors duration-slow sm:py-20",
+        isSuccess ? "bg-[#03110a]" : "bg-graphite",
+      )}
+    >
       <Seo title={c.seo.title} description={c.seo.description} path="/auth" />
-      <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: c.breadcrumbLabel }]} />
 
-      <section className="grid grid-cols-1 gap-12 pb-14 md:pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-16">
-        <div className="order-2 flex w-full max-w-[480px] flex-col gap-6 rounded-xl border border-gray-100 bg-white p-4 md:p-12 lg:order-1">
-          {step === "phone" && (
-            <form noValidate onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                  {c.phoneStep.kicker}
-                </span>
-                <h1 className="m-0 text-h2 font-semibold">{c.phoneStep.heading}</h1>
-                <p className="m-0 text-small leading-[1.7] text-gray-800">{c.phoneStep.subtitle}</p>
-              </div>
-              <Input
+      {/* پس‌زمینه مش متحرک + گویچه‌های محو — سهم سیان طبق برند‌بوک زیر ۱٪ و
+      فقط در این گرادیان‌های بسیار رقیق، هرگز پس‌زمینه یکدست. */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+        <div
+          className={cn(
+            "absolute inset-0 motion-safe:animate-mesh-shift motion-reduce:animate-none",
+            isSuccess
+              ? "bg-[radial-gradient(ellipse_90%_70%_at_15%_20%,rgba(47,182,107,0.16),transparent_55%),radial-gradient(ellipse_70%_55%_at_85%_75%,rgba(47,182,107,0.1),transparent_50%)]"
+              : "bg-[radial-gradient(ellipse_90%_70%_at_15%_20%,rgba(0,209,255,0.10),transparent_55%),radial-gradient(ellipse_70%_55%_at_85%_75%,rgba(0,209,255,0.06),transparent_50%)]",
+          )}
+        />
+        <div
+          className={cn(
+            "absolute end-0 top-[5%] size-[300px] rounded-full opacity-40 blur-[70px] motion-safe:animate-orb-float-1 motion-reduce:animate-none",
+            isSuccess ? "bg-success/25" : "bg-cyan/20",
+          )}
+        />
+        <div
+          className={cn(
+            "absolute bottom-[10%] start-[5%] size-[240px] rounded-full opacity-30 blur-[70px] motion-safe:animate-orb-float-2 motion-reduce:animate-none",
+            isSuccess ? "bg-success/20" : "bg-cyan/15",
+          )}
+        />
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,209,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,209,255,0.05) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+      </div>
+
+      <div
+        className={cn(
+          "relative z-10 w-full max-w-md rounded-xl border p-6 shadow-2xl backdrop-blur-xl motion-safe:animate-card-enter motion-reduce:animate-none sm:p-8",
+          isSuccess ? "border-success/40 bg-[#06180e]/92" : "border-white/10 bg-black/40",
+          shake && "motion-safe:animate-shake",
+        )}
+      >
+        {step === "phone" && (
+          <form noValidate onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="flex flex-col gap-6">
+            <LoginIcon />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-titanium">
+                {c.phoneStep.kicker}
+              </span>
+              <h1 className="m-0 text-h2 font-semibold text-fog-white">{c.phoneStep.heading}</h1>
+              <p className="m-0 text-small leading-[1.7] text-silver">{c.phoneStep.subtitle}</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="auth-phone" className="text-small font-medium text-fog-white">
+                {c.phoneStep.phoneLabel}
+              </label>
+              <input
+                id="auth-phone"
                 dir="ltr"
                 type="tel"
                 inputMode="numeric"
-                label={c.phoneStep.phoneLabel}
                 placeholder={c.phoneStep.phonePlaceholder}
-                className="font-mono"
-                error={phoneForm.formState.errors.phone?.message}
+                className={cn(darkFieldClass, "font-mono", phoneForm.formState.errors.phone && "border-danger")}
+                aria-invalid={!!phoneForm.formState.errors.phone}
                 {...phoneForm.register("phone")}
               />
-              <Checkbox
-                label={c.phoneStep.rulesLabel}
-                error={!!phoneForm.formState.errors.rules}
-                {...phoneForm.register("rules")}
-              />
-              <Button type="submit" loading={phoneForm.formState.isSubmitting}>
-                {phoneForm.formState.isSubmitting ? c.phoneStep.submitting : c.phoneStep.submit}
-              </Button>
-            </form>
-          )}
-
-          {step === "otp" && (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                  {c.otpStep.kicker}
+              {phoneForm.formState.errors.phone && (
+                <span className="text-caption text-danger-dark" role="alert" aria-live="polite">
+                  {phoneForm.formState.errors.phone.message}
                 </span>
-                <h2 className="m-0 text-h2 font-semibold">{c.otpStep.heading}</h2>
-                <p className="m-0 text-small leading-[1.7] text-gray-800">
-                  {c.otpStep.subtitleBefore}{" "}
-                  <span dir="ltr" className="font-mono text-graphite">
-                    {formatPhoneDisplay(phone)}
-                  </span>{" "}
-                  {c.otpStep.subtitleAfter}{" "}
-                  <button
-                    type="button"
-                    onClick={() => setStep("phone")}
-                    className="border-0 bg-transparent p-0 text-small text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite"
-                  >
-                    {c.otpStep.changeNumber}
-                  </button>
-                </p>
-              </div>
-              <div dir="ltr" className="flex justify-between gap-2">
-                {otpDigits.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={(el) => {
-                      otpRefs.current[index] = el;
-                    }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    aria-label={`رقم ${index + 1}`}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="h-14 w-full rounded-md border border-silver bg-white text-center font-mono text-h4 text-graphite outline-none transition-colors duration-fast hover:border-titanium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan"
-                  />
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span dir="ltr" className="font-mono text-small text-gray-800">
-                  {secondsLeft > 0 ? `${c.otpStep.resendPrefix} ${minutes}:${seconds}` : ""}
-                </span>
-                <button
-                  type="button"
-                  disabled={secondsLeft > 0}
-                  onClick={handleResend}
-                  className={
-                    secondsLeft > 0
-                      ? "border-0 bg-transparent p-0 text-small text-silver"
-                      : "border-0 bg-transparent p-0 text-small font-medium text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite"
-                  }
-                >
-                  {c.otpStep.resendAction}
-                </button>
-              </div>
-              <Button onClick={handleOtpSubmit} loading={verifying}>
-                {verifying ? c.otpStep.submitting : c.otpStep.submit}
-              </Button>
-              {otpError && (
-                <div className="flex items-center gap-2 rounded-md border border-danger-ink bg-white p-3 text-small text-danger-ink">
-                  <span aria-hidden="true">&#10005;</span>
-                  {otpError}
-                </div>
               )}
             </div>
-          )}
-
-          {step === "profile" && (
-            <form noValidate onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-gray-800">
-                  {c.profileStep.kicker}
-                </span>
-                <h2 className="m-0 text-h2 font-semibold">{c.profileStep.heading}</h2>
-                <p className="m-0 text-small leading-[1.7] text-gray-800">{c.profileStep.subtitle}</p>
-              </div>
-              <Input
-                label={c.profileStep.nameLabel}
-                placeholder={c.profileStep.namePlaceholder}
-                error={profileForm.formState.errors.fullName?.message}
-                {...profileForm.register("fullName")}
-              />
-              <div className="flex flex-col gap-2">
-                <Input
-                  dir="ltr"
-                  type="email"
-                  label={c.profileStep.emailLabel}
-                  placeholder={c.profileStep.emailPlaceholder}
-                  error={profileForm.formState.errors.email?.message}
-                  {...profileForm.register("email")}
+            <label className="inline-flex cursor-pointer select-none items-start gap-2.5">
+              <span className="relative mt-0.5 inline-flex size-5 shrink-0">
+                <input
+                  type="checkbox"
+                  className="peer absolute inset-0 z-10 size-5 cursor-pointer opacity-0"
+                  {...phoneForm.register("rules")}
                 />
-                <span className="text-caption text-gray-800">{c.profileStep.emailHint}</span>
-              </div>
-              <Button type="submit" loading={profileForm.formState.isSubmitting}>
-                {profileForm.formState.isSubmitting ? c.profileStep.submitting : c.profileStep.submit}
-              </Button>
-            </form>
-          )}
-
-          {step === "done" && (
-            <div className="flex flex-col items-start gap-3">
-              <span
-                aria-hidden="true"
-                className="grid size-12 place-items-center rounded-full bg-success-ink text-h4 text-white"
-              >
-                &#10003;
+                <span
+                  className={cn(
+                    "bg-white/[0.04] peer-checked:bg-cyan/20 pointer-events-none absolute inset-0 rounded-sm border transition-colors duration-fast peer-checked:border-cyan peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan",
+                    phoneForm.formState.errors.rules ? "border-danger" : "border-white/20",
+                  )}
+                />
+                <svg viewBox="0 0 12 12" fill="none" className="pointer-events-none absolute inset-0 size-5 p-1 opacity-0 peer-checked:opacity-100">
+                  <path d="M2 6.2 4.8 9 10 3" stroke="#00D1FF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </span>
-              <h2 className="m-0 text-h2 font-semibold">{c.done.heading}</h2>
-              <p className="m-0 text-body leading-[1.7] text-gray-800">{c.done.body}</p>
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={() => navigate("/account")}>{c.done.accountCta}</Button>
-                <Button variant="secondary" onClick={() => navigate("/")}>
-                  {c.done.homeCta}
-                </Button>
-              </div>
+              <span className="text-body text-silver">{c.phoneStep.rulesLabel}</span>
+            </label>
+            <Button
+              type="submit"
+              loading={phoneForm.formState.isSubmitting}
+              className="h-12 w-full !bg-white !text-graphite hover:!bg-gray-100"
+            >
+              {phoneForm.formState.isSubmitting ? c.phoneStep.submitting : c.phoneStep.submit}
+            </Button>
+          </form>
+        )}
+
+        {step === "otp" && (
+          <div className="flex flex-col gap-6">
+            <LoginIcon />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-titanium">
+                {c.otpStep.kicker}
+              </span>
+              <h2 className="m-0 text-h2 font-semibold text-fog-white">{c.otpStep.heading}</h2>
+              <p className="m-0 text-small leading-[1.7] text-silver">
+                {c.otpStep.subtitleBefore}{" "}
+                <span dir="ltr" className="font-mono text-fog-white">
+                  {formatPhoneDisplay(phone)}
+                </span>{" "}
+                {c.otpStep.subtitleAfter}
+              </p>
+              <button
+                type="button"
+                onClick={() => setStep("phone")}
+                className="decoration-cyan/40 border-0 bg-transparent p-0 text-small text-cyan underline underline-offset-4 hover:decoration-cyan"
+              >
+                {c.otpStep.changeNumber}
+              </button>
             </div>
-          )}
-
-          <p className="m-0 border-t border-gray-100 pt-6 text-caption leading-[1.7] text-gray-800">
-            {c.passwordNote}
-          </p>
-        </div>
-
-        <div className="order-1 flex flex-col gap-4 lg:order-2">
-          <ImagePlaceholder caption={c.side.imageCaption} className="aspect-[4/3] w-full rounded-xl" />
-          <ul className="m-0 flex list-none flex-col p-0">
-            {c.side.items.map((item, index) => (
-              <li
-                key={item}
+            <div dir="ltr" role="group" aria-label="ارقام کد تایید" className="flex justify-between gap-2">
+              {otpDigits.map((digit, index) => (
+                <input
+                  key={index}
+                  ref={(el) => {
+                    otpRefs.current[index] = el;
+                  }}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={1}
+                  autoComplete={index === 0 ? "one-time-code" : "off"}
+                  aria-label={`رقم ${index + 1}`}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                  onFocus={(e) => e.target.select()}
+                  className={cn(
+                    "h-14 w-full rounded-xl border-2 text-center font-mono text-h4 outline-none transition-all duration-fast",
+                    otpError
+                      ? "bg-danger/10 border-danger text-danger-dark"
+                      : digit
+                        ? "border-cyan/70 bg-cyan/10 text-fog-white"
+                        : "border-white/15 bg-white/[0.04] text-fog-white",
+                    "focus-visible:scale-[1.03] focus-visible:border-cyan focus-visible:shadow-[0_0_0_3px_rgba(0,209,255,0.25)]",
+                  )}
+                />
+              ))}
+            </div>
+            {otpError && (
+              <p className="m-0 text-center text-small text-danger-dark" role="alert" aria-live="polite">
+                {otpError}
+              </p>
+            )}
+            <Button
+              onClick={handleOtpSubmit}
+              loading={verifying}
+              className="h-12 w-full !bg-white !text-graphite hover:!bg-gray-100"
+            >
+              {verifying ? c.otpStep.submitting : c.otpStep.submit}
+            </Button>
+            <div className="flex flex-wrap items-center justify-between gap-2" aria-live="polite">
+              <span dir="ltr" className="font-mono text-small text-titanium">
+                {secondsLeft > 0 ? `${c.otpStep.resendPrefix} ${minutes}:${seconds}` : ""}
+              </span>
+              <button
+                type="button"
+                disabled={secondsLeft > 0}
+                onClick={handleResend}
                 className={
-                  "flex gap-4 border-t border-gray-100 py-3 text-body text-gray-800" +
-                  (index === c.side.items.length - 1 ? " border-b" : "")
+                  secondsLeft > 0
+                    ? "text-titanium/60 border-0 bg-transparent p-0 text-small"
+                    : "decoration-cyan/40 border-0 bg-transparent p-0 text-small font-medium text-cyan underline underline-offset-4 hover:decoration-cyan"
                 }
               >
-                <span aria-hidden="true" className="font-mono text-micro text-titanium">
-                  {String(index + 1).padStart(2, "0")}
+                {c.otpStep.resendAction}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === "profile" && (
+          <form noValidate onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="flex flex-col gap-6">
+            <LoginIcon />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span dir="ltr" className="font-mono text-micro tracking-[0.08em] text-titanium">
+                {c.profileStep.kicker}
+              </span>
+              <h2 className="m-0 text-h2 font-semibold text-fog-white">{c.profileStep.heading}</h2>
+              <p className="m-0 text-small leading-[1.7] text-silver">{c.profileStep.subtitle}</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="auth-name" className="text-small font-medium text-fog-white">
+                {c.profileStep.nameLabel}
+              </label>
+              <input
+                id="auth-name"
+                placeholder={c.profileStep.namePlaceholder}
+                className={cn(darkFieldClass, profileForm.formState.errors.fullName && "border-danger")}
+                aria-invalid={!!profileForm.formState.errors.fullName}
+                {...profileForm.register("fullName")}
+              />
+              {profileForm.formState.errors.fullName && (
+                <span className="text-caption text-danger-dark" role="alert" aria-live="polite">
+                  {profileForm.formState.errors.fullName.message}
                 </span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="auth-email" className="text-small font-medium text-fog-white">
+                {c.profileStep.emailLabel}
+              </label>
+              <input
+                id="auth-email"
+                dir="ltr"
+                type="email"
+                placeholder={c.profileStep.emailPlaceholder}
+                className={cn(darkFieldClass, profileForm.formState.errors.email && "border-danger")}
+                aria-invalid={!!profileForm.formState.errors.email}
+                {...profileForm.register("email")}
+              />
+              {profileForm.formState.errors.email && (
+                <span className="text-caption text-danger-dark" role="alert" aria-live="polite">
+                  {profileForm.formState.errors.email.message}
+                </span>
+              )}
+              <span className="text-caption text-titanium">{c.profileStep.emailHint}</span>
+            </div>
+            <Button
+              type="submit"
+              loading={profileForm.formState.isSubmitting}
+              className="h-12 w-full !bg-white !text-graphite hover:!bg-gray-100"
+            >
+              {profileForm.formState.isSubmitting ? c.profileStep.submitting : c.profileStep.submit}
+            </Button>
+          </form>
+        )}
+
+        {step === "done" && (
+          <div className="flex flex-col items-center gap-2 text-center" aria-live="polite">
+            <div className="relative mx-auto mb-4 flex size-24 items-center justify-center">
+              <div className="border-success/40 absolute inset-0 rounded-full border-2 motion-safe:animate-success-ring motion-reduce:animate-none" />
+              <div className="bg-success/15 relative flex size-20 items-center justify-center rounded-full border-2 border-success shadow-[0_0_40px_rgba(47,182,107,0.35)] motion-safe:animate-success-pop motion-reduce:animate-none">
+                <svg className="size-12" viewBox="0 0 52 52" aria-hidden="true">
+                  <circle cx="26" cy="26" r="25" fill="none" stroke="rgba(47,182,107,0.3)" strokeWidth="2" />
+                  <path
+                    fill="none"
+                    stroke="#2FB66B"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14 27l7 7 16-16"
+                  />
+                </svg>
+              </div>
+            </div>
+            <h2 className="m-0 text-h2 font-semibold text-success">{c.done.heading}</h2>
+            <p className="m-0 text-small text-silver">{c.done.body}</p>
+            <div className="mt-4 flex w-full flex-col gap-3">
+              <Button onClick={() => navigate("/account")} className="h-12 w-full !bg-success !text-white hover:!bg-success-dark">
+                {c.done.accountCta}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => navigate("/")}
+                className="!border-white/15 hover:!border-success/40 h-12 w-full !bg-transparent !text-silver hover:!text-white"
+              >
+                {c.done.homeCta}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <p className="border-white/10 m-0 mt-6 border-t pt-6 text-center text-caption leading-[1.7] text-titanium">
+          {c.passwordNote}
+        </p>
+      </div>
     </div>
   );
 }
