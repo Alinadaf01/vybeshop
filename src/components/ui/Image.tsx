@@ -63,8 +63,16 @@ export function Image({
   return (
     // display:contents so <picture> doesn't add its own (inline) box — the
     // <img> below is the one callers style via className, same as a plain <img>.
+    // <source> normally generates no box at all, but display:contents on its
+    // parent "unwraps" picture and promotes ALL its children — including
+    // <source> — into the grandparent's own layout algorithm. In a CSS Grid
+    // parent this silently adds a second (invisible) auto-placed item before
+    // <img>, pushing the real image into row 2 under the *first* column
+    // instead of beside it in column 2. `hidden` (display:none) keeps
+    // <source> out of layout entirely without affecting picture's own
+    // source-selection, which reads srcSet/type/media regardless of CSS.
     <picture className="contents">
-      <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
+      <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} className="hidden" />
       <img
         src={src}
         alt={alt}

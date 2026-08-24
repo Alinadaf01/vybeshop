@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from config.media import absolute_media_url
+
 from .models import Category, ColorOption, Product
 
 
@@ -15,7 +17,9 @@ class CategorySerializer(serializers.ModelSerializer):
         return str(obj.pk)
 
     def get_image(self, obj: Category) -> str:
-        return obj.resolved_image_url
+        if obj.image:
+            return absolute_media_url(self.context.get("request"), obj.image)
+        return obj.external_image_url
 
 
 class ColorOptionSerializer(serializers.ModelSerializer):
@@ -69,7 +73,11 @@ class ProductSerializer(serializers.ModelSerializer):
         return str(obj.pk)
 
     def get_images(self, obj: Product) -> list[str]:
-        return [image.resolved_url for image in obj.images.all()]
+        request = self.context.get("request")
+        return [
+            absolute_media_url(request, image.image) if image.image else image.external_url
+            for image in obj.images.all()
+        ]
 
     def get_dimensions(self, obj: Product) -> dict:
         return {"w": obj.width_mm, "h": obj.height_mm, "d": obj.depth_mm}

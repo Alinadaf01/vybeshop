@@ -46,11 +46,12 @@ class HomepageContentView(APIView):
         hero = HeroSection.objects.filter(pk=1, is_active=True).first()
         showcases = HomeShowcase.objects.filter(is_active=True).select_related("product").order_by("order")[:2]
         tiles = CommunityTile.objects.filter(is_active=True).order_by("order")[:6]
+        context = {"request": request}
         return Response(
             {
-                "hero": PublicHeroSectionSerializer(hero).data if hero else None,
-                "showcases": PublicHomeShowcaseSerializer(showcases, many=True).data,
-                "community_tiles": PublicCommunityTileSerializer(tiles, many=True).data,
+                "hero": PublicHeroSectionSerializer(hero, context=context).data if hero else None,
+                "showcases": PublicHomeShowcaseSerializer(showcases, many=True, context=context).data,
+                "community_tiles": PublicCommunityTileSerializer(tiles, many=True, context=context).data,
             }
         )
 
@@ -95,9 +96,9 @@ class CatalogFileDetailView(RetrieveAPIView):
 _PRODUCT_PREFETCH = ("images", "colors", "attributes__attribute", "attributes__value_option")
 
 
-def _favorited_products_response(user, http_status=status.HTTP_200_OK) -> Response:
+def _favorited_products_response(request, http_status=status.HTTP_200_OK) -> Response:
     product_ids = list(
-        Favorite.objects.filter(user=user).order_by("-created_at").values_list("product_id", flat=True)
+        Favorite.objects.filter(user=request.user).order_by("-created_at").values_list("product_id", flat=True)
     )
     products = {
         p.pk: p
@@ -106,19 +107,19 @@ def _favorited_products_response(user, http_status=status.HTTP_200_OK) -> Respon
         )
     }
     ordered = [products[pid] for pid in product_ids if pid in products]
-    return Response(ProductSerializer(ordered, many=True).data, status=http_status)
+    return Response(ProductSerializer(ordered, many=True, context={"request": request}).data, status=http_status)
 
 
 class FavoriteListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        return _favorited_products_response(request.user)
+        return _favorited_products_response(request)
 
     def post(self, request):
         product = get_object_or_404(Product, pk=request.data.get("product_id"))
         Favorite.objects.get_or_create(user=request.user, product=product)
-        return _favorited_products_response(request.user, status.HTTP_201_CREATED)
+        return _favorited_products_response(request, status.HTTP_201_CREATED)
 
 
 class FavoriteDeleteView(APIView):
@@ -126,7 +127,7 @@ class FavoriteDeleteView(APIView):
 
     def delete(self, request, product_id):
         Favorite.objects.filter(user=request.user, product_id=product_id).delete()
-        return _favorited_products_response(request.user)
+        return _favorited_products_response(request)
 
 
 class FavoriteMergeView(APIView):
@@ -139,4 +140,4 @@ class FavoriteMergeView(APIView):
             [Favorite(user=request.user, product_id=pid) for pid in existing_ids],
             ignore_conflicts=True,
         )
-        return _favorited_products_response(request.user)
+        return _favorited_products_response(request)

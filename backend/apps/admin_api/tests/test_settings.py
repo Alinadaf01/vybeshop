@@ -60,6 +60,20 @@ class AdminSiteSettingsApiTests(AdminApiTestMixin, APITestCase):
         settings = SiteSettings.load()
         self.assertTrue(settings.logo_light)
 
+    def test_uploaded_logo_and_favicon_urls_are_absolute(self):
+        # FIX-TASK.md دور چهارم، باگ ۱ — این‌جا DRF's own ImageField serializer
+        # field این absolutize را خودکار انجام می‌دهد (چون context دارد
+        # request)، برخلاف بقیه مدل‌ها که SerializerMethodField دستی دارند؛
+        # این تست همان رفتار خودکار را تأیید می‌کند تا رگرسیون نشود.
+        response = self.client.patch(
+            reverse("admin-settings-site"),
+            {"logoLight": _fake_image_file("logo_light.png"), "favicon": _fake_image_file("favicon.png")},
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["logo_light"].startswith("http"), response.data["logo_light"])
+        self.assertTrue(response.data["favicon"].startswith("http"), response.data["favicon"])
+
 
 class AdminApiCredentialApiTests(AdminApiTestMixin, APITestCase):
     def setUp(self):

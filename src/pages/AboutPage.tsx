@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/Image";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { Seo } from "@/components/seo/Seo";
 import { useCountUp } from "@/lib/useCountUp";
 import { aboutContent as c } from "@/content/about";
@@ -99,13 +98,16 @@ export default function AboutPage() {
       <section className="bg-graphite px-5 py-14 text-fog-white md:py-20 xl:px-10">
         <div className="mx-auto flex max-w-page flex-col gap-12">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-            {/* «ماکرو خطوط لایه‌ای» با وجود نامش یک تصویرسازی کارتونی سبز با
-            لوگوی «vybe» روی آن است — گرافیک آماده دیگری از همان دسته
-            (FIX-TASK.md دور دوم) — تا نسخه واقعی برسد جای‌نگهدار می‌ماند. */}
-            <ImagePlaceholder
-              caption={c.process.macroImageAlt}
+            {/* «عکس کارگاه درباره ما» (WHERE IDEAS BECOME REAL) جایگاهش
+            همین‌جاست، نه سکشن «جایی که ایده‌ها واقعی می‌شوند» — طبق نگاشت
+            design/HANDOFF.md (FIX-TASK.md دور چهارم). */}
+            <Image
+              src="/images/marketing/workshop-wide.jpg"
+              alt={c.process.bannerImageAlt}
+              width={715}
+              height={437}
               dark
-              className="h-[320px] w-full rounded-lg border border-edge"
+              className="h-[320px] w-full rounded-lg border border-edge object-cover"
             />
             <div className="flex flex-col gap-4">
               <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">
@@ -167,14 +169,6 @@ export default function AboutPage() {
               {c.workshop.subtitle}
             </p>
           </div>
-          <Image
-            src="/images/marketing/workshop-wide.jpg"
-            alt={c.workshop.bannerImageAlt}
-            width={715}
-            height={437}
-            dark
-            className="w-full rounded-lg border border-edge object-cover"
-          />
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {c.workshop.areas.map((area, index) => (
               <div key={area.label} className="flex flex-col gap-2">

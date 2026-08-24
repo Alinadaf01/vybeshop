@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from config.media import absolute_media_url
+
 from .models import (
     BlogPost,
     CatalogEdition,
@@ -37,7 +39,9 @@ class BlogPostSerializer(serializers.ModelSerializer):
         return str(obj.pk)
 
     def get_cover_image(self, obj: BlogPost) -> str:
-        return obj.resolved_cover_url
+        if obj.cover_image:
+            return absolute_media_url(self.context.get("request"), obj.cover_image)
+        return obj.external_cover_url
 
 
 class ContactMessageInputSerializer(serializers.ModelSerializer):
@@ -114,10 +118,10 @@ class PublicHeroSectionSerializer(serializers.ModelSerializer):
         fields = ["image", "image_mobile", "image_alt", "title", "subtitle", "caption", "cta_label", "cta_url"]
 
     def get_image(self, obj: HeroSection) -> str:
-        return obj.image.url if obj.image else ""
+        return absolute_media_url(self.context.get("request"), obj.image)
 
     def get_image_mobile(self, obj: HeroSection) -> str:
-        return obj.image_mobile.url if obj.image_mobile else ""
+        return absolute_media_url(self.context.get("request"), obj.image_mobile)
 
 
 class PublicHomeShowcaseSerializer(serializers.ModelSerializer):
@@ -148,7 +152,20 @@ class PublicHomeShowcaseSerializer(serializers.ModelSerializer):
         return {"slug": obj.product.slug, "name": obj.product.name}
 
     def get_image(self, obj: HomeShowcase) -> str:
-        return obj.resolved_image_url
+        # Mirrors HomeShowcase.resolved_image_url, but resolved by hand so
+        # only the uploaded-file branches get absolutized — the product's
+        # external_url fallback is a frontend-hosted static path and must
+        # stay relative (config/media.py's docstring explains why).
+        request = self.context.get("request")
+        if obj.image:
+            return absolute_media_url(request, obj.image)
+        if obj._product_is_usable():
+            primary = obj.product.images.first()
+            if primary:
+                if primary.image:
+                    return absolute_media_url(request, primary.image)
+                return primary.external_url
+        return ""
 
     def get_title(self, obj: HomeShowcase) -> str:
         return obj.resolved_title
@@ -169,4 +186,4 @@ class PublicCommunityTileSerializer(serializers.ModelSerializer):
         return str(obj.pk)
 
     def get_image(self, obj: CommunityTile) -> str:
-        return obj.image.url if obj.image else ""
+        return absolute_media_url(self.context.get("request"), obj.image)

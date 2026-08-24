@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from config.media import absolute_media_url
+
 from .models import ApiCredential, ShippingMethod, SiteSettings
 
 _SOCIAL_FIELDS = [
@@ -64,4 +66,6 @@ class PaymentGatewaySerializer(serializers.ModelSerializer):
         return obj.service.upper()
 
     def get_logo(self, obj: ApiCredential) -> str | None:
-        return obj.logo.url if obj.logo else None
+        if not obj.logo:
+            return None
+        return absolute_media_url(self.context.get("request"), obj.logo)

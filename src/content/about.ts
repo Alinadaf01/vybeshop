@@ -38,7 +38,9 @@ export const aboutContent = {
     kicker: "HOW IT IS MADE",
     heading: "از طراحی تا تحویل",
     body: "هر محصول از یک ایده شروع می‌شود و با طراحی، ساخت و کنترل کیفیت به دست شما می‌رسد.",
-    macroImageAlt: "تصویرسازی سه‌مرحله‌ای فرایند تولید VYBE — طراحی، تولید و بسته‌بندی",
+    // بنر «عکس کارگاه درباره ما» (WHERE IDEAS BECOME REAL) طبق
+    // design/HANDOFF.md جایش همین‌جاست، نه سکشن کارگاه (FIX-TASK.md دور چهارم).
+    bannerImageAlt: "بنر کارگاه VYBE — WHERE IDEAS BECOME REAL",
     // نوار چهار برچسبی — تغییر محتوایی تأییدشده در CONTENT-TASK.md §3
     // (جایگزین جدول فنی PRINTER/MATERIAL/LAYER/REJECT RATE قدیمی). دور دوم
     // FIX-TASK.md این را اشتباهاً به جدول فنی برگرداند؛ در دور سوم اصلاح شد.
@@ -63,7 +65,6 @@ export const aboutContent = {
   workshop: {
     heading: "جایی که ایده‌ها واقعی می‌شوند.",
     subtitle: "اینجا ایده‌ها خلق، طراحی، ساخته و با دقت بررسی می‌شوند تا به محصولی قابل‌استفاده تبدیل شوند.",
-    bannerImageAlt: "بنر کارگاه VYBE — WHERE IDEAS BECOME REAL",
     areas: [
       { label: "DESIGN", imageAlt: "تصویرسازی طراح پشت میز کار با چراغ رومیزی و جعبه محصول" },
       { label: "MODELING", imageAlt: "تصویرسازی طراحی مدل سه‌بعدی محصول روی مانیتور" },

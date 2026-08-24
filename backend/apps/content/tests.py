@@ -1,9 +1,19 @@
+import io
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from PIL import Image as PILImage
 from rest_framework.test import APITestCase
 
-from apps.catalog.models import Category, Product
-from apps.content.models import Favorite
+from apps.catalog.models import Category, Product, ProductImage
+from apps.content.models import BlogPost, CommunityTile, Favorite, HeroSection, HomeShowcase
 from apps.users.models import User
+
+
+def _fake_image_file(name="test.png"):
+    buffer = io.BytesIO()
+    PILImage.new("RGB", (10, 10), color="green").save(buffer, format="PNG")
+    return SimpleUploadedFile(name, buffer.getvalue(), content_type="image/png")
 
 
 class FavoriteApiTests(APITestCase):
@@ -94,3 +104,81 @@ class FavoriteApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
         self.assertEqual(Favorite.objects.filter(user=self.user, product=self.product).count(), 1)
+
+
+class AbsoluteMediaUrlApiTests(APITestCase):
+    """FIX-TASK.md دور چهارم، باگ ۱ — MEDIA_URL نسبی بود، پس obj.image.url
+    نسبت به مبدأ فرانت resolve می‌شد نه بک‌اند (دو پورت در dev، دو دامنه در
+    production). هر مدل تصویردار عمومی این‌جا با یک عکس واقعی آپلود می‌شود
+    تا مطمئن شویم پاسخ API همیشه یک آدرس مطلق (با http) برمی‌گرداند، نه
+    مسیر نسبی مثل "/media/...".
+    """
+
+    def setUp(self):
+        self.category = Category.objects.create(
+            slug="desktop-stands", name="Desktop Stands", image=_fake_image_file("category.png")
+        )
+        self.product = Product.objects.create(
+            sku="TEST-001", slug="test-product", name="Test Product", price=100000, category=self.category
+        )
+        ProductImage.objects.create(product=self.product, image=_fake_image_file("product.png"), order=1)
+        BlogPost.objects.create(
+            slug="test-post",
+            title="Test Post",
+            excerpt="...",
+            category="طراحی",
+            author="Test Author",
+            is_published=True,
+            cover_image=_fake_image_file("blog.png"),
+        )
+
+    def _assert_all_absolute(self, urls):
+        self.assertTrue(urls, "expected at least one image URL to check")
+        for url in urls:
+            self.assertTrue(url.startswith("http"), f"expected an absolute URL, got: {url!r}")
+
+    def test_category_image_is_absolute(self):
+        response = self.client.get(reverse("category-list"))
+        self.assertEqual(response.status_code, 200)
+        self._assert_all_absolute([row["image"] for row in response.data])
+
+    def test_product_images_are_absolute(self):
+        response = self.client.get(reverse("product-list"))
+        self.assertEqual(response.status_code, 200)
+        self._assert_all_absolute(
+            [url for row in response.data["results"] for url in row["images"]]
+        )
+
+    def test_blog_post_cover_image_is_absolute(self):
+        response = self.client.get(reverse("blog-list"))
+        self.assertEqual(response.status_code, 200)
+        self._assert_all_absolute([row["cover_image"] for row in response.data["results"]])
+
+    def test_homepage_hero_showcase_and_community_images_are_absolute(self):
+        hero = HeroSection.load()
+        hero.image = _fake_image_file("hero.png")
+        hero.image_alt = "test hero"
+        hero.is_active = True
+        hero.save()
+
+        HomeShowcase.objects.create(
+            order=1, image=_fake_image_file("showcase.png"), title="Showcase", is_active=True
+        )
+        CommunityTile.objects.create(order=1, image=_fake_image_file("tile.png"), is_active=True)
+
+        response = self.client.get(reverse("homepage"))
+        self.assertEqual(response.status_code, 200)
+        self._assert_all_absolute(
+            [
+                response.data["hero"]["image"],
+                *[row["image"] for row in response.data["showcases"]],
+                *[row["image"] for row in response.data["community_tiles"]],
+            ]
+        )
+
+    def test_favorited_product_images_are_absolute(self):
+        user = User.objects.create_user(phone="09121234567", is_verified=True)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(reverse("favorite-list-create"), {"productId": self.product.pk}, format="json")
+        self.assertEqual(response.status_code, 201)
+        self._assert_all_absolute([url for row in response.data for url in row["images"]])
