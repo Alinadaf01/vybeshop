@@ -1,110 +1,113 @@
 [
   {
-    "id": "prod-01",
-    "sku": "VYBE-STA-001",
-    "slug": "vybe-stand-air",
-    "name": "VYBE Stand Air",
-    "shortDescription": "پایه رومیزی سبک با زاویه ثابت ۶۵ درجه",
-    "description": "VYBE Stand Air یک پایه تک‌تکه برای گوشی است که با هدف کمینه‌گرایی طراحی شده. زاویه نمایش ۶۵ درجه برای تماشای محتوا و تایپ روی صفحه بهینه شده و پایه‌های لاستیکی از لغزش روی میز جلوگیری می‌کنند.",
-    "price": 390000,
+    "id": "prod-a",
+    "sku": "VYBE-A-001",
+    "slug": "product-a",
+    "name": "محصول A",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 590000,
     "images": [
-      "/images/products/vybe-stand-air/1.jpg",
-      "/images/products/vybe-stand-air/2.jpg",
-      "/images/products/vybe-stand-air/3.jpg"
+      "/images/products/product-a/1.jpg"
     ],
-    "category": "desktop-stands",
+    "category": "category-1",
     "colors": [
       {
         "id": "color-graphite",
         "name": "گرافیت",
         "hex": "#2B2B2E",
         "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      },
-      {
-        "id": "color-titanium-grey",
-        "name": "خاکستری تیتانیوم",
-        "hex": "#8A8D92",
-        "inStock": true
       }
     ],
-    "material": "PLA+ مات",
+    "material": "PLA+",
     "dimensions": {
-      "w": 90,
-      "h": 60,
-      "d": 45
+      "w": 120,
+      "h": 90,
+      "d": 70
     },
-    "weight": 78,
+    "weight": 140,
     "layerHeight": 0.16,
     "inStock": true,
-    "stockCount": 132,
+    "stockCount": 64,
     "specs": []
   },
   {
-    "id": "prod-02",
-    "sku": "VYBE-STA-002",
-    "slug": "vybe-stand-pro",
-    "name": "VYBE Stand Pro",
-    "shortDescription": "پایه رومیزی چاپی با تنظیم زاویه",
-    "description": "VYBE Stand Pro با بدنه‌ی PETG چاپ‌شده و مفصل اصطکاکی دقیق، زاویه نمایش را بین ۲۰ تا ۷۰ درجه تنظیم می‌کند. مناسب برای گوشی و تبلت تا وزن ۵۰۰ گرم، با پایه سیلیکونی ضدلغزش.",
-    "price": 890000,
+    "id": "prod-b",
+    "sku": "VYBE-B-001",
+    "slug": "product-b",
+    "name": "محصول B",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 950000,
     "images": [
-      "/images/products/vybe-stand-pro/1.jpg",
-      "/images/products/vybe-stand-pro/2.jpg",
-      "/images/products/vybe-stand-pro/3.jpg"
+      "/images/products/product-b/1.jpg"
     ],
-    "category": "desktop-stands",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-silver-oos",
-        "name": "نقره‌ای",
-        "hex": "#C4C8CD",
-        "inStock": false
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 110,
-      "h": 95,
-      "d": 80
-    },
-    "weight": 245,
-    "layerHeight": 0.12,
-    "inStock": true,
-    "stockCount": 54,
-    "specs": []
-  },
-  {
-    "id": "prod-03",
-    "sku": "VYBE-FLD-001",
-    "slug": "vybe-fold-desk",
-    "name": "VYBE Fold Desk",
-    "shortDescription": "پایه تاشوی رومیزی برای گوشی و تبلت",
-    "description": "VYBE Fold Desk با یک حرکت تا می‌شود و در کیف یا کشو جا می‌گیرد. لولای اصطکاکی PETG داخلی زاویه انتخابی را نگه می‌دارد و از هر دو گوشی و تبلت پشتیبانی می‌کند.",
-    "price": 450000,
-    "images": [
-      "/images/products/vybe-fold-desk/1.jpg",
-      "/images/products/vybe-fold-desk/2.jpg"
-    ],
-    "category": "desktop-stands",
+    "category": "category-2",
     "colors": [
       {
         "id": "color-matte-black",
         "name": "مشکی مات",
         "hex": "#101012",
         "inStock": true
-      },
+      }
+    ],
+    "material": "PETG",
+    "dimensions": {
+      "w": 150,
+      "h": 110,
+      "d": 100
+    },
+    "weight": 320,
+    "layerHeight": 0.2,
+    "inStock": true,
+    "stockCount": 38,
+    "specs": []
+  },
+  {
+    "id": "prod-c",
+    "sku": "VYBE-C-001",
+    "slug": "product-c",
+    "name": "محصول C",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 320000,
+    "images": [
+      "/images/products/product-c/1.jpg"
+    ],
+    "category": "category-3",
+    "colors": [
+      {
+        "id": "color-forest-green",
+        "name": "سبز جنگلی",
+        "hex": "#1B4332",
+        "inStock": true
+      }
+    ],
+    "material": "TPU",
+    "dimensions": {
+      "w": 75,
+      "h": 140,
+      "d": 10
+    },
+    "weight": 45,
+    "layerHeight": 0.2,
+    "inStock": true,
+    "stockCount": 112,
+    "specs": []
+  },
+  {
+    "id": "prod-d",
+    "sku": "VYBE-D-001",
+    "slug": "product-d",
+    "name": "محصول D",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 210000,
+    "images": [
+      "/images/products/product-d/1.jpg"
+    ],
+    "category": "category-4",
+    "colors": [
       {
         "id": "color-ice-white",
         "name": "سفید یخی",
@@ -112,364 +115,171 @@
         "inStock": true
       }
     ],
+    "material": "PLA",
+    "dimensions": {
+      "w": 180,
+      "h": 40,
+      "d": 25
+    },
+    "weight": 35,
+    "layerHeight": 0.16,
+    "inStock": true,
+    "stockCount": 96,
+    "specs": []
+  },
+  {
+    "id": "prod-e",
+    "sku": "VYBE-E-001",
+    "slug": "product-e",
+    "name": "محصول E",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 165000,
+    "images": [
+      "/images/products/product-e/1.jpg"
+    ],
+    "category": "category-5",
+    "colors": [
+      {
+        "id": "color-blush-pink",
+        "name": "صورتی کمرنگ",
+        "hex": "#F3C9CE",
+        "inStock": true
+      },
+      {
+        "id": "color-matte-black",
+        "name": "مشکی مات",
+        "hex": "#101012",
+        "inStock": true
+      }
+    ],
+    "material": "PLA",
+    "dimensions": {
+      "w": 40,
+      "h": 60,
+      "d": 35
+    },
+    "weight": 25,
+    "layerHeight": 0.12,
+    "inStock": true,
+    "stockCount": 150,
+    "specs": []
+  },
+  {
+    "id": "prod-f",
+    "sku": "VYBE-F-001",
+    "slug": "product-f",
+    "name": "محصول F",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 145000,
+    "images": [
+      "/images/products/product-f/1.jpg"
+    ],
+    "category": "category-6",
+    "colors": [
+      {
+        "id": "color-ocean-blue",
+        "name": "آبی اقیانوسی",
+        "hex": "#2A4D8F",
+        "inStock": true
+      },
+      {
+        "id": "color-blush-pink",
+        "name": "صورتی کمرنگ",
+        "hex": "#F3C9CE",
+        "inStock": true
+      }
+    ],
+    "material": "PLA",
+    "dimensions": {
+      "w": 35,
+      "h": 55,
+      "d": 30
+    },
+    "weight": 20,
+    "layerHeight": 0.12,
+    "inStock": true,
+    "stockCount": 140,
+    "specs": []
+  },
+  {
+    "id": "prod-g",
+    "sku": "VYBE-G-001",
+    "slug": "product-g",
+    "name": "محصول G",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 185000,
+    "images": [
+      "/images/products/product-g/1.jpg"
+    ],
+    "category": "category-7",
+    "colors": [
+      {
+        "id": "color-matte-black",
+        "name": "مشکی مات",
+        "hex": "#101012",
+        "inStock": true
+      }
+    ],
     "material": "PETG",
     "dimensions": {
-      "w": 85,
-      "h": 12,
-      "d": 60
+      "w": 30,
+      "h": 90,
+      "d": 15
     },
-    "weight": 92,
+    "weight": 18,
     "layerHeight": 0.16,
     "inStock": true,
     "stockCount": 88,
     "specs": []
   },
   {
-    "id": "prod-04",
-    "sku": "VYBE-DCK-001",
-    "slug": "vybe-dock-mini",
-    "name": "VYBE Dock Mini",
-    "shortDescription": "داک شارژ تک‌پورت برای میز کار",
-    "description": "VYBE Dock Mini کابل شارژ را داخل بدنه پنهان می‌کند و گوشی را در زاویه‌ای مناسب برای دیدن نوتیفیکیشن‌ها نگه می‌دارد. طراحی‌شده برای کابل‌های USB-C استاندارد.",
-    "price": 350000,
+    "id": "prod-h",
+    "sku": "VYBE-H-001",
+    "slug": "product-h",
+    "name": "محصول H",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 780000,
     "images": [
-      "/images/products/vybe-dock-mini/1.jpg",
-      "/images/products/vybe-dock-mini/2.jpg"
+      "/images/products/product-h/1.jpg"
     ],
-    "category": "charging-docks",
+    "category": "category-7",
     "colors": [
       {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
+        "id": "color-cocoa-brown",
+        "name": "قهوه‌ای کاکائویی",
+        "hex": "#5B4636",
+        "inStock": false
       }
     ],
-    "material": "PLA+ مات",
+    "material": "PLA+",
     "dimensions": {
-      "w": 70,
-      "h": 75,
-      "d": 55
-    },
-    "weight": 110,
-    "layerHeight": 0.16,
-    "inStock": true,
-    "stockCount": 76,
-    "specs": []
-  },
-  {
-    "id": "prod-05",
-    "sku": "VYBE-DCK-002",
-    "slug": "vybe-dock-pro",
-    "name": "VYBE Dock Pro",
-    "shortDescription": "ایستگاه شارژ سه‌کاره برای گوشی، ساعت و هندزفری",
-    "description": "VYBE Dock Pro به‌طور هم‌زمان گوشی، ساعت هوشمند و هندزفری بی‌سیم را شارژ می‌کند. کانال‌های مدیریت کابل داخل بدنه جاسازی شده‌اند تا میز کار مرتب بماند.",
-    "price": 1450000,
-    "images": [
-      "/images/products/vybe-dock-pro/1.jpg",
-      "/images/products/vybe-dock-pro/2.jpg",
-      "/images/products/vybe-dock-pro/3.jpg"
-    ],
-    "category": "charging-docks",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      },
-      {
-        "id": "color-silver",
-        "name": "نقره‌ای",
-        "hex": "#C4C8CD",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 160,
+      "w": 100,
       "h": 90,
-      "d": 100
+      "d": 70
     },
-    "weight": 320,
-    "layerHeight": 0.12,
-    "inStock": true,
-    "stockCount": 29,
-    "specs": []
-  },
-  {
-    "id": "prod-06",
-    "sku": "VYBE-DCK-003",
-    "slug": "vybe-dock-duo",
-    "name": "VYBE Dock Duo",
-    "shortDescription": "داک شارژ دوقلو برای گوشی و ساعت هوشمند",
-    "description": "VYBE Dock Duo طراحی شده برای کسانی که هر شب گوشی و ساعت هوشمند خود را کنار هم شارژ می‌کنند. دو سطح شیب‌دار جداگانه از تداخل کابل‌ها جلوگیری می‌کند.",
-    "price": 690000,
-    "images": [
-      "/images/products/vybe-dock-duo/1.jpg",
-      "/images/products/vybe-dock-duo/2.jpg"
-    ],
-    "category": "charging-docks",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      },
-      {
-        "id": "color-titanium-grey",
-        "name": "خاکستری تیتانیوم",
-        "hex": "#8A8D92",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 130,
-      "h": 70,
-      "d": 65
-    },
-    "weight": 165,
-    "layerHeight": 0.16,
+    "weight": 180,
+    "layerHeight": 0.2,
     "inStock": false,
     "stockCount": 0,
     "specs": []
   },
   {
-    "id": "prod-07",
-    "sku": "VYBE-CLP-001",
-    "slug": "vybe-clip-car",
-    "name": "VYBE Clip Car",
-    "shortDescription": "نگهدارنده گوشی برای شیار تهویه خودرو",
-    "description": "VYBE Clip Car با یک فشار روی شیار تهویه خودرو نصب می‌شود و از طریق گیره فنری از پرتاب گوشی حین ترمز جلوگیری می‌کند. زاویه چرخش ۳۶۰ درجه برای دید بهتر نقشه.",
-    "price": 420000,
+    "id": "prod-i",
+    "sku": "VYBE-I-001",
+    "slug": "product-i",
+    "name": "محصول I",
+    "shortDescription": "جای‌نگهدار — توضیح کوتاه بعداً از پنل ادمین تکمیل می‌شود.",
+    "description": "جای‌نگهدار — توضیح کامل این محصول بعداً از پنل ادمین تکمیل می‌شود.",
+    "price": 430000,
     "images": [
-      "/images/products/vybe-clip-car/1.jpg",
-      "/images/products/vybe-clip-car/2.jpg"
+      "/images/products/product-i/1.jpg"
     ],
-    "category": "phone-mounts",
+    "category": "category-8",
     "colors": [
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      },
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 60,
-      "h": 95,
-      "d": 55
-    },
-    "weight": 88,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 143,
-    "specs": []
-  },
-  {
-    "id": "prod-08",
-    "sku": "VYBE-CLP-002",
-    "slug": "vybe-clip-bike",
-    "name": "VYBE Clip Bike",
-    "shortDescription": "نگهدارنده ضدلرزش گوشی برای دوچرخه",
-    "description": "VYBE Clip Bike روی فرمان دوچرخه یا موتور بسته می‌شود و با لایه TPU داخلی، ارتعاش جاده را جذب می‌کند تا از افت کیفیت دوربین گوشی هنگام فیلم‌برداری جلوگیری شود.",
-    "price": 480000,
-    "images": [
-      "/images/products/vybe-clip-bike/1.jpg",
-      "/images/products/vybe-clip-bike/2.jpg"
-    ],
-    "category": "phone-mounts",
-    "colors": [
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      },
-      {
-        "id": "color-silver",
-        "name": "نقره‌ای",
-        "hex": "#C4C8CD",
-        "inStock": true
-      }
-    ],
-    "material": "TPU انعطاف‌پذیر",
-    "dimensions": {
-      "w": 65,
-      "h": 100,
-      "d": 60
-    },
-    "weight": 96,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 61,
-    "specs": []
-  },
-  {
-    "id": "prod-09",
-    "sku": "VYBE-CLP-003",
-    "slug": "vybe-clip-moto",
-    "name": "VYBE Clip Moto",
-    "shortDescription": "نگهدارنده ضدآب گوشی برای موتورسیکلت",
-    "description": "VYBE Clip Moto با پوشش سیلیکونی ضدآب و بست فلزی تقویت‌شده برای استفاده روزمره روی موتورسیکلت ساخته شده. مقاوم در برابر رطوبت و ارتعاش‌های شدید جاده.",
-    "price": 520000,
-    "images": [
-      "/images/products/vybe-clip-moto/1.jpg",
-      "/images/products/vybe-clip-moto/2.jpg",
-      "/images/products/vybe-clip-moto/3.jpg"
-    ],
-    "category": "phone-mounts",
-    "colors": [
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      }
-    ],
-    "material": "TPU انعطاف‌پذیر",
-    "dimensions": {
-      "w": 68,
-      "h": 105,
-      "d": 62
-    },
-    "weight": 104,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 37,
-    "specs": []
-  },
-  {
-    "id": "prod-10",
-    "sku": "VYBE-HK-001",
-    "slug": "vybe-hook-duo",
-    "name": "VYBE Hook Duo",
-    "shortDescription": "قلاب دیواری دوتایی بدون نیاز به پیچ",
-    "description": "VYBE Hook Duo با چسب صنعتی دو طرفه روی هر سطح صافی نصب می‌شود و تا ۳ کیلوگرم وزن را تحمل می‌کند. مناسب برای آویزان کردن کوله‌پشتی، کلید یا هدفون.",
-    "price": 180000,
-    "images": [
-      "/images/products/vybe-hook-duo/1.jpg",
-      "/images/products/vybe-hook-duo/2.jpg"
-    ],
-    "category": "wall-hooks",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      },
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 40,
-      "h": 55,
-      "d": 30
-    },
-    "weight": 22,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 210,
-    "specs": []
-  },
-  {
-    "id": "prod-11",
-    "sku": "VYBE-HK-002",
-    "slug": "vybe-hook-wall",
-    "name": "VYBE Hook Wall",
-    "shortDescription": "قلاب دیواری بزرگ برای استفاده سنگین",
-    "description": "VYBE Hook Wall نسخه بزرگ‌تر خانواده Hook است و با پیچ‌های فلزی تقویتی تا ۵ کیلوگرم را تحمل می‌کند. برای نصب دائمی با پیچ یا چسب صنعتی طراحی شده.",
-    "price": 240000,
-    "images": [
-      "/images/products/vybe-hook-wall/1.jpg",
-      "/images/products/vybe-hook-wall/2.jpg"
-    ],
-    "category": "wall-hooks",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-titanium-grey",
-        "name": "خاکستری تیتانیوم",
-        "hex": "#8A8D92",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 50,
-      "h": 70,
-      "d": 40
-    },
-    "weight": 58,
-    "layerHeight": 0.16,
-    "inStock": true,
-    "stockCount": 95,
-    "specs": []
-  },
-  {
-    "id": "prod-12",
-    "sku": "VYBE-HK-003",
-    "slug": "vybe-hook-coat",
-    "name": "VYBE Hook Coat",
-    "shortDescription": "ردیف قلاب برای راهرو و رخت‌آویز",
-    "description": "VYBE Hook Coat یک نوار سه‌قلابه است که به‌صورت افقی روی دیوار راهرو نصب می‌شود؛ مناسب برای کت، شال‌گردن و کیف. هر قلاب مستقل تا ۲ کیلوگرم تحمل می‌کند.",
-    "price": 320000,
-    "images": [
-      "/images/products/vybe-hook-coat/1.jpg",
-      "/images/products/vybe-hook-coat/2.jpg"
-    ],
-    "category": "wall-hooks",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
       {
         "id": "color-ice-white",
         "name": "سفید یخی",
@@ -477,513 +287,20 @@
         "inStock": true
       }
     ],
-    "material": "PLA+ مات",
+    "material": "PLA",
     "dimensions": {
-      "w": 180,
-      "h": 45,
-      "d": 35
-    },
-    "weight": 140,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 47,
-    "specs": []
-  },
-  {
-    "id": "prod-13",
-    "sku": "VYBE-GRD-001",
-    "slug": "vybe-grid-base",
-    "name": "VYBE Grid Base",
-    "shortDescription": "پنل پایه سیستم مدولار گرید برای میز کار",
-    "description": "VYBE Grid Base صفحه شروع سیستم مدولار VYBE است. شیارهای استاندارد ۱۶ میلی‌متری امکان نصب قطعات دیگر خانواده Grid را بدون ابزار اضافه فراهم می‌کنند.",
-    "price": 590000,
-    "images": [
-      "/images/products/vybe-grid-base/1.jpg",
-      "/images/products/vybe-grid-base/2.jpg"
-    ],
-    "category": "modular-grid",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 300,
-      "h": 10,
-      "d": 200
-    },
-    "weight": 410,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 40,
-    "specs": []
-  },
-  {
-    "id": "prod-14",
-    "sku": "VYBE-GRD-002",
-    "slug": "vybe-grid-panel",
-    "name": "VYBE Grid Panel",
-    "shortDescription": "پنل عمودی برای سازمان‌دهی ابزار روی گرید",
-    "description": "VYBE Grid Panel به‌صورت عمودی روی VYBE Grid Base قفل می‌شود و فضای اضافه برای آویزان کردن ابزار، هدفون یا کابل ایجاد می‌کند.",
-    "price": 380000,
-    "images": [
-      "/images/products/vybe-grid-panel/1.jpg",
-      "/images/products/vybe-grid-panel/2.jpg"
-    ],
-    "category": "modular-grid",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-titanium-grey",
-        "name": "خاکستری تیتانیوم",
-        "hex": "#8A8D92",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 200,
-      "h": 150,
-      "d": 8
-    },
-    "weight": 260,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 63,
-    "specs": []
-  },
-  {
-    "id": "prod-15",
-    "sku": "VYBE-GRD-003",
-    "slug": "vybe-grid-tray",
-    "name": "VYBE Grid Tray",
-    "shortDescription": "سینی کوچک برای لوازم جانبی روی گرید",
-    "description": "VYBE Grid Tray یک سینی کم‌عمق است که روی شیارهای Grid قفل می‌شود؛ مناسب برای نگهداری کلید، سکه یا لوازم کوچک روی میز کار.",
-    "price": 210000,
-    "images": [
-      "/images/products/vybe-grid-tray/1.jpg",
-      "/images/products/vybe-grid-tray/2.jpg"
-    ],
-    "category": "modular-grid",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      },
-      {
-        "id": "color-silver",
-        "name": "نقره‌ای",
-        "hex": "#C4C8CD",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 120,
-      "h": 20,
-      "d": 90
+      "w": 90,
+      "h": 90,
+      "d": 220
     },
     "weight": 95,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 118,
-    "specs": []
-  },
-  {
-    "id": "prod-16",
-    "sku": "VYBE-FLD-002",
-    "slug": "vybe-fold-travel",
-    "name": "VYBE Fold Travel",
-    "shortDescription": "پایه تاشوی جیبی برای سفر",
-    "description": "VYBE Fold Travel در حالت جمع‌شده به اندازه یک کارت اعتباری ضخیم است و در جیب یا کیف پول جا می‌گیرد. برای استفاده سریع روی میز هتل یا فرودگاه طراحی شده.",
-    "price": 290000,
-    "images": [
-      "/images/products/vybe-fold-travel/1.jpg",
-      "/images/products/vybe-fold-travel/2.jpg"
-    ],
-    "category": "travel-folding",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 55,
-      "h": 4,
-      "d": 85
-    },
-    "weight": 48,
-    "layerHeight": 0.12,
-    "inStock": true,
-    "stockCount": 174,
-    "specs": []
-  },
-  {
-    "id": "prod-17",
-    "sku": "VYBE-FLD-003",
-    "slug": "vybe-fold-slim",
-    "name": "VYBE Fold Slim",
-    "shortDescription": "نازک‌ترین پایه تاشوی خانواده VYBE",
-    "description": "VYBE Fold Slim با ضخامت تنها ۳ میلی‌متر، سبک‌ترین گزینه برای حمل روزانه است. لولای اصطکاکی زاویه دلخواه بین ۱۰ تا ۶۰ درجه را ثابت نگه می‌دارد.",
-    "price": 260000,
-    "images": [
-      "/images/products/vybe-fold-slim/1.jpg",
-      "/images/products/vybe-fold-slim/2.jpg"
-    ],
-    "category": "travel-folding",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      },
-      {
-        "id": "color-titanium-grey",
-        "name": "خاکستری تیتانیوم",
-        "hex": "#8A8D92",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 50,
-      "h": 3,
-      "d": 80
-    },
-    "weight": 38,
-    "layerHeight": 0.12,
-    "inStock": true,
-    "stockCount": 0,
-    "specs": []
-  },
-  {
-    "id": "prod-18",
-    "sku": "VYBE-FLD-004",
-    "slug": "vybe-fold-tripod",
-    "name": "VYBE Fold Tripod",
-    "shortDescription": "سه‌پایه تاشوی سبک برای عکاسی سفر",
-    "description": "VYBE Fold Tripod سه پایه تاشوی سبک دارد که در حالت باز، پایه‌ای پایدار برای گوشی یا دوربین کوچک ایجاد می‌کند. مناسب برای عکاسی و فیلم‌برداری سفر.",
-    "price": 420000,
-    "images": [
-      "/images/products/vybe-fold-tripod/1.jpg",
-      "/images/products/vybe-fold-tripod/2.jpg",
-      "/images/products/vybe-fold-tripod/3.jpg"
-    ],
-    "category": "travel-folding",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 45,
-      "h": 180,
-      "d": 45
-    },
-    "weight": 165,
     "layerHeight": 0.16,
     "inStock": true,
     "stockCount": 52,
     "specs": []
   },
   {
-    "id": "prod-19",
-    "sku": "VYBE-SNP-001",
-    "slug": "vybe-snap-mag",
-    "name": "VYBE Snap Mag",
-    "shortDescription": "نگهدارنده رومیزی مغناطیسی سازگار با MagSafe",
-    "description": "VYBE Snap Mag از آرایه مغناطیسی داخلی برای اتصال محکم به گوشی‌های سازگار با MagSafe استفاده می‌کند. تنها با نزدیک کردن گوشی، در جای خود قفل می‌شود.",
-    "price": 520000,
-    "images": [
-      "/images/products/vybe-snap-mag/1.jpg",
-      "/images/products/vybe-snap-mag/2.jpg"
-    ],
-    "category": "magnetic-mounts",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 80,
-      "h": 90,
-      "d": 70
-    },
-    "weight": 145,
-    "layerHeight": 0.16,
-    "inStock": true,
-    "stockCount": 66,
-    "specs": []
-  },
-  {
-    "id": "prod-20",
-    "sku": "VYBE-SNP-002",
-    "slug": "vybe-snap-car",
-    "name": "VYBE Snap Car",
-    "shortDescription": "نگهدارنده مغناطیسی خودرو برای داشبورد",
-    "description": "VYBE Snap Car با پایه چسب صنعتی روی داشبورد یا شیشه نصب می‌شود و با مگنت‌های N52 گوشی را حتی روی جاده‌های ناهموار محکم نگه می‌دارد.",
-    "price": 480000,
-    "images": [
-      "/images/products/vybe-snap-car/1.jpg",
-      "/images/products/vybe-snap-car/2.jpg"
-    ],
-    "category": "magnetic-mounts",
-    "colors": [
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      },
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      }
-    ],
-    "material": "PETG",
-    "dimensions": {
-      "w": 55,
-      "h": 80,
-      "d": 50
-    },
-    "weight": 98,
-    "layerHeight": 0.16,
-    "inStock": true,
-    "stockCount": 84,
-    "specs": []
-  },
-  {
-    "id": "prod-21",
-    "sku": "VYBE-SNP-003",
-    "slug": "vybe-snap-wallet",
-    "name": "VYBE Snap Wallet",
-    "shortDescription": "کیف کارت مغناطیسی متصل به پشت گوشی",
-    "description": "VYBE Snap Wallet یک کیف کارت باریک است که با مگنت به پشت گوشی‌های سازگار با MagSafe می‌چسبد و تا سه کارت بانکی را در خود جای می‌دهد.",
-    "price": 340000,
-    "images": [
-      "/images/products/vybe-snap-wallet/1.jpg",
-      "/images/products/vybe-snap-wallet/2.jpg"
-    ],
-    "category": "magnetic-mounts",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      },
-      {
-        "id": "color-silver",
-        "name": "نقره‌ای",
-        "hex": "#C4C8CD",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 65,
-      "h": 95,
-      "d": 8
-    },
-    "weight": 32,
-    "layerHeight": 0.16,
-    "inStock": true,
-    "stockCount": 129,
-    "specs": []
-  },
-  {
-    "id": "prod-22",
-    "sku": "VYBE-ACC-001",
-    "slug": "vybe-clip-cable",
-    "name": "VYBE Clip Cable",
-    "shortDescription": "گیره نگهدارنده کابل برای میز کار",
-    "description": "VYBE Clip Cable با چسب دو طرفه روی لبه میز نصب می‌شود و کابل شارژ را در جای ثابت نگه می‌دارد تا از روی میز نیفتد.",
-    "price": 95000,
-    "images": [
-      "/images/products/vybe-clip-cable/1.jpg",
-      "/images/products/vybe-clip-cable/2.jpg"
-    ],
-    "category": "accessories",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-ice-white",
-        "name": "سفید یخی",
-        "hex": "#F2F2F0",
-        "inStock": true
-      },
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      }
-    ],
-    "material": "TPU انعطاف‌پذیر",
-    "dimensions": {
-      "w": 25,
-      "h": 20,
-      "d": 15
-    },
-    "weight": 8,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 340,
-    "specs": []
-  },
-  {
-    "id": "prod-23",
-    "sku": "VYBE-ACC-002",
-    "slug": "vybe-hook-cable",
-    "name": "VYBE Hook Cable",
-    "shortDescription": "قلاب کوچک برای مدیریت کابل پشت میز",
-    "description": "VYBE Hook Cable یک قلاب کوچک برای هدایت کابل‌های پاور و شبکه پشت میز کار است تا از گره‌خوردن و افتادن آن‌ها جلوگیری شود.",
-    "price": 65000,
-    "images": [
-      "/images/products/vybe-hook-cable/1.jpg",
-      "/images/products/vybe-hook-cable/2.jpg"
-    ],
-    "category": "accessories",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-matte-black",
-        "name": "مشکی مات",
-        "hex": "#101012",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 20,
-      "h": 25,
-      "d": 15
-    },
-    "weight": 6,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 412,
-    "specs": []
-  },
-  {
-    "id": "prod-24",
-    "sku": "VYBE-ACC-003",
-    "slug": "vybe-grid-connector",
-    "name": "VYBE Grid Connector",
-    "shortDescription": "قطعه اتصال برای گسترش سیستم مدولار گرید",
-    "description": "VYBE Grid Connector دو پنل از خانواده Grid را در گوشه‌ای ۹۰ درجه به هم متصل می‌کند تا چیدمان سه‌بعدی روی میز کار ممکن شود.",
-    "price": 75000,
-    "images": [
-      "/images/products/vybe-grid-connector/1.jpg",
-      "/images/products/vybe-grid-connector/2.jpg"
-    ],
-    "category": "accessories",
-    "colors": [
-      {
-        "id": "color-graphite",
-        "name": "گرافیت",
-        "hex": "#2B2B2E",
-        "inStock": true
-      },
-      {
-        "id": "color-silver",
-        "name": "نقره‌ای",
-        "hex": "#C4C8CD",
-        "inStock": true
-      }
-    ],
-    "material": "PLA+ مات",
-    "dimensions": {
-      "w": 30,
-      "h": 30,
-      "d": 20
-    },
-    "weight": 12,
-    "layerHeight": 0.2,
-    "inStock": true,
-    "stockCount": 256,
-    "specs": []
-  },
-  {
-    "id": "prod-25",
+    "id": "prod-test-no-image",
     "sku": "VYBE-TEST-NOIMG",
     "slug": "test-product-no-image",
     "name": "VYBE Test — بدون تصویر",
@@ -991,9 +308,9 @@
     "description": "این محصول عمداً بدون عکس است تا رفتار صفحه محصول در نبود تصویر تست شود.",
     "price": 100000,
     "images": [],
-    "category": "accessories",
+    "category": "category-8",
     "colors": [],
-    "material": "PLA+ مات",
+    "material": "PLA+",
     "dimensions": {
       "w": 10,
       "h": 10,

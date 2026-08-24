@@ -6,7 +6,6 @@ import { formatPrice, formatJalaliDate } from "@/lib/formatters";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { Image } from "@/components/ui/Image";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/home/Reveal";
@@ -48,9 +47,9 @@ export default function HomePage() {
   });
 
   const products = productsPage?.results ?? [];
-  const showcaseA = products.find((p) => p.slug === "vybe-stand-air");
-  const showcaseB = products.find((p) => p.slug === "vybe-snap-mag");
-  const featuredSlugs = ["vybe-stand-pro", "vybe-dock-pro", "vybe-hook-duo", "vybe-fold-travel"];
+  const showcaseA = products.find((p) => p.slug === "product-a");
+  const showcaseB = products.find((p) => p.slug === "product-b");
+  const featuredSlugs = ["product-c", "product-d", "product-e", "product-f"];
   const featured = featuredSlugs.map((slug) => products.find((p) => p.slug === slug));
 
   const hero = homepage?.hero;
@@ -240,10 +239,13 @@ export default function HomePage() {
             <p className="m-0 text-body-large text-silver">{homeContent.process.subtitle}</p>
           </Reveal>
           <Reveal>
-            <ImagePlaceholder
-              caption={homeContent.process.macroImageAlt}
+            <Image
+              src="/images/marketing/macro-layer-lines.jpg"
+              alt={homeContent.process.macroImageAlt}
+              width={1672}
+              height={941}
               dark
-              className="h-[280px] items-end rounded-lg border border-edge"
+              className="h-[280px] w-full rounded-lg border border-edge object-cover"
             />
           </Reveal>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

@@ -7,7 +7,7 @@ test("home -> products -> filter by category -> product detail", async ({ page }
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
   // Home -> products via the hero CTA (real link click, not a direct goto).
-  await page.getByRole("link", { name: "مجموعه را کاوش کنید" }).click();
+  await page.getByRole("link", { name: "کاوش محصولات" }).click();
   await expect(page).toHaveURL(/\/products$/);
 
   const productGrid = page.locator("a").filter({ has: page.locator('img, [role="img"]') });

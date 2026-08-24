@@ -31,38 +31,42 @@ export function ProductGallery({ images, productName, activeIndex, onActiveIndex
       <Image
         key={activeIndex}
         src={images[activeIndex]}
-        alt={`${productName} — تصویر ${activeIndex + 1} از ${images.length}`}
+        alt={images.length > 0 ? `${productName} — تصویر ${activeIndex + 1} از ${images.length}` : productName}
         width={1200}
         height={1200}
         priority
         className="aspect-square w-full rounded-xl border border-gray-100 object-cover"
       />
-      <div role="tablist" aria-label="گالری تصاویر محصول" className="grid grid-cols-4 gap-3 md:grid-cols-5">
-        {images.map((image, index) => {
-          const selected = index === activeIndex;
-          return (
-            <button
-              key={image}
-              ref={(el) => {
-                thumbRefs.current[index] = el;
-              }}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              aria-label={`نمایش تصویر ${index + 1} از ${images.length}`}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => onActiveIndexChange(index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              className={cn(
-                "overflow-hidden rounded-md transition-colors duration-fast",
-                selected ? "border-2 border-graphite" : "border border-gray-100 hover:border-titanium",
-              )}
-            >
-              <Image src={image} alt="" width={200} height={200} className="aspect-square w-full object-cover" />
-            </button>
-          );
-        })}
-      </div>
+      {/* یک عکس یعنی چیزی برای جابه‌جایی بین آن‌ها نیست — نوار تامبنیل تکراری
+      نشان داده نمی‌شود (CONTENT-TASK.md §4: "گالری با تک‌تصویر درست کار کند"). */}
+      {images.length > 1 && (
+        <div role="tablist" aria-label="گالری تصاویر محصول" className="grid grid-cols-4 gap-3 md:grid-cols-5">
+          {images.map((image, index) => {
+            const selected = index === activeIndex;
+            return (
+              <button
+                key={image}
+                ref={(el) => {
+                  thumbRefs.current[index] = el;
+                }}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-label={`نمایش تصویر ${index + 1} از ${images.length}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => onActiveIndexChange(index)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                className={cn(
+                  "overflow-hidden rounded-md transition-colors duration-fast",
+                  selected ? "border-2 border-graphite" : "border border-gray-100 hover:border-titanium",
+                )}
+              >
+                <Image src={image} alt="" width={200} height={200} className="aspect-square w-full object-cover" />
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

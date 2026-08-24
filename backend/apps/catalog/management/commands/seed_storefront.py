@@ -72,6 +72,11 @@ class Command(BaseCommand):
                     "short_description": row["shortDescription"],
                     "description": row["description"],
                     "price": row["price"],
+                    # Sensitive, admin/report-only field — deliberately not part of
+                    # the public frontend Product type/fixture (CONTENT-TASK.md §4:
+                    # "costPrice برای اینکه گزارش سود خالی نماند"). A flat margin
+                    # placeholder computed here instead of exposing it publicly.
+                    "cost_price": round(row["price"] * 0.55),
                     "category": category,
                     "material": row["material"],
                     "width_mm": row["dimensions"]["w"],

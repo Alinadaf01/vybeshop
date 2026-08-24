@@ -432,10 +432,10 @@ export function DevComponentsPage() {
               <Lightbox
                 open={lightboxOpen}
                 onClose={() => setLightboxOpen(false)}
-                images={["/images/products/vybe-stand-air/1.jpg", "/images/products/vybe-stand-air/2.jpg"]}
+                images={["/images/products/product-a/1.jpg", "/images/products/product-b/1.jpg"]}
                 index={lightboxIndex}
                 onIndexChange={setLightboxIndex}
-                title="VYBE Stand Air"
+                title="محصول A"
               />
             </Cell>
             <Cell label="TOAST">
