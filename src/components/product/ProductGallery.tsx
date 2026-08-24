@@ -35,7 +35,7 @@ export function ProductGallery({ images, productName, activeIndex, onActiveIndex
         width={1200}
         height={1200}
         priority
-        className="aspect-square w-full rounded-xl border border-gray-100 object-cover"
+        className="aspect-square w-full rounded-xl border border-gray-100 object-cover motion-safe:animate-fade-in"
       />
       {/* یک عکس یعنی چیزی برای جابه‌جایی بین آن‌ها نیست — نوار تامبنیل تکراری
       نشان داده نمی‌شود (CONTENT-TASK.md §4: "گالری با تک‌تصویر درست کار کند"). */}

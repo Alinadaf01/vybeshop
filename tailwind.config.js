@@ -115,6 +115,11 @@ export default {
         spin: {
           to: { transform: "rotate(360deg)" },
         },
+        // FIX-TASK.md §3 — تعویض نرم تصویر گالری محصول.
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
         // FIX-TASK.md §2 — کارت ورود، برگرفته از design/otp-template/
         // (رنگ‌ها با برند جایگزین شدند، ولی خود حرکت‌ها همان‌هاست).
         "card-enter": {
@@ -156,10 +161,16 @@ export default {
           "0%, 100%": { transform: "translate(0, 0) scale(1)" },
           "50%": { transform: "translate(-28px, 28px) scale(1.1)" },
         },
+        // FIX-TASK.md §3 — بازخورد دکمه «افزودن به سبد».
+        "add-bump": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" },
+        },
       },
       animation: {
         shimmer: "shimmer 1.4s linear infinite",
         spin: "spin 600ms linear infinite",
+        "fade-in": "fade-in 300ms cubic-bezier(0.4,0,0.2,1) both",
         "card-enter": "card-enter 700ms cubic-bezier(0.22,1,0.36,1) forwards",
         shake: "shake 550ms cubic-bezier(0.36,0.07,0.19,0.97) both",
         "pulse-ring": "pulse-ring 2.5s cubic-bezier(0.4,0,0.2,1) infinite",
@@ -168,6 +179,7 @@ export default {
         "mesh-shift": "mesh-shift 14s cubic-bezier(0.4,0,0.2,1) infinite",
         "orb-float-1": "orb-float-1 18s cubic-bezier(0.4,0,0.2,1) infinite",
         "orb-float-2": "orb-float-2 22s cubic-bezier(0.4,0,0.2,1) infinite",
+        "add-bump": "add-bump 300ms cubic-bezier(0.4,0,0.2,1)",
       },
     },
   },

@@ -5,6 +5,22 @@ import { pagesToCheck } from "./routes";
 for (const { path, label } of pagesToCheck) {
   test(`no critical/serious axe violations on ${label}`, async ({ page }) => {
     await page.goto(path);
+    await page.waitForLoadState("networkidle");
+    // صبر تا انیمیشن‌های یک‌باره بارگذاری (fade-in صفحه، ورود پلکانی، کارت
+    // ورود) ته‌نشین شوند — وگرنه axe گاهی یک فریم میانیِ ترانزیشن (کنتراست
+    // موقت پایین حین fade) را اسکن می‌کند. انیمیشن‌های تزئینیِ بی‌نهایت
+    // (mesh/orb/pulse-ring) نادیده گرفته می‌شوند چون هرگز "finished" نمی‌شوند
+    // (FIX-TASK.md §3 صفحه‌آرایی‌های تازه).
+    await page
+      .waitForFunction(
+        () =>
+          document.getAnimations().every((a) => {
+            const timing = a.effect?.getTiming();
+            return timing?.iterations === Infinity || a.playState === "finished" || a.playState === "idle";
+          }),
+        { timeout: 3000 },
+      )
+      .catch(() => {});
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
       .analyze();

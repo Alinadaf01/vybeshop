@@ -10,15 +10,17 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="block overflow-hidden rounded-lg border border-gray-100 bg-white no-underline transition-colors duration-base hover:border-titanium"
+      className="group block overflow-hidden rounded-lg border border-gray-100 bg-white no-underline transition-colors duration-base hover:border-titanium"
     >
-      <Image
-        src={product.images[0]}
-        alt={product.name}
-        width={800}
-        height={1000}
-        className="aspect-[4/5] w-full object-cover"
-      />
+      <span className="block overflow-hidden">
+        <Image
+          src={product.images[0]}
+          alt={product.name}
+          width={800}
+          height={1000}
+          className="aspect-[4/5] w-full object-cover transition-transform duration-slow group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        />
+      </span>
       <span className="flex flex-col gap-2 p-4">
         <span dir="ltr" className="font-mono text-micro tracking-[0.06em] text-gray-800">
           {categoryName}

@@ -2,7 +2,25 @@ import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/Image";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { Seo } from "@/components/seo/Seo";
+import { useCountUp } from "@/lib/useCountUp";
 import { aboutContent as c } from "@/content/about";
+
+/** اعداد چهارگانه بالای صفحه هنگام دیده‌شدن می‌شمارند؛ مقادیر غیرعددی
+ * (مثل "IRAN") بدون انیمیشن همان‌طور نمایش داده می‌شوند (FIX-TASK.md §3). */
+function StatValue({ value }: { value: string }) {
+  const match = value.match(/^(\D*)(\d+)(\D*)$/);
+  const { ref, value: current } = useCountUp<HTMLSpanElement>(match ? Number(match[2]) : 0);
+
+  if (!match) return <>{value}</>;
+  const [, prefix, , suffix] = match;
+  return (
+    <span ref={ref}>
+      {prefix}
+      {current}
+      {suffix}
+    </span>
+  );
+}
 
 export default function AboutPage() {
   return (
@@ -21,7 +39,9 @@ export default function AboutPage() {
             {c.mission.stats.map((stat) => (
               <div key={stat.label} className="flex flex-col gap-1">
                 <dt className="font-mono text-micro text-titanium">{stat.label}</dt>
-                <dd className="m-0 font-mono text-h3 text-white">{stat.value}</dd>
+                <dd className="m-0 font-mono text-h3 text-white">
+                  <StatValue value={stat.value} />
+                </dd>
               </div>
             ))}
           </dl>

@@ -31,7 +31,11 @@ export function RootLayout() {
       {/* tabIndex=-1: not in tab order, but makes the skip link above actually
           move keyboard/screen-reader focus here (not just scroll position). */}
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
-        <Outlet />
+        {/* fade کوتاه هنگام ناوبری (FIX-TASK.md §3) — key={pathname} تضمین
+        می‌کند انیمیشن هر بار دوباره اجرا شود، نه فقط بار اول. */}
+        <div key={location.pathname} className="motion-safe:animate-fade-in">
+          <Outlet />
+        </div>
       </main>
       <Footer />
       <ScrollRestoration />

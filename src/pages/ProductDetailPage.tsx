@@ -7,6 +7,7 @@ import { useFavoriteToggle } from "@/lib/useFavoriteToggle";
 import { categories } from "@/data/categories";
 import { getProductsByCategory } from "@/data/products";
 import { formatPrice, formatDimensions } from "@/lib/formatters";
+import { cn } from "@/lib/cn";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Button } from "@/components/ui/Button";
 import { ColorSwatch } from "@/components/ui/ColorSwatch";
@@ -29,6 +30,7 @@ export default function ProductDetailPage() {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -49,6 +51,9 @@ export default function ProductDetailPage() {
     onSuccess: (cart) => {
       queryClient.setQueryData(["cart"], cart);
       showToast({ variant: "success", message: c.addedToCartToast, action: { label: c.viewCart, onClick: () => navigate("/cart") } });
+      // بازخورد ریزتعامل روی خود دکمه، جدا از توست (FIX-TASK.md §3).
+      setJustAdded(true);
+      setTimeout(() => setJustAdded(false), 400);
     },
     onError: () => {
       showToast({ variant: "danger", message: c.addToCartErrorToast });
@@ -166,7 +171,7 @@ export default function ProductDetailPage() {
                 variant="primary"
                 disabled={isOutOfStock || addToCartMutation.isPending}
                 onClick={handleAddToCart}
-                className="min-w-[180px] flex-1"
+                className={cn("min-w-[180px] flex-1", justAdded && "motion-safe:animate-add-bump")}
               >
                 {isOutOfStock ? c.outOfStock : addToCartMutation.isPending ? c.addingToCart : c.addToCart}
               </Button>
@@ -362,7 +367,7 @@ export default function ProductDetailPage() {
           variant="primary"
           disabled={isOutOfStock || addToCartMutation.isPending}
           onClick={handleAddToCart}
-          className="ms-auto shrink-0"
+          className={cn("ms-auto shrink-0", justAdded && "motion-safe:animate-add-bump")}
         >
           {isOutOfStock ? c.outOfStock : addToCartMutation.isPending ? c.addingToCart : c.addToCart}
         </Button>

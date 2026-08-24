@@ -18,8 +18,12 @@ const OTP_LENGTH = 6;
 // دو استایل مشترک برای فیلدهای متنی/چک‌باکس روی کارت تیره — Input/Checkbox
 // مشترک سایت برای زمینه روشن ساخته شده‌اند، برای همین اینجا (تنها جایی که
 // کارت تیره دارد) نسخه محلی می‌سازیم به‌جای دستکاری آن کامپوننت‌های مشترک.
+// نکته: توکن‌های رنگ این پروژه به var(--color-x) resolve می‌شوند، پس اصلاح‌گر
+// شفافیت Tailwind (bg-x/10) رویشان کار نمی‌کند — همان محدودیتی که کامنت
+// --color-overlay در tokens.css مستند کرده. این‌جا هرجا شفافیت لازم بود از
+// rgba() صریح در arbitrary value استفاده شده، نه اصلاح‌گر اسلش.
 const darkFieldClass =
-  "h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 text-body text-fog-white outline-none transition-all duration-base placeholder:text-titanium hover:border-white/20 focus-visible:border-cyan/60 focus-visible:bg-cyan/[0.06] focus-visible:shadow-[0_0_0_3px_rgba(0,209,255,0.18)]";
+  "h-12 w-full rounded-xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-4 text-body text-fog-white outline-none transition-all duration-base placeholder:text-titanium hover:border-[rgba(255,255,255,0.2)] focus-visible:border-[rgba(0,209,255,0.6)] focus-visible:bg-[rgba(0,209,255,0.06)] focus-visible:shadow-[0_0_0_3px_rgba(0,209,255,0.18)]";
 
 function formatPhoneDisplay(phone: string): string {
   return phone.replace(/(\d{4})(\d{3})(\d{4})/, "$1 $2 $3");
@@ -29,7 +33,7 @@ function formatPhoneDisplay(phone: string): string {
 function LoginIcon() {
   return (
     <div className="mb-6 flex justify-center">
-      <div className="rounded-2xl border-cyan/25 bg-cyan/[0.07] flex size-14 items-center justify-center border motion-safe:animate-pulse-ring motion-reduce:animate-none">
+      <div className="rounded-2xl border-[rgba(0,209,255,0.25)] bg-[rgba(0,209,255,0.07)] flex size-14 items-center justify-center border motion-safe:animate-pulse-ring motion-reduce:animate-none">
         <svg className="size-7 text-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <path
             strokeLinecap="round"
@@ -204,13 +208,13 @@ export default function AuthPage() {
         <div
           className={cn(
             "absolute end-0 top-[5%] size-[300px] rounded-full opacity-40 blur-[70px] motion-safe:animate-orb-float-1 motion-reduce:animate-none",
-            isSuccess ? "bg-success/25" : "bg-cyan/20",
+            isSuccess ? "bg-[rgba(47,182,107,0.25)]" : "bg-[rgba(0,209,255,0.2)]",
           )}
         />
         <div
           className={cn(
             "absolute bottom-[10%] start-[5%] size-[240px] rounded-full opacity-30 blur-[70px] motion-safe:animate-orb-float-2 motion-reduce:animate-none",
-            isSuccess ? "bg-success/20" : "bg-cyan/15",
+            isSuccess ? "bg-[rgba(47,182,107,0.2)]" : "bg-[rgba(0,209,255,0.15)]",
           )}
         />
         <div
@@ -226,7 +230,9 @@ export default function AuthPage() {
       <div
         className={cn(
           "relative z-10 w-full max-w-md rounded-xl border p-6 shadow-2xl backdrop-blur-xl motion-safe:animate-card-enter motion-reduce:animate-none sm:p-8",
-          isSuccess ? "border-success/40 bg-[#06180e]/92" : "border-white/10 bg-black/40",
+          isSuccess
+            ? "border-[rgba(47,182,107,0.4)] bg-[rgba(6,24,14,0.92)]"
+            : "border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.4)]",
           shake && "motion-safe:animate-shake",
         )}
       >
@@ -269,8 +275,8 @@ export default function AuthPage() {
                 />
                 <span
                   className={cn(
-                    "bg-white/[0.04] peer-checked:bg-cyan/20 pointer-events-none absolute inset-0 rounded-sm border transition-colors duration-fast peer-checked:border-cyan peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan",
-                    phoneForm.formState.errors.rules ? "border-danger" : "border-white/20",
+                    "bg-[rgba(255,255,255,0.04)] peer-checked:bg-[rgba(0,209,255,0.2)] pointer-events-none absolute inset-0 rounded-sm border transition-colors duration-fast peer-checked:border-cyan peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan",
+                    phoneForm.formState.errors.rules ? "border-danger" : "border-[rgba(255,255,255,0.2)]",
                   )}
                 />
                 <svg viewBox="0 0 12 12" fill="none" className="pointer-events-none absolute inset-0 size-5 p-1 opacity-0 peer-checked:opacity-100">
@@ -307,7 +313,7 @@ export default function AuthPage() {
               <button
                 type="button"
                 onClick={() => setStep("phone")}
-                className="decoration-cyan/40 border-0 bg-transparent p-0 text-small text-cyan underline underline-offset-4 hover:decoration-cyan"
+                className="decoration-[rgba(0,209,255,0.4)] border-0 bg-transparent p-0 text-small text-cyan underline underline-offset-4 hover:decoration-cyan"
               >
                 {c.otpStep.changeNumber}
               </button>
@@ -332,10 +338,10 @@ export default function AuthPage() {
                   className={cn(
                     "h-14 w-full rounded-xl border-2 text-center font-mono text-h4 outline-none transition-all duration-fast",
                     otpError
-                      ? "bg-danger/10 border-danger text-danger-dark"
+                      ? "bg-[rgba(214,69,69,0.1)] border-danger text-danger-dark"
                       : digit
-                        ? "border-cyan/70 bg-cyan/10 text-fog-white"
-                        : "border-white/15 bg-white/[0.04] text-fog-white",
+                        ? "border-[rgba(0,209,255,0.7)] bg-[rgba(0,209,255,0.1)] text-fog-white"
+                        : "border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.04)] text-fog-white",
                     "focus-visible:scale-[1.03] focus-visible:border-cyan focus-visible:shadow-[0_0_0_3px_rgba(0,209,255,0.25)]",
                   )}
                 />
@@ -363,8 +369,8 @@ export default function AuthPage() {
                 onClick={handleResend}
                 className={
                   secondsLeft > 0
-                    ? "text-titanium/60 border-0 bg-transparent p-0 text-small"
-                    : "decoration-cyan/40 border-0 bg-transparent p-0 text-small font-medium text-cyan underline underline-offset-4 hover:decoration-cyan"
+                    ? "text-[rgba(122,125,130,0.6)] border-0 bg-transparent p-0 text-small"
+                    : "decoration-[rgba(0,209,255,0.4)] border-0 bg-transparent p-0 text-small font-medium text-cyan underline underline-offset-4 hover:decoration-cyan"
                 }
               >
                 {c.otpStep.resendAction}
@@ -433,8 +439,8 @@ export default function AuthPage() {
         {step === "done" && (
           <div className="flex flex-col items-center gap-2 text-center" aria-live="polite">
             <div className="relative mx-auto mb-4 flex size-24 items-center justify-center">
-              <div className="border-success/40 absolute inset-0 rounded-full border-2 motion-safe:animate-success-ring motion-reduce:animate-none" />
-              <div className="bg-success/15 relative flex size-20 items-center justify-center rounded-full border-2 border-success shadow-[0_0_40px_rgba(47,182,107,0.35)] motion-safe:animate-success-pop motion-reduce:animate-none">
+              <div className="border-[rgba(47,182,107,0.4)] absolute inset-0 rounded-full border-2 motion-safe:animate-success-ring motion-reduce:animate-none" />
+              <div className="bg-[rgba(47,182,107,0.15)] relative flex size-20 items-center justify-center rounded-full border-2 border-success shadow-[0_0_40px_rgba(47,182,107,0.35)] motion-safe:animate-success-pop motion-reduce:animate-none">
                 <svg className="size-12" viewBox="0 0 52 52" aria-hidden="true">
                   <circle cx="26" cy="26" r="25" fill="none" stroke="rgba(47,182,107,0.3)" strokeWidth="2" />
                   <path
@@ -457,7 +463,7 @@ export default function AuthPage() {
               <Button
                 variant="secondary"
                 onClick={() => navigate("/")}
-                className="!border-white/15 hover:!border-success/40 h-12 w-full !bg-transparent !text-silver hover:!text-white"
+                className="!border-[rgba(255,255,255,0.15)] hover:!border-[rgba(47,182,107,0.4)] h-12 w-full !bg-transparent !text-silver hover:!text-white"
               >
                 {c.done.homeCta}
               </Button>
@@ -465,7 +471,7 @@ export default function AuthPage() {
           </div>
         )}
 
-        <p className="border-white/10 m-0 mt-6 border-t pt-6 text-center text-caption leading-[1.7] text-titanium">
+        <p className="border-[rgba(255,255,255,0.1)] m-0 mt-6 border-t pt-6 text-center text-caption leading-[1.7] text-titanium">
           {c.passwordNote}
         </p>
       </div>

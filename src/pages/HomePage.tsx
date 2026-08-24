@@ -201,7 +201,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {(categoriesData ?? Array.from({ length: 6 })).map((category, index) =>
             category ? (
-              <Reveal key={category.slug}>
+              <Reveal key={category.slug} delayMs={(index % 3) * 70}>
                 <Link
                   to={`/products?category=${category.slug}`}
                   className="block overflow-hidden rounded-lg border border-gray-100 bg-white no-underline transition-colors duration-base hover:border-titanium"
@@ -281,7 +281,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
           {featured.map((product, index) =>
             product ? (
-              <Reveal key={product.slug}>
+              <Reveal key={product.slug} delayMs={(index % 4) * 70}>
                 <ProductCard product={product} />
               </Reveal>
             ) : (
@@ -361,11 +361,21 @@ export default function HomePage() {
               </button>
             </form>
           </Reveal>
-          <Reveal className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {communityTiles.length > 0
-              ? communityTiles.map((tile) =>
-                  tile.linkUrl ? (
-                    <Link key={tile.id} to={tile.linkUrl}>
+              ? communityTiles.map((tile, index) => (
+                  <Reveal key={tile.id} delayMs={(index % 3) * 70}>
+                    {tile.linkUrl ? (
+                      <Link to={tile.linkUrl}>
+                        <Image
+                          src={tile.image}
+                          alt={tile.imageAlt}
+                          width={400}
+                          height={400}
+                          className="aspect-square w-full rounded-md object-cover"
+                        />
+                      </Link>
+                    ) : (
                       <Image
                         src={tile.image}
                         alt={tile.imageAlt}
@@ -373,29 +383,21 @@ export default function HomePage() {
                         height={400}
                         className="aspect-square w-full rounded-md object-cover"
                       />
-                    </Link>
-                  ) : (
+                    )}
+                  </Reveal>
+                ))
+              : homeContent.community.images.map((image, index) => (
+                  <Reveal key={image.src} delayMs={(index % 3) * 70}>
                     <Image
-                      key={tile.id}
-                      src={tile.image}
-                      alt={tile.imageAlt}
+                      src={image.src}
+                      alt={image.alt}
                       width={400}
                       height={400}
                       className="aspect-square w-full rounded-md object-cover"
                     />
-                  ),
-                )
-              : homeContent.community.images.map((image) => (
-                  <Image
-                    key={image.src}
-                    src={image.src}
-                    alt={image.alt}
-                    width={400}
-                    height={400}
-                    className="aspect-square w-full rounded-md object-cover"
-                  />
+                  </Reveal>
                 ))}
-          </Reveal>
+          </div>
         </section>
       )}
     </div>
