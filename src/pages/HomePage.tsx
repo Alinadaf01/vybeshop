@@ -7,7 +7,6 @@ import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Image } from "@/components/ui/Image";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/home/Reveal";
 import { HomeShowcaseBlock } from "@/components/home/HomeShowcaseBlock";
@@ -237,16 +236,15 @@ export default function HomePage() {
               {homeContent.process.kicker}
             </span>
             <h2 className="m-0 text-h2 font-semibold">{homeContent.process.heading}</h2>
-            <p className="m-0 text-body-large text-silver">{homeContent.process.subtitle}</p>
           </Reveal>
-          {/* «ماکرو خطوط لایه‌ای» با وجود نامش یک تصویرسازی کارتونی سبز با
-          لوگوی «vybe» روی آن است — گرافیک آماده دیگری از همان دسته
-          (FIX-TASK.md دور دوم) — تا نسخه واقعی برسد جای‌نگهدار می‌ماند. */}
           <Reveal>
-            <ImagePlaceholder
-              caption={homeContent.process.macroImageAlt}
+            <Image
+              src="/images/marketing/macro-layer-lines.jpg"
+              alt={homeContent.process.macroImageAlt}
+              width={1672}
+              height={941}
               dark
-              className="h-[280px] w-full rounded-lg border border-edge"
+              className="h-[280px] w-full rounded-lg border border-edge object-cover"
             />
           </Reveal>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

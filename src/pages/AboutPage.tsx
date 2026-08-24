@@ -61,12 +61,12 @@ export default function AboutPage() {
               </p>
             ))}
           </div>
-          {/* عکس «ماکرو سطح قطعه» گرافیک آماده مستقل است (تیتر، لوگو و
-          پس‌زمینه خودش را دارد) — تا نسخه بدون متن برسد این جایگاه به حالت
-          قبلی برمی‌گردد (FIX-TASK.md §1). */}
-          <ImagePlaceholder
-            caption={c.whyWeExist.imageAlt}
-            className="aspect-[4/3] w-full rounded-xl border border-gray-100"
+          <Image
+            src="/images/about/macro-surface.jpg"
+            alt={c.whyWeExist.imageAlt}
+            width={1200}
+            height={900}
+            className="aspect-[4/3] w-full rounded-xl border border-gray-100 object-cover"
           />
         </div>
       </section>
@@ -115,14 +115,14 @@ export default function AboutPage() {
               <p className="m-0 max-w-text text-body-large leading-[1.7] text-silver [text-wrap:pretty]">
                 {c.process.body}
               </p>
-              <dl dir="ltr" className="m-0 grid grid-cols-2 gap-6 border-t border-edge pt-6 sm:grid-cols-4">
-                {c.process.specs.map((spec) => (
-                  <div key={spec.label} className="flex flex-col gap-1">
-                    <dt className="font-mono text-micro tracking-[0.06em] text-titanium">{spec.label}</dt>
-                    <dd className="m-0 font-mono text-caption text-fog-white">{spec.value}</dd>
-                  </div>
+              <div
+                dir="ltr"
+                className="flex flex-wrap gap-6 border-t border-edge pt-6 font-mono text-caption tracking-[0.06em] text-titanium"
+              >
+                {c.process.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
                 ))}
-              </dl>
+              </div>
             </div>
           </div>
 
@@ -161,20 +161,20 @@ export default function AboutPage() {
 
       <section className="bg-graphite px-5 py-14 text-fog-white md:py-20 xl:px-10">
         <div className="mx-auto flex max-w-page flex-col gap-6">
-          <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <div className="flex flex-col gap-2">
-              <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">
-                {c.workshop.kicker}
-              </p>
-              <h2 className="m-0 text-h1 font-bold">{c.workshop.heading}</h2>
-            </div>
+          <div className="flex flex-col gap-2">
+            <h2 className="m-0 text-h1 font-bold">{c.workshop.heading}</h2>
             <p className="m-0 max-w-text text-body leading-[1.7] text-silver [text-wrap:pretty]">
               {c.workshop.subtitle}
             </p>
           </div>
-          {/* بنر «عکس کارگاه درباره ما» گرافیک آماده مستقل است (تیتر، لوگو و
-          پس‌زمینه خودش را دارد) — حذف شد تا نسخه بدون متن برسد
-          (FIX-TASK.md §1). */}
+          <Image
+            src="/images/marketing/workshop-wide.jpg"
+            alt={c.workshop.bannerImageAlt}
+            width={715}
+            height={437}
+            dark
+            className="w-full rounded-lg border border-edge object-cover"
+          />
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {c.workshop.areas.map((area, index) => (
               <div key={area.label} className="flex flex-col gap-2">

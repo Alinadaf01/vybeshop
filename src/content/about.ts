@@ -39,15 +39,10 @@ export const aboutContent = {
     heading: "از طراحی تا تحویل",
     body: "هر محصول از یک ایده شروع می‌شود و با طراحی، ساخت و کنترل کیفیت به دست شما می‌رسد.",
     macroImageAlt: "تصویرسازی سه‌مرحله‌ای فرایند تولید VYBE — طراحی، تولید و بسته‌بندی",
-    // برگردانده شد به فرمت برچسب:مقدار (dt/dd) طبق ساختار vybeshop.ir —
-    // CONTENT-TASK.md §3 این را با یک نوار تگ ساده جایگزین کرده بود که با
-    // ساختار سایت زنده فرق داشت (FIX-TASK.md دور دوم، بخش «مقایسه ساختاری»).
-    specs: [
-      { label: "PRINTER", value: "Bambu Lab P1S × 6" },
-      { label: "MATERIAL", value: "PLA+ matte · PETG" },
-      { label: "LAYER", value: "0.2 mm · 3 walls" },
-      { label: "REJECT RATE", value: "~6%" },
-    ],
+    // نوار چهار برچسبی — تغییر محتوایی تأییدشده در CONTENT-TASK.md §3
+    // (جایگزین جدول فنی PRINTER/MATERIAL/LAYER/REJECT RATE قدیمی). دور دوم
+    // FIX-TASK.md این را اشتباهاً به جدول فنی برگرداند؛ در دور سوم اصلاح شد.
+    tags: ["DESIGN", "DETAIL", "QUALITY", "MADE IN IRAN"],
     steps: [
       { tag: "STEP 1 · IDEA", title: "ایده", body: "دغدغه را به یک ایده تبدیل می‌کنیم." },
       { tag: "STEP 2 · DESIGN", title: "طراحی", body: "ایده را به یک محصول کاربردی تبدیل می‌کنیم." },
@@ -66,9 +61,9 @@ export const aboutContent = {
     ],
   },
   workshop: {
-    kicker: "THE WORKSHOP",
     heading: "جایی که ایده‌ها واقعی می‌شوند.",
     subtitle: "اینجا ایده‌ها خلق، طراحی، ساخته و با دقت بررسی می‌شوند تا به محصولی قابل‌استفاده تبدیل شوند.",
+    bannerImageAlt: "بنر کارگاه VYBE — WHERE IDEAS BECOME REAL",
     areas: [
       { label: "DESIGN", imageAlt: "تصویرسازی طراح پشت میز کار با چراغ رومیزی و جعبه محصول" },
       { label: "MODELING", imageAlt: "تصویرسازی طراحی مدل سه‌بعدی محصول روی مانیتور" },
