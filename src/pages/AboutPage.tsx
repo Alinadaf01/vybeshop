@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/Image";
+import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { Seo } from "@/components/seo/Seo";
 import { aboutContent as c } from "@/content/about";
 
@@ -40,12 +41,12 @@ export default function AboutPage() {
               </p>
             ))}
           </div>
-          <Image
-            src="/images/about/macro-surface.jpg"
-            alt={c.whyWeExist.imageAlt}
-            width={1536}
-            height={1024}
-            className="aspect-[4/3] w-full rounded-xl border border-gray-100 object-cover"
+          {/* عکس «ماکرو سطح قطعه» گرافیک آماده مستقل است (تیتر، لوگو و
+          پس‌زمینه خودش را دارد) — تا نسخه بدون متن برسد این جایگاه به حالت
+          قبلی برمی‌گردد (FIX-TASK.md §1). */}
+          <ImagePlaceholder
+            caption={c.whyWeExist.imageAlt}
+            className="aspect-[4/3] w-full rounded-xl border border-gray-100"
           />
         </div>
       </section>
@@ -81,8 +82,8 @@ export default function AboutPage() {
             <Image
               src="/images/marketing/macro-layer-lines.jpg"
               alt={c.process.macroImageAlt}
-              width={1672}
-              height={941}
+              width={1200}
+              height={800}
               dark
               className="h-[320px] w-full rounded-lg border border-edge object-cover"
             />
@@ -151,14 +152,9 @@ export default function AboutPage() {
               {c.workshop.subtitle}
             </p>
           </div>
-          <Image
-            src="/images/marketing/workshop-wide.jpg"
-            alt={c.workshop.bannerImageAlt}
-            width={715}
-            height={437}
-            dark
-            className="aspect-[16/10] w-full rounded-lg border border-edge object-cover"
-          />
+          {/* بنر «عکس کارگاه درباره ما» گرافیک آماده مستقل است (تیتر، لوگو و
+          پس‌زمینه خودش را دارد) — حذف شد تا نسخه بدون متن برسد
+          (FIX-TASK.md §1). */}
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {c.workshop.areas.map((area, index) => (
               <div key={area.label} className="flex flex-col gap-2">
