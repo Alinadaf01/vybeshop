@@ -1,10 +1,18 @@
 """One-off script for CONTENT-TASK.md §1 — converts Photos/* into the
 project's image pipeline: renamed English filenames, JPEG originals (kept
-as the <img> fallback), and WebP srcset variants at widths <= the source's
-native width only (never upscale, per task note). Admin-uploaded images
+as the <img> fallback), and WebP srcset variants. Admin-uploaded images
 (hero, showcase blocks, community tiles) are exported to a separate
 directory instead of public/, since those go through the Homepage admin
 API, not the static asset pipeline.
+
+Image.tsx always requests all three WIDTHS in its srcset regardless of a
+source's native size, so every -{w}.webp file must exist on disk for every
+width or the browser 404s that <source> candidate and the whole <picture>
+falls back to the placeholder (FIX-TASK.md bug #1). So every width in
+WIDTHS gets a file — but the pixel content is capped at the source's
+native width (never upscaled): a 400px-wide source still produces
+-800.webp and -1200.webp files, they just contain the same 400px image
+as -400.webp.
 """
 
 import os
@@ -40,12 +48,17 @@ def save_static(src_filename, dest_relpath):
 
     made = []
     for w in WIDTHS:
-        if w > native_w:
-            continue
-        h = round(im.height * (w / native_w))
-        variant = im.resize((w, h), Image.LANCZOS)
+        # Cap the actual pixel width at native_w (never upscale) but always
+        # write the file under the requested width's filename — the file
+        # just contains the same capped-size image as a smaller width would.
+        target_w = min(w, native_w)
+        if target_w == native_w:
+            variant = im
+        else:
+            h = round(im.height * (target_w / native_w))
+            variant = im.resize((target_w, h), Image.LANCZOS)
         variant.save(f"{dest_abs_noext}-{w}.webp", "WEBP", quality=WEBP_QUALITY)
-        made.append(w)
+        made.append(f"{w}(px={target_w})")
     print(f"{src_filename} ({native_w}x{im.height}) -> {dest_relpath}.jpg + webp{made}")
 
 

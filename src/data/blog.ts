@@ -3,7 +3,12 @@ import type { BlogPost } from "@/types/blog";
 // دوازده مقاله بود ولی هیچ عکسی برایشان نرسیده بود (CONTENT-TASK.md §5).
 // گزینه اول از ترجیح‌های کارفرما اجرا شد: تعداد به چهار مقاله کاهش یافت —
 // آن‌هایی که به نام محصول یا دسته‌بندی خاصی از کاتالوگ قدیمی اشاره
-// نمی‌کردند — و کاور هرکدام از تصاویر واقعی موجود (ماکرو، کارگاه) گرفته شد.
+// نمی‌کردند. کاور هرکدام قرار بود از تصاویر «واقعی» موجود (ماکرو، کارگاه)
+// گرفته شود، ولی معلوم شد آن دو فایل تصویرسازی کارتونی با لوگوی متنی
+// هستند، نه عکس — coverImage روی رشته خالی ماند تا Image جای‌نگهدار نشان
+// دهد (FIX-TASK.md دور دوم). همین تغییر باید در backend/fixtures/blog.json
+// هم اعمال و seed دوباره اجرا شود، چون صفحه لیست/جزئیات بلاگ از بک‌اند
+// می‌خواند نه از این فایل (این فایل فقط fallback آفلاین است).
 export const blogPosts: BlogPost[] = [
   {
     id: "blog-01",
@@ -29,7 +34,7 @@ export const blogPosts: BlogPost[] = [
         body: "وقتی یک قطعه را کنار قطعه مشابه بازار می‌گذاریم، تفاوت معمولاً در چیزی است که حذف شده، نه چیزی که اضافه شده.",
       },
     ],
-    coverImage: "/images/marketing/macro-layer-lines.jpg",
+    coverImage: "",
     author: "تیم طراحی VYBE",
     authorRole: "طراحی صنعتی",
     publishedAt: "2026-01-12",
@@ -60,7 +65,7 @@ export const blogPosts: BlogPost[] = [
         body: "برای قطعات پرتیراژ و ساده، قالب تزریقی هزینه هر واحد را به‌شدت پایین می‌آورد؛ در این حالت طرح باید از ابتدا برای قالب طراحی شود.",
       },
     ],
-    coverImage: "/images/about/macro-surface.jpg",
+    coverImage: "",
     author: "تیم مهندسی VYBE",
     authorRole: "مهندسی تولید",
     publishedAt: "2026-04-18",
@@ -91,7 +96,7 @@ export const blogPosts: BlogPost[] = [
         body: "تیم اکنون سه نفر و شش پرینتر است، اما هنوز هر قطعه قبل از ارسال از دست همان افرادی رد می‌شود که آن را طراحی کرده‌اند.",
       },
     ],
-    coverImage: "/images/marketing/workshop-wide.jpg",
+    coverImage: "",
     author: "بنیان‌گذاران VYBE",
     authorRole: "بنیان‌گذاران",
     publishedAt: "2026-05-19",
@@ -122,7 +127,7 @@ export const blogPosts: BlogPost[] = [
         body: "هدف رساندن سهم فیلامنت بازیافتی در کل تولید به بیش از نیمی از محصولات ساختاری در سال آینده است.",
       },
     ],
-    coverImage: "/images/marketing/workshop-wide.jpg",
+    coverImage: "",
     author: "تیم مهندسی VYBE",
     authorRole: "مهندسی تولید",
     publishedAt: "2026-06-01",

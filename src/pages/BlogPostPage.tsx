@@ -10,7 +10,7 @@ import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { formatJalaliDate } from "@/lib/formatters";
 import { Seo } from "@/components/seo/Seo";
-import { absoluteUrl, buildArticleJsonLd } from "@/lib/seo";
+import { absoluteUrl, buildArticleJsonLd, DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { blogPostContent as c } from "@/content/blogPost";
 
 function authorInitials(author: string) {
@@ -68,9 +68,9 @@ export default function BlogPostPage() {
         title={post.title}
         description={post.excerpt}
         path={`/blog/${post.slug}`}
-        image={post.coverImage}
+        image={post.coverImage || DEFAULT_OG_IMAGE}
         type="article"
-        jsonLd={buildArticleJsonLd(post, absoluteUrl(post.coverImage))}
+        jsonLd={buildArticleJsonLd(post, absoluteUrl(post.coverImage || DEFAULT_OG_IMAGE))}
       />
       <div className="mx-auto max-w-page px-5 xl:px-10">
         <Breadcrumb

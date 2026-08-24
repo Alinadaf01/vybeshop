@@ -16,7 +16,7 @@ import { Rating } from "@/components/ui/Rating";
 import { SpecTable } from "@/components/product/SpecTable";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductCard } from "@/components/product/ProductCard";
-import { Image } from "@/components/ui/Image";
+import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { Seo } from "@/components/seo/Seo";
@@ -266,13 +266,13 @@ export default function ProductDetailPage() {
         </section>
 
         <section className="mb-14 grid grid-cols-1 gap-8 rounded-xl bg-graphite p-6 text-fog-white md:mb-20 md:p-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-          <Image
-            src="/images/marketing/macro-layer-lines.jpg"
-            alt={c.howItsMade.macroImageAlt}
-            width={1200}
-            height={800}
+          {/* «ماکرو خطوط لایه‌ای» با وجود نامش یک تصویرسازی کارتونی سبز با
+          لوگوی «vybe» روی آن است — گرافیک آماده دیگری از همان دسته
+          (FIX-TASK.md دور دوم) — تا نسخه واقعی برسد جای‌نگهدار می‌ماند. */}
+          <ImagePlaceholder
+            caption={c.howItsMade.macroImageAlt}
             dark
-            className="h-[280px] w-full rounded-lg border border-edge object-cover"
+            className="h-[280px] w-full rounded-lg border border-edge"
           />
           <div className="flex flex-col gap-4">
             <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">

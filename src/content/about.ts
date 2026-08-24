@@ -39,10 +39,15 @@ export const aboutContent = {
     heading: "از طراحی تا تحویل",
     body: "هر محصول از یک ایده شروع می‌شود و با طراحی، ساخت و کنترل کیفیت به دست شما می‌رسد.",
     macroImageAlt: "تصویرسازی سه‌مرحله‌ای فرایند تولید VYBE — طراحی، تولید و بسته‌بندی",
-    // ⚠️ این نوار قبلاً جدول فنی پرینتر/متریال بود (Bambu Lab P1S, PLA+, 0.2mm,
-    // ~6%). طبق CONTENT-TASK.md §3 با چهار برچسب کیفی جایگزین شد — جدول فنی
-    // حذف شد.
-    tags: ["DESIGN", "DETAIL", "QUALITY", "MADE IN IRAN"],
+    // برگردانده شد به فرمت برچسب:مقدار (dt/dd) طبق ساختار vybeshop.ir —
+    // CONTENT-TASK.md §3 این را با یک نوار تگ ساده جایگزین کرده بود که با
+    // ساختار سایت زنده فرق داشت (FIX-TASK.md دور دوم، بخش «مقایسه ساختاری»).
+    specs: [
+      { label: "PRINTER", value: "Bambu Lab P1S × 6" },
+      { label: "MATERIAL", value: "PLA+ matte · PETG" },
+      { label: "LAYER", value: "0.2 mm · 3 walls" },
+      { label: "REJECT RATE", value: "~6%" },
+    ],
     steps: [
       { tag: "STEP 1 · IDEA", title: "ایده", body: "دغدغه را به یک ایده تبدیل می‌کنیم." },
       { tag: "STEP 2 · DESIGN", title: "طراحی", body: "ایده را به یک محصول کاربردی تبدیل می‌کنیم." },

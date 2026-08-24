@@ -6,6 +6,7 @@
   "scripts": {
     "tokens:build": "node scripts/build-tokens.mjs",
     "check:classes": "node scripts/check-classes.mjs",
+    "check:image-widths": "node scripts/check-image-widths.mjs",
     "predev": "npm run tokens:build",
     "prebuild": "npm run tokens:build",
     "dev": "vite",
@@ -19,7 +20,7 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "check": "npm run typecheck && npm run lint && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run check:image-widths && npm run build"
   },
   "dependencies": {
     "@fontsource/inter": "^5.1.0",
