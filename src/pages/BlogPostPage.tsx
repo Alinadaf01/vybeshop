@@ -62,6 +62,18 @@ export default function BlogPostPage() {
 
   const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}`;
 
+  // Plain <a href="#id"> native fragment navigation races with
+  // <ScrollRestoration /> (RootLayout.tsx) — react-router listens for the
+  // resulting history change and sometimes resets scroll to 0 right after
+  // the browser scrolls to the target, so the jump silently no-ops. Handling
+  // the scroll ourselves and updating the hash via replaceState (which fires
+  // no popstate/hashchange) sidesteps the race entirely.
+  function handleTocClick(event: React.MouseEvent<HTMLAnchorElement>, sectionId: string) {
+    event.preventDefault();
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState(null, "", `#${sectionId}`);
+  }
+
   return (
     <div>
       <Seo
@@ -91,6 +103,7 @@ export default function BlogPostPage() {
                 <a
                   key={section.id}
                   href={`#${section.id}`}
+                  onClick={(event) => handleTocClick(event, section.id)}
                   className="border-s-2 border-gray-100 ps-4 text-small text-gray-800 no-underline transition-colors duration-fast hover:border-graphite hover:text-graphite"
                 >
                   {section.heading}

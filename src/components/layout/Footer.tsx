@@ -17,13 +17,13 @@ const supportLinks: { label: string; href?: string }[] = [
   { label: "پیگیری سفارش" },
   { label: "ارسال و تحویل" },
   { label: "مرجوعی" },
-  { label: "نگهداری قطعات", href: "/blog/polycarbonate-care-guide" },
+  { label: "نگهداری قطعات", href: "/blog/blog-3" },
   { label: "سؤالات متداول" },
 ];
 
 const aboutLinks: { label: string; href?: string }[] = [
   { label: "کارگاه", href: "/about" },
-  { label: "فرایند تولید", href: "/blog/from-idea-to-3d-print" },
+  { label: "فرایند تولید", href: "/blog/blog-12" },
   { label: "همکاری با ما", href: "/contact" },
   { label: "تماس با ما", href: "/contact" },
 ];

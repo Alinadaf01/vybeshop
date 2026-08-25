@@ -6,9 +6,13 @@ from .serializers import CategorySerializer, ProductSerializer
 
 
 class ProductListView(ListAPIView):
-    queryset = Product.objects.filter(is_active=True).select_related("category").prefetch_related(
-        "images", "colors", "attributes__attribute", "attributes__value_option"
-    )
+    # VYBE-TEST-NOIMG is a regression fixture for the no-image rendering path
+    # (see src/data/products.ts) — reachable only by direct slug via
+    # ProductDetailView below, never meant to appear in the public grid a
+    # real customer browses.
+    queryset = Product.objects.filter(is_active=True).exclude(sku="VYBE-TEST-NOIMG").select_related(
+        "category"
+    ).prefetch_related("images", "colors", "attributes__attribute", "attributes__value_option")
     serializer_class = ProductSerializer
     filterset_class = ProductFilter
 

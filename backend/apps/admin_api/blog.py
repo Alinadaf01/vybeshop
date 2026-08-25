@@ -1,3 +1,4 @@
+from django.utils import timezone
 from djangorestframework_camel_case.parser import CamelCaseFormParser, CamelCaseJSONParser, CamelCaseMultiPartParser
 from rest_framework import serializers
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -29,6 +30,25 @@ class AdminBlogPostSerializer(serializers.ModelSerializer):
 
     def get_resolved_cover_url(self, obj: BlogPost) -> str:
         return obj.resolved_cover_url
+
+    def _apply_publish_default(self, validated_data: dict, existing: BlogPost | None) -> None:
+        # The admin panel only exposes an is_published switch, no date picker
+        # for published_at — without this, flipping the switch on leaves
+        # published_at null, which crashes the storefront's blog post page
+        # (Jalali date conversion throws on a null date) as soon as anyone
+        # visits it (BLOG-SEED-TASK.md §5 verification).
+        will_be_published = validated_data.get("is_published", existing.is_published if existing else False)
+        has_date = validated_data.get("published_at") or (existing and existing.published_at)
+        if will_be_published and not has_date:
+            validated_data["published_at"] = timezone.now()
+
+    def create(self, validated_data):
+        self._apply_publish_default(validated_data, existing=None)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        self._apply_publish_default(validated_data, existing=instance)
+        return super().update(instance, validated_data)
 
 
 class AdminBlogPostListCreateView(AdminActivityLogMixin, ListCreateAPIView):

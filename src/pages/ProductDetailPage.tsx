@@ -255,7 +255,7 @@ export default function ProductDetailPage() {
             <p className="m-0 border-t border-gray-100 pt-4 text-small leading-[1.6] text-gray-800">
               {c.specTable.careNoteBefore}{" "}
               <Link
-                to="/blog/polycarbonate-care-guide"
+                to="/blog/blog-3"
                 className="text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite"
               >
                 {c.specTable.careLinkLabel}
@@ -281,7 +281,7 @@ export default function ProductDetailPage() {
             <h2 className="m-0 text-h2 font-semibold">{c.howItsMade.heading}</h2>
             <p className="m-0 text-body-large leading-[1.7] text-silver [text-wrap:pretty]">{c.howItsMade.body}</p>
             <Link
-              to="/blog/from-idea-to-3d-print"
+              to="/blog/blog-2"
               className="self-start border-b border-titanium pb-1 text-body font-medium text-fog-white no-underline transition-colors duration-fast hover:border-cyan"
             >
               {c.howItsMade.linkLabel}

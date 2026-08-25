@@ -137,6 +137,9 @@ class Command(BaseCommand):
                     "published_at": datetime.fromisoformat(row["publishedAt"]).replace(tzinfo=dt_timezone.utc),
                 },
             )
+        # Posts renamed/removed from the fixture (e.g. an old slug swapped for a
+        # new one) would otherwise survive forever via update_or_create alone.
+        BlogPost.objects.exclude(slug__in=[row["slug"] for row in rows]).delete()
         self.stdout.write(f"  blog posts: {len(rows)}")
 
     def seed_catalog(self):

@@ -30,9 +30,14 @@ function stripExtension(path: string) {
  * src, with zero page-code changes.
  *
  * WebP srcset assumes files are delivered as `{base}-{width}.webp` beside
- * the given src (e.g. `1.jpg` -> `1-400.webp`, `1-800.webp`, ...). Confirm
- * this naming with design once real exports arrive and adjust here if it
- * differs — this is the one place that convention is encoded.
+ * the given src (e.g. `1.jpg` -> `1-400.webp`, `1-800.webp`, ...). This is
+ * only guaranteed for static assets under public/images (enforced by
+ * scripts/check-image-widths.mjs) — a file uploaded through the admin panel
+ * (an absolute http(s) URL pointing at Django's /media/) has no such backend
+ * pipeline generating those companions. Requesting a nonexistent webp
+ * variant cross-origin gets blocked by ORB, which some browsers propagate as
+ * a failure to the sibling <img> too, breaking the whole image. So webp
+ * srcset is only attempted for relative (static) paths.
  */
 export function Image({
   src,
@@ -57,6 +62,23 @@ export function Image({
     );
   }
 
+  const hasWebpVariants = !/^https?:\/\//.test(src);
+
+  const img = (
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={priority ? "eager" : "lazy"}
+      decoding={priority ? "sync" : "async"}
+      onError={() => setFailed(true)}
+      className={className}
+    />
+  );
+
+  if (!hasWebpVariants) return img;
+
   const base = stripExtension(src);
   const webpSrcSet = widths.map((w) => `${base}-${w}.webp ${w}w`).join(", ");
 
@@ -73,16 +95,7 @@ export function Image({
     // source-selection, which reads srcSet/type/media regardless of CSS.
     <picture className="contents">
       <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} className="hidden" />
-      <img
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        loading={priority ? "eager" : "lazy"}
-        decoding={priority ? "sync" : "async"}
-        onError={() => setFailed(true)}
-        className={className}
-      />
+      {img}
     </picture>
   );
 }

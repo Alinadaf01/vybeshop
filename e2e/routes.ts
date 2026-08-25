@@ -8,7 +8,7 @@ export const pagesToCheck = [
   { path: "/categories", label: "/categories" },
   { path: "/catalog", label: "/catalog" },
   { path: "/blog", label: "/blog" },
-  { path: "/blog/why-minimal-design-matters", label: "/blog/:slug" },
+  { path: "/blog/blog-1", label: "/blog/:slug" },
   { path: "/about", label: "/about" },
   { path: "/contact", label: "/contact" },
   { path: "/auth", label: "/auth" },

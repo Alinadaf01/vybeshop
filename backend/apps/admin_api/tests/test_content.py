@@ -86,6 +86,30 @@ class AdminBlogApiTests(AdminApiTestMixin, APITestCase):
         post = BlogPost.objects.get(slug="post-with-cover")
         self.assertTrue(post.cover_image)
 
+    def test_publishing_without_a_date_sets_published_at_to_now(self):
+        # Regression: the panel only exposes an is_published switch, no date
+        # picker — leaving published_at null crashed the storefront's blog
+        # post page (Jalali date conversion throws on a null date) the
+        # moment anyone visited it (BLOG-SEED-TASK.md §5 verification).
+        response = self.client.post(
+            reverse("admin-blog-list"),
+            {"slug": "post-no-date", "title": "پست بدون تاریخ", "excerpt": "خلاصه", "category": "محصول", "author": "تیم VYBE", "isPublished": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        post = BlogPost.objects.get(slug="post-no-date")
+        self.assertIsNotNone(post.published_at)
+
+    def test_unpublished_post_still_has_no_default_date(self):
+        response = self.client.post(
+            reverse("admin-blog-list"),
+            {"slug": "post-draft", "title": "پیش‌نویس", "excerpt": "خلاصه", "category": "محصول", "author": "تیم VYBE", "isPublished": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        post = BlogPost.objects.get(slug="post-draft")
+        self.assertIsNone(post.published_at)
+
     def test_resolved_cover_url_falls_back_to_external(self):
         post = BlogPost.objects.create(
             slug="post-external", title="پست خارجی", excerpt="خلاصه", category="محصول",
