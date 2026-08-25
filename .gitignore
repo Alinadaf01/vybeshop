@@ -48,3 +48,12 @@ backend/db.sqlite3
 
 # deploy (§8) — SSL certs and any local override of the prod compose file
 certbot/
+
+# deploy/setup.sh stages 5 & 7 — real database dumps, media tarballs, and
+# backups are data, never repo content. The directories themselves stay
+# tracked via .gitkeep.
+deploy/incoming/*
+!deploy/incoming/.gitkeep
+deploy/backups/*
+!deploy/backups/.gitkeep
+deploy/backup.log

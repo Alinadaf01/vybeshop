@@ -1,18 +1,25 @@
-# Production Compose (§8 deploy prep) — prepared, not executed, as part of
-# this task. See DEPLOY.md for the actual step-by-step deploy process.
+# Production Compose — Option B architecture (DEPLOY-TASK.md): the
+# storefront stays on Vercel and is never built or served from this host.
+# Only the admin panel's static build is served here (bind-mounted below,
+# alongside Django itself).
 #
-# Frontend builds (storefront, admin) are NOT containerized here — they're
-# static output (`npm run build` -> dist/) that Nginx serves directly from a
-# bind mount, built on the host or in CI before `docker compose up`. Only
-# the backend needs a real runtime container.
-#
-# Always invoke with `--env-file .env.production` (DEPLOY.md's commands all
-# do). `env_file:` below only injects vars into the container's own
-# runtime — it does NOT feed the `${POSTGRES_PASSWORD}`-style substitution
-# used directly in this YAML file, which Compose only reads from the shell
-# environment or a file passed via --env-file (confirmed with
+# Always invoke with `--env-file .env.production` (deploy/setup.sh and
+# DEPLOY.md's commands all do). `env_file:` below only injects vars into the
+# container's own runtime — it does NOT feed the `${POSTGRES_PASSWORD}`-style
+# substitution used directly in this YAML file, which Compose only reads
+# from the shell environment or a file passed via --env-file (confirmed with
 # `docker compose config` — omitting the flag fails with "required variable
 # POSTGRES_PASSWORD is missing a value" even though .env.production exists).
+#
+# pgdata and media are NAMED volumes (not Compose's default anonymous
+# project-scoped ones) deliberately — DEPLOY-TASK.md §3.5: an anonymous
+# volume gets deleted by an errant `docker compose down -v`, along with
+# every order and uploaded image the owner has ever entered. Naming them
+# doesn't prevent `-v` from deleting them, but it does make the volume
+# visible and identifiable in `docker volume ls` instead of a random hash,
+# which is the difference between "wait, that's the real database" and
+# silently wiping it. NEVER run `docker compose down -v` on this file in
+# production — see deploy/RUNBOOK.md.
 services:
   db:
     image: postgres:16-alpine
@@ -61,7 +68,7 @@ services:
              python manage.py collectstatic --noinput &&
              gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 60"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/site-settings/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/settings/"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -101,7 +108,6 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./dist:/var/www/storefront:ro
       - ./admin/dist:/var/www/admin:ro
       - static:/var/www/static:ro
       - media:/var/www/media:ro
@@ -112,6 +118,10 @@ services:
 
 volumes:
   pgdata:
+    name: vybe_pgdata
   redisdata:
+    name: vybe_redisdata
   static:
+    name: vybe_static
   media:
+    name: vybe_media

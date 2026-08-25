@@ -1,5 +1,7 @@
 # راهنمای دیپلوی — VYBE
 
+> ⚠️ **این سند پیش از تصمیم معماری Option B نوشته شده و دستورات دستی‌اش فرض می‌کند فروشگاه هم روی همین سرور سرو می‌شود.** طبق `DEPLOY-TASK.md`، فروشگاه روی Vercel می‌ماند و فقط `api.vybeshop.ir` و `admin.vybeshop.ir` به این سرور می‌آیند — `nginx/nginx.conf`، `docker-compose.prod.yml` و `.env.production.example` قبلاً مطابق همین معماری به‌روز شده‌اند. برای اجرای واقعی از **`deploy/RUNBOOK.md`** و `deploy/setup.sh` استفاده کن، نه دستورات دستی زیر — این‌ها فقط برای زمینه/پس‌زمینه نگه داشته شده‌اند.
+
 این سند مراحل واقعی انتشار سایت روی سرور را قدم‌به‌قدم توضیح می‌دهد. تا اینجا فقط فایل‌های لازم (Dockerfile، docker-compose.prod.yml، nginx.conf، `.env.production.example`) آماده شده‌اند — **این مراحل هنوز اجرا نشده‌اند.**
 
 پیش‌نیاز: یک سرور (VPS) با Docker و Docker Compose نصب‌شده، و دامنه‌ای که رکورد A آن به IP سرور اشاره کند (برای `vybeshop.ir`، `www.vybeshop.ir` و `admin.vybeshop.ir`).
