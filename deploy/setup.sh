@@ -659,7 +659,14 @@ stage_6() {
 
     summary
     echo "وضعیت گواهی:"
-    docker run --rm -v "$PROJECT_DIR/certbot/conf:/etc/letsencrypt:ro" certbot/certbot certificates 2>/dev/null | grep -A2 "Certificate Name" || echo "پیدا نشد"
+    # `certificates` always wants to write its lock file directly inside
+    # --config-dir, no matter what --work-dir/--logs-dir are set to -- so
+    # a :ro mount can never satisfy it (confirmed live). Not mounting :ro
+    # here is fine: this is an ephemeral --rm container that only reports
+    # status, same trust level as every other certbot/certbot invocation
+    # in this script.
+    docker run --rm -v "$PROJECT_DIR/certbot/conf:/etc/letsencrypt" certbot/certbot \
+        certificates 2>/dev/null | grep -A2 "Certificate Name" || echo "پیدا نشد"
     echo "تست HTTPS api: $(curl -sf "https://${DOMAIN_API}/api/settings/" -o /dev/null && echo پاس || echo 'رد شد — دستی چک کن')"
     echo "تست HTTPS admin: $(curl -sf "https://${DOMAIN_ADMIN}/" -o /dev/null && echo پاس || echo 'رد شد — دستی چک کن')"
     echo "cron تمدید: نصب شد (crontab -l برای دیدن)"
