@@ -3,6 +3,12 @@
 # Only the admin panel's static build is served here (bind-mounted below,
 # alongside Django itself).
 #
+# web/celery-worker/celery-beat PULL a prebuilt image (BACKEND_IMAGE_TAG)
+# instead of building locally — this VPS can't build backend/Dockerfile
+# itself (Chromium geoblocked from Iranian IPs at cdn.playwright.dev; see
+# deploy/STAGE4-FIX-TASK.md). .github/workflows/build-backend-image.yml
+# builds and pushes it to GHCR on every push to backend/**.
+#
 # Always invoke with `--env-file .env.production` (deploy/setup.sh and
 # DEPLOY.md's commands all do). `env_file:` below only injects vars into the
 # container's own runtime — it does NOT feed the `${POSTGRES_PASSWORD}`-style
@@ -48,8 +54,7 @@ services:
       retries: 10
 
   web:
-    build:
-      context: ./backend
+    image: ghcr.io/alinadaf01/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file: .env.production
     volumes:
@@ -75,8 +80,7 @@ services:
       start_period: 30s
 
   celery-worker:
-    build:
-      context: ./backend
+    image: ghcr.io/alinadaf01/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file: .env.production
     volumes:
@@ -89,8 +93,7 @@ services:
     command: celery -A config worker --loglevel=info --concurrency=2
 
   celery-beat:
-    build:
-      context: ./backend
+    image: ghcr.io/alinadaf01/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file: .env.production
     depends_on:

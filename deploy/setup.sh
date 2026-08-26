@@ -153,8 +153,21 @@ stage_1() {
     ufw allow 80/tcp comment "HTTP" || true
     ufw allow 443/tcp comment "HTTPS" || true
     log "پورت‌های ۲۲/۸۰/۴۴۳ مجاز شدند. پورت‌های Postgres (۵۴۳۲) و Redis (۶۳۷۹) هرگز باز نمی‌شوند — فقط داخل شبکه داکلر در دسترس‌اند."
+
+    # ufw's default FORWARD chain policy is DROP — irrelevant until Docker
+    # exists (stage 2), but Docker routes every container's outbound traffic
+    # through FORWARD, not OUTPUT (that's only for the host's own traffic).
+    # With DROP still in place, `curl` on the host works fine while every
+    # download *inside* a build (e.g. Playwright fetching Chromium) silently
+    # times out — a two-hour rabbit hole the first time this was hit
+    # (deploy/STAGE4-FIX-TASK.md). Fixing it here, before Docker is even
+    # installed, means a fresh server never re-learns this the hard way.
+    sed -i 's/^DEFAULT_FORWARD_POLICY=.*/DEFAULT_FORWARD_POLICY="ACCEPT"/' /etc/default/ufw
+    ok "ufw FORWARD policy روی ACCEPT تنظیم شد (برای ترافیک خروجی کانتینرهای داکر)."
+
     if ufw status | grep -q "Status: active"; then
-        log "ufw از قبل فعال است."
+        log "ufw از قبل فعال است — reload تا FORWARD policy جدید اعمال شود..."
+        ufw reload
     else
         confirm "فایروال الان فعال می‌شود (فقط ۲۲/۸۰/۴۴۳ باز می‌ماند). اگر همین الان با SSH وصلی و پورت ۲۲ باز است، امن است. ادامه می‌دهی؟"
         ufw --force enable
@@ -294,7 +307,15 @@ stage_4() {
     require_deploy_user
     require_project_dir
     require_env_file
-    announce "مرحله ۴: بیلد پنل ادمین و بالا آوردن سرویس‌ها (Postgres, Redis, Django, Celery, Nginx)"
+    announce "مرحله ۴: بیلد پنل ادمین، pull ایمیج بک‌اند از GHCR، و بالا آوردن سرویس‌ها"
+
+    if ! command -v node &>/dev/null || ! command -v npm &>/dev/null; then
+        err "Node.js/npm روی این سرور نصب نیست — بیلد پنل ادمین به آن نیاز دارد."
+        err "نصب کن (Node 22 LTS از NodeSource) و دوباره همین مرحله را اجرا کن:"
+        err "  curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -"
+        err "  sudo apt-get install -y nodejs"
+        exit 1
+    fi
 
     log "بیلد پنل ادمین..."
     (
@@ -304,8 +325,27 @@ stage_4() {
     )
     ok "admin/dist ساخته شد."
 
+    # backend/web, celery-worker, celery-beat are NOT built on this server —
+    # `playwright install --with-deps chromium` inside backend/Dockerfile
+    # downloads Chromium from cdn.playwright.dev, which geoblocks Iranian
+    # IPs with a 403 (confirmed deliberate, not a local network/firewall
+    # issue — see deploy/STAGE4-FIX-TASK.md). The image is built on GitHub
+    # Actions instead (.github/workflows/build-backend-image.yml) and pushed
+    # to GHCR; this server only ever pulls it.
+    set -a; source "$ENV_FILE"; set +a
+    if [[ -z "${GHCR_TOKEN:-}" ]] || [[ -z "${GHCR_USER:-}" ]]; then
+        err "GHCR_TOKEN و GHCR_USER در .env.production خالی‌اند — بدون این‌ها نمی‌شود ایمیج خصوصی را از GHCR کشید."
+        err "یک GitHub Personal Access Token با scope فقط read:packages بساز و در .env.production بگذار."
+        exit 1
+    fi
+    log "ورود به ghcr.io..."
+    echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+    log "کشیدن ایمیج بک‌اند (تگ: ${BACKEND_IMAGE_TAG:-latest})..."
+    dc pull
+
     log "بالا آوردن سرویس‌ها..."
-    dc up -d --build --remove-orphans
+    dc up -d --remove-orphans
 
     log "منتظر سالم شدن سرویس‌ها (تا ۹۰ ثانیه)..."
     for i in $(seq 1 18); do
@@ -317,6 +357,7 @@ stage_4() {
     dc ps
 
     summary
+    echo "منبع ایمیج بک‌اند: $(docker inspect --format '{{.Config.Image}}' "$(dc ps -q web)" 2>/dev/null || echo 'نامشخص') (باید ghcr.io/... باشد، نه یک بیلد محلی)"
     dc ps
     echo
     echo "لاگ آخر web (اگر خطا هست همین‌جا دیده می‌شود):"

@@ -37,7 +37,7 @@ chmod +x /root/setup.sh
 /root/setup.sh 1
 ```
 
-**چه می‌بینی اگر درست بود:** خلاصه پایانی کاربر `deploy` را نشان می‌دهد، `ufw` را «active» نشان می‌دهد با فقط ۲۲/۸۰/۴۴۳، `fail2ban: active`، `timezone: Asia/Tehran`، و حداقل یک دستگاه سواپ فعال.
+**چه می‌بینی اگر درست بود:** خط «ufw FORWARD policy روی ACCEPT تنظیم شد» را می‌بینی (بدون این، بعداً در مرحله ۴ هر دانلودی داخل کانتینر داکر — نه فقط بیلد ایمیج — بی‌صدا timeout می‌خورد؛ جزئیات در `deploy/STAGE4-FIX-TASK.md`)، خلاصه پایانی کاربر `deploy` را نشان می‌دهد، `ufw` را «active» نشان می‌دهد با فقط ۲۲/۸۰/۴۴۳، `fail2ban: active`، `timezone: Asia/Tehran`، و حداقل یک دستگاه سواپ فعال.
 
 **بعدش چیکار کن:** از سشن خارج شو (`exit`) و دوباره وارد شو، این‌بار به‌عنوان `deploy`:
 
@@ -84,13 +84,58 @@ cd /opt/vybeshop
 
 ---
 
-## مرحله ۴ — بیلد و بالا آوردن سرویس‌ها
+## مرحله ۴ — بیلد پنل ادمین، pull ایمیج بک‌اند، بالا آوردن سرویس‌ها
+
+> ⚠️ **این مرحله بازنویسی شد** (`deploy/STAGE4-FIX-TASK.md`). سرور دیگر ایمیج بک‌اند را خودش نمی‌سازد — `playwright install --with-deps chromium` داخل `backend/Dockerfile` از `cdn.playwright.dev` دانلود می‌کند و آن سرویس IP ایران را ۴۰۳ می‌دهد (جیوبلاک عمدی، نه فایروال). به‌جایش، GitHub Actions ایمیج را می‌سازد و به GHCR پوش می‌کند؛ سرور فقط pull می‌کند.
+
+### پیش‌نیاز یک‌باره: توکن GHCR
+
+اگر قبلاً نساخته‌ای، یک GitHub Personal Access Token بساز:
+
+۱. در گیت‌هاب: Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token
+۲. فقط اسکوپ `read:packages` را تیک بزن — هیچ اسکوپ نوشتنی لازم نیست
+۳. توکن را کپی کن (فقط یک‌بار نشان داده می‌شود)
+
+بعد در سرور، داخل `/opt/vybeshop/.env.production` این دو خط را پر کن:
+
+```
+GHCR_TOKEN=<توکنی که ساختی>
+GHCR_USER=<یوزرنیم گیت‌هابت>
+```
+
+### اجرا
 
 ```bash
 ./deploy/setup.sh 4
 ```
 
-**چه می‌بینی اگر درست بود:** جدول `docker compose ps` پنج سرویس (`db`, `redis`, `web`, `celery-worker`, `celery-beat`, `nginx` — شش‌تا) را نشان می‌دهد، همه با وضعیت `Up` یا `Up (healthy)`. اگر `web` مدام ری‌استارت می‌شود (`Restarting`)، لاگ چاپ‌شده در انتهای همین مرحله را برایم بفرست.
+اگر Node.js روی سرور نصب نباشد (لازم برای بیلد پنل ادمین)، اسکریپت همین‌جا با یک پیام روشن متوقف می‌شود، نه با خطای مبهم — دستور نصب را که نشان می‌دهد اجرا کن و دوباره مرحله ۴ را بزن.
+
+**چه می‌بینی اگر درست بود:** جدول `docker compose ps` شش سرویس (`db`, `redis`, `web`, `celery-worker`, `celery-beat`, `nginx`) را نشان می‌دهد، همه با وضعیت `Up` یا `Up (healthy)`. خط «منبع ایمیج بک‌اند» باید با `ghcr.io/alinadaf01/vybeshop-backend` شروع شود — اگر خالی یا چیز دیگری بود، یعنی pull درست انجام نشده.
+
+اگر `web` مدام ری‌استارت می‌شود (`Restarting`)، لاگ چاپ‌شده در انتهای همین مرحله را برایم بفرست.
+
+---
+
+## بعد از این، آپدیت کد چطور به سرور می‌رسد؟
+
+جریان کار قبلی (تغییر بده، `git pull`، `docker compose up -d --build`) دیگر کار نمی‌کند — سرور نمی‌تواند بک‌اند را بسازد. از این به بعد:
+
+```
+۱. کامیت و push به GitHub (از دستگاه خودت)
+۲. صبر کن تا GitHub Actions ایمیج جدید را بسازد و به GHCR پوش کند
+   (در گیت‌هاب: تب Actions → workflow «Build Backend Image» → سبز شود)
+۳. روی سرور: اگر می‌خواهی نسخه مشخصی را نصب کنی (نه صرفاً latest)،
+   BACKEND_IMAGE_TAG را در .env.production روی همان تگ sha-... بگذار
+۴. cd /opt/vybeshop && docker compose --env-file .env.production \
+     -f docker-compose.prod.yml pull web celery-worker celery-beat
+۵. docker compose --env-file .env.production -f docker-compose.prod.yml \
+     up -d web celery-worker celery-beat
+```
+
+این فقط برای تغییرات **بک‌اند** (پوشه `backend/`) است. تغییرات پنل ادمین (`admin/`) هنوز مثل قبل روی خود سرور بیلد می‌شوند (`npm run build` — همان چیزی که مرحله ۴ اجرا کرد)، چون پنل ادمین به Chromium نیازی ندارد و روی سرور بیلد شدنش مشکلی ایجاد نمی‌کند.
+
+**بازگشت به نسخه قبل (rollback):** اگر نسخه جدید مشکل داشت، کافی است `BACKEND_IMAGE_TAG` را در `.env.production` به تگ `sha-...` نسخه قبلی برگردانی و مراحل ۴-۵ بالا را دوباره بزنی — نیازی به بیلد دوباره نیست، ایمیج قبلی همان‌جا در GHCR مانده.
 
 ---
 

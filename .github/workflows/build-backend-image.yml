@@ -1,0 +1,60 @@
+name: Build Backend Image
+
+# Builds backend/Dockerfile and pushes to GHCR. This exists because the
+# Iranian VPS running production can't build this image itself:
+# `playwright install --with-deps chromium` inside it downloads from
+# cdn.playwright.dev, which geoblocks Iranian IPs with a 403 (Azure Front
+# Door, confirmed deliberate — see deploy/STAGE4-FIX-TASK.md). GitHub's own
+# runners aren't geoblocked, so the build happens here instead; the server
+# only ever pulls the finished image (deploy/setup.sh stage 4).
+#
+# One image serves all three backend services (web, celery-worker,
+# celery-beat) — they're the same Dockerfile with different `command:`
+# overrides in docker-compose.prod.yml, so building it three times would
+# just triple the ~2GB Chromium payload for no reason.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+  workflow_dispatch:
+
+env:
+  IMAGE: ghcr.io/alinadaf01/vybeshop-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required to push to GHCR with the default GITHUB_TOKEN — no extra
+      # secret to create or rotate.
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute short SHA tag
+        id: vars
+        run: echo "sha_tag=sha-$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+
+      # Two tags on every build: `latest` for convenience, and the immutable
+      # sha-<7-char> one the server actually pins to in .env.production
+      # (BACKEND_IMAGE_TAG) — rollback is then "change one variable and
+      # `dc up -d`", not "hope `latest` still points at something that works".
+      - uses: docker/build-push-action@v5
+        with:
+          context: backend
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ steps.vars.outputs.sha_tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
