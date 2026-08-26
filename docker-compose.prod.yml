@@ -7,7 +7,9 @@
 # instead of building locally — this VPS can't build backend/Dockerfile
 # itself (Chromium geoblocked from Iranian IPs at cdn.playwright.dev; see
 # deploy/STAGE4-FIX-TASK.md). .github/workflows/build-backend-image.yml
-# builds and pushes it to GHCR on every push to backend/**.
+# builds and pushes it to Docker Hub on every push to backend/** (GHCR was
+# tried first but proved unreachable from this server — consistent TLS
+# handshake timeouts — while Docker Hub works reliably).
 #
 # Always invoke with `--env-file .env.production` (deploy/setup.sh and
 # DEPLOY.md's commands all do). `env_file:` below only injects vars into the
@@ -54,7 +56,7 @@ services:
       retries: 10
 
   web:
-    image: ghcr.io/alinadaf01/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
+    image: ${DOCKERHUB_USER}/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file: .env.production
     volumes:
@@ -80,7 +82,7 @@ services:
       start_period: 30s
 
   celery-worker:
-    image: ghcr.io/alinadaf01/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
+    image: ${DOCKERHUB_USER}/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file: .env.production
     volumes:
@@ -93,7 +95,7 @@ services:
     command: celery -A config worker --loglevel=info --concurrency=2
 
   celery-beat:
-    image: ghcr.io/alinadaf01/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
+    image: ${DOCKERHUB_USER}/vybeshop-backend:${BACKEND_IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file: .env.production
     depends_on:

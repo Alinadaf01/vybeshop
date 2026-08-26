@@ -1,5 +1,5 @@
 # Production image. Built by .github/workflows/build-backend-image.yml and
-# pushed to ghcr.io/alinadaf01/vybeshop-backend — the Iranian VPS only pulls
+# pushed to Docker Hub (<user>/vybeshop-backend) — the Iranian VPS only pulls
 # it (deploy/setup.sh stage 4), never builds it. Reason: `playwright install
 # --with-deps chromium` below downloads Chromium from cdn.playwright.dev,
 # which geoblocks Iranian IPs with a 403 (Azure Front Door, confirmed

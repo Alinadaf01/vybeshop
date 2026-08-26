@@ -343,7 +343,7 @@ stage_4() {
     require_deploy_user
     require_project_dir
     require_env_file
-    announce "مرحله ۴: بیلد پنل ادمین، pull ایمیج بک‌اند از GHCR، و بالا آوردن سرویس‌ها"
+    announce "مرحله ۴: بیلد پنل ادمین، pull ایمیج بک‌اند از Docker Hub، و بالا آوردن سرویس‌ها"
 
     if ! command -v node &>/dev/null || ! command -v npm &>/dev/null; then
         err "Node.js/npm روی این سرور نصب نیست — بیلد پنل ادمین به آن نیاز دارد."
@@ -367,41 +367,43 @@ stage_4() {
     # IPs with a 403 (confirmed deliberate, not a local network/firewall
     # issue — see deploy/STAGE4-FIX-TASK.md). The image is built on GitHub
     # Actions instead (.github/workflows/build-backend-image.yml) and pushed
-    # to GHCR; this server only ever pulls it.
+    # to Docker Hub; this server only ever pulls it. (GHCR was tried first —
+    # behind Fastly, it was consistently unreachable from here with TLS
+    # handshake timeouts, even with retries. Docker Hub works reliably.)
     set -a; source "$ENV_FILE"; set +a
-    if [[ -z "${GHCR_TOKEN:-}" ]] || [[ -z "${GHCR_USER:-}" ]]; then
-        err "GHCR_TOKEN و GHCR_USER در .env.production خالی‌اند — بدون این‌ها نمی‌شود ایمیج خصوصی را از GHCR کشید."
-        err "یک GitHub Personal Access Token با scope فقط read:packages بساز و در .env.production بگذار."
+    if [[ -z "${DOCKERHUB_TOKEN:-}" ]] || [[ -z "${DOCKERHUB_USER:-}" ]]; then
+        err "DOCKERHUB_TOKEN و DOCKERHUB_USER در .env.production خالی‌اند — بدون این‌ها نمی‌شود ایمیج خصوصی را از Docker Hub کشید."
+        err "یک Docker Hub Access Token با دسترسی فقط read-only بساز و در .env.production بگذار."
         exit 1
     fi
-    # The link from this server to ghcr.io (behind Fastly) has been observed
-    # to be slow/unstable rather than blocked — plain TLS handshakes to it
-    # sometimes take 7-11s when github.com itself is sub-second. Retrying
-    # with backoff turns "occasionally times out" into "occasionally slow",
-    # which is the actual situation. Login and pull are retried SEPARATELY
-    # — login can succeed on attempt 1 while the pull that follows times out
-    # on attempt 3, and conflating them would restart from the wrong step.
+    # The link from this server to a registry has been observed to be
+    # slow/unstable rather than blocked — plain TLS handshakes sometimes
+    # take 7-11s when github.com itself is sub-second. Retrying with backoff
+    # turns "occasionally times out" into "occasionally slow", which is the
+    # actual situation. Login and pull are retried SEPARATELY — login can
+    # succeed on attempt 1 while the pull that follows times out on attempt
+    # 3, and conflating them would restart from the wrong step.
     local retry_delays=(10 20 30 45)
 
-    log "ورود به ghcr.io (تا ۵ تلاش — لینک ایران به GHCR گاهی کند/ناپایدار است، نه بلاک‌شده)..."
+    log "ورود به Docker Hub (تا ۵ تلاش — لینک ایران به رجیستری‌ها گاهی کند/ناپایدار است، نه بلاک‌شده)..."
     local login_ok=0
     for attempt in 1 2 3 4 5; do
-        if echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin; then
+        if echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin; then
             login_ok=1
             break
         fi
         if [[ $attempt -lt 5 ]]; then
             local delay="${retry_delays[$((attempt - 1))]}"
-            warn "ورود به ghcr.io — تلاش $attempt از ۵ شکست خورد (شبکه کند/ناپایدار، نه لزوماً خطای واقعی). ${delay} ثانیه صبر و تلاش دوباره — این یعنی در حال تلاش است، هنگ نکرده."
+            warn "ورود به Docker Hub — تلاش $attempt از ۵ شکست خورد (شبکه کند/ناپایدار، نه لزوماً خطای واقعی). ${delay} ثانیه صبر و تلاش دوباره — این یعنی در حال تلاش است، هنگ نکرده."
             sleep "$delay"
         fi
     done
     if [[ $login_ok -ne 1 ]]; then
-        err "بعد از ۵ تلاش، ورود به ghcr.io موفق نشد."
-        err "شبکه به GHCR ناپایدار است — چند دقیقه بعد دوباره ./setup.sh 4 را بزنید."
+        err "بعد از ۵ تلاش، ورود به Docker Hub موفق نشد."
+        err "شبکه به Docker Hub ناپایدار است — چند دقیقه بعد دوباره ./setup.sh 4 را بزنید."
         exit 1
     fi
-    ok "ورود به ghcr.io موفق بود."
+    ok "ورود به Docker Hub موفق بود."
 
     log "کشیدن ایمیج بک‌اند (تگ: ${BACKEND_IMAGE_TAG:-latest}) — تا ۵ تلاش..."
     local pull_ok=0
@@ -417,8 +419,8 @@ stage_4() {
         fi
     done
     if [[ $pull_ok -ne 1 ]]; then
-        err "بعد از ۵ تلاش، کشیدن ایمیج از GHCR موفق نشد."
-        err "شبکه به GHCR ناپایدار است — چند دقیقه بعد دوباره ./setup.sh 4 را بزنید."
+        err "بعد از ۵ تلاش، کشیدن ایمیج از Docker Hub موفق نشد."
+        err "شبکه به Docker Hub ناپایدار است — چند دقیقه بعد دوباره ./setup.sh 4 را بزنید."
         exit 1
     fi
     ok "ایمیج کشیده شد."
@@ -436,7 +438,7 @@ stage_4() {
     dc ps
 
     summary
-    echo "منبع ایمیج بک‌اند: $(docker inspect --format '{{.Config.Image}}' "$(dc ps -q web)" 2>/dev/null || echo 'نامشخص') (باید ghcr.io/... باشد، نه یک بیلد محلی)"
+    echo "منبع ایمیج بک‌اند: $(docker inspect --format '{{.Config.Image}}' "$(dc ps -q web)" 2>/dev/null || echo 'نامشخص') (باید ${DOCKERHUB_USER:-<کاربر>}/vybeshop-backend باشد، نه یک بیلد محلی)"
     dc ps
     echo
     echo "لاگ آخر web (اگر خطا هست همین‌جا دیده می‌شود):"
