@@ -425,8 +425,23 @@ stage_4() {
     fi
     ok "ایمیج کشیده شد."
 
-    log "بالا آوردن سرویس‌ها..."
-    dc up -d --remove-orphans
+    # nginx is deliberately NOT started here. nginx.conf requires SSL certs
+    # under /etc/letsencrypt/live/${DOMAIN_API}/ that don't exist until
+    # stage 6 runs (which handles the cert chicken-and-egg problem itself,
+    # by temporarily swapping in nginx.bootstrap.conf before ever starting
+    # nginx for the first time). Starting nginx here would just crash-loop
+    # it until stage 6 fixes the config -- confirmed live.
+    log "بالا آوردن سرویس‌ها (db, redis, web, celery-worker, celery-beat — nginx در مرحله ۶ بالا می‌آید)..."
+    dc up -d --remove-orphans db redis web celery-worker celery-beat
+
+    # A brand-new named volume has no pre-existing content in the image to
+    # copy ownership from on first mount, so Docker creates the mountpoint
+    # as root -- but web/celery run as the non-root `vybe` user (Dockerfile),
+    # so collectstatic/media writes fail with PermissionError until this
+    # runs. A no-op on every run after the first (chown is idempotent).
+    log "تنظیم مالکیت volume های static/media برای کاربر غیر-root ایمیج (uid 1000)..."
+    docker run --rm -v vybe_static:/static -v vybe_media:/media alpine chown -R 1000:1000 /static /media
+    dc restart web >/dev/null
 
     log "منتظر سالم شدن سرویس‌ها (تا ۹۰ ثانیه)..."
     for i in $(seq 1 18); do
@@ -443,6 +458,8 @@ stage_4() {
     echo
     echo "لاگ آخر web (اگر خطا هست همین‌جا دیده می‌شود):"
     dc logs --tail=20 web
+    echo
+    echo "توجه: nginx عمداً بالا نیامد — گواهی SSL هنوز نیست. مرحله ۶ آن را بالا می‌آورد."
 }
 
 # ---------------------------------------------------------------------------

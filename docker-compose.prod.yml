@@ -74,8 +74,15 @@ services:
       sh -c "python manage.py migrate --noinput &&
              python manage.py collectstatic --noinput &&
              gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 60"
+    # Must send a Host header ALLOWED_HOSTS accepts -- curl's default
+    # "Host: localhost" isn't in ALLOWED_HOSTS, so Django returns 400 and
+    # the healthcheck fails forever even though the app is fine (confirmed
+    # live: identical request with -H "Host: api.vybeshop.ir" gets a normal
+    # response; without it, every attempt 400s). Hardcoded rather than
+    # ${DOMAIN_API} since that variable only exists inside setup.sh, not
+    # in .env.production -- Compose would substitute it as empty.
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/settings/"]
+      test: ["CMD", "curl", "-f", "-H", "Host: api.vybeshop.ir", "http://localhost:8000/api/settings/"]
       interval: 15s
       timeout: 5s
       retries: 5
