@@ -45,12 +45,16 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # The image contains the full project source, not just a build
-      # artifact — it must never be public. `docker push` auto-creates a
-      # missing Docker Hub repo, but a free account's default visibility for
-      # auto-created repos isn't guaranteed private, so this creates it
-      # explicitly (as private) before the first push ever happens. A no-op
-      # on every push after the first.
-      - name: Ensure Docker Hub repo exists and is private
+      # artifact — it must never be public. Docker Hub Access Tokens are
+      # scoped to the Registry API (login/push/pull) only; the Hub's web API
+      # that creates/configures repositories (hub.docker.com/v2/repositories/)
+      # rejects PAT-authenticated requests with 403 "insufficient scope" no
+      # matter what permission level the token has — confirmed by testing.
+      # So this can't auto-create the repo; it only verifies a private repo
+      # already exists, and fails loudly (instead of silently letting `docker
+      # push` auto-create it, which for a fresh repo may default to public)
+      # if it's missing or public.
+      - name: Verify Docker Hub repo exists and is private
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -59,26 +63,25 @@ jobs:
           TOKEN=$(jq -n --arg u "$DOCKERHUB_USERNAME" --arg p "$DOCKERHUB_TOKEN" '{username:$u,password:$p}' \
             | curl -sf -H "Content-Type: application/json" -X POST -d @- https://hub.docker.com/v2/users/login/ \
             | jq -r '.token')
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          HTTP_CODE=$(curl -s -o /tmp/repo-info.json -w "%{http_code}" \
             -H "Authorization: JWT $TOKEN" \
             "https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/vybeshop-backend/")
-          if [ "$STATUS" = "404" ]; then
-            echo "Repo doesn't exist yet — creating as private..."
-            BODY=$(jq -n --arg ns "$DOCKERHUB_USERNAME" '{namespace:$ns,name:"vybeshop-backend",is_private:true}')
-            HTTP_CODE=$(curl -s -o /tmp/create-repo-response.json -w "%{http_code}" -X POST \
-              -H "Authorization: JWT $TOKEN" -H "Content-Type: application/json" -d "$BODY" \
-              https://hub.docker.com/v2/repositories/)
-            echo "Create-repo response (HTTP $HTTP_CODE):"
-            cat /tmp/create-repo-response.json
-            echo
-            if [ "$HTTP_CODE" -ge 400 ]; then
-              echo "::error::Failed to create Docker Hub repo as private (HTTP $HTTP_CODE) — see response body above."
-              exit 1
-            fi
-            echo "Created as private."
-          else
-            echo "Repo already exists (HTTP $STATUS) — leaving its visibility as-is."
+          if [ "$HTTP_CODE" = "404" ]; then
+            echo "::error::Docker Hub repo '$DOCKERHUB_USERNAME/vybeshop-backend' doesn't exist yet."
+            echo "::error::Create it once manually (Docker Hub cannot be told to do this via an access token): https://hub.docker.com/repository/create -> name 'vybeshop-backend' -> Visibility: Private. Then re-run this workflow."
+            exit 1
           fi
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "Docker Hub repo lookup failed (HTTP $HTTP_CODE):"
+            cat /tmp/repo-info.json
+            exit 1
+          fi
+          IS_PRIVATE=$(jq -r '.is_private' /tmp/repo-info.json)
+          if [ "$IS_PRIVATE" != "true" ]; then
+            echo "::error::Docker Hub repo '$DOCKERHUB_USERNAME/vybeshop-backend' is PUBLIC. It contains the full project source and must be private. Fix its visibility in Docker Hub repo settings, then re-run."
+            exit 1
+          fi
+          echo "Repo exists and is private — proceeding."
 
       - name: Compute short SHA tag
         id: vars
