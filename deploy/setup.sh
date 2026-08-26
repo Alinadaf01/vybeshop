@@ -575,9 +575,19 @@ stage_6() {
     announce "مرحله ۶: گواهی SSL با Certbot برای $DOMAIN_API و $DOMAIN_ADMIN"
 
     mkdir -p "$PROJECT_DIR/certbot/conf" "$PROJECT_DIR/certbot/www"
-    local cert_path="$PROJECT_DIR/certbot/conf/live/${DOMAIN_API}/fullchain.pem"
+    local cert_path_in_volume="/etc/letsencrypt/live/${DOMAIN_API}/fullchain.pem"
 
-    if [[ -f "$cert_path" ]]; then
+    # Certbot creates certbot/conf/live and /archive as root-owned, mode
+    # 0700 (it protects private key material this way by design) -- but
+    # this whole script runs as the unprivileged `deploy` user, which
+    # can't even stat inside that directory. A host-side `[[ -f ... ]]`
+    # silently reads as "not found" on a permission-denied path, so this
+    # always took the "no cert yet" branch and hit certbot's interactive
+    # "renew anyway?" prompt with no stdin -- confirmed live, forever
+    # broken on every run after the first. Checking from inside a
+    # container (which mounts the volume with root's own view of it)
+    # sidesteps the host-permission mismatch entirely.
+    if docker run --rm -v "$PROJECT_DIR/certbot/conf:/etc/letsencrypt:ro" alpine test -f "$cert_path_in_volume"; then
         log "گواهی از قبل وجود دارد — تلاش برای تمدید (بی‌اثر اگر هنوز زود است)..."
         docker run --rm \
             -v "$PROJECT_DIR/certbot/conf:/etc/letsencrypt" \
@@ -648,7 +658,8 @@ stage_6() {
     ok "cron تمدید گواهی هفتگی (یکشنبه ساعت ۳ صبح) تنظیم شد."
 
     summary
-    echo "گواهی: $(openssl x509 -enddate -noout -in "$cert_path" 2>/dev/null || echo 'پیدا نشد')"
+    echo "وضعیت گواهی:"
+    docker run --rm -v "$PROJECT_DIR/certbot/conf:/etc/letsencrypt:ro" certbot/certbot certificates 2>/dev/null | grep -A2 "Certificate Name" || echo "پیدا نشد"
     echo "تست HTTPS api: $(curl -sf "https://${DOMAIN_API}/api/settings/" -o /dev/null && echo پاس || echo 'رد شد — دستی چک کن')"
     echo "تست HTTPS admin: $(curl -sf "https://${DOMAIN_ADMIN}/" -o /dev/null && echo پاس || echo 'رد شد — دستی چک کن')"
     echo "cron تمدید: نصب شد (crontab -l برای دیدن)"
