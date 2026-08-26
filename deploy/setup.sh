@@ -611,17 +611,25 @@ stage_6() {
         log "برگرداندن پیکربندی کامل Nginx (با بلوک‌های HTTPS)..."
         mv "$PROJECT_DIR/nginx/nginx.conf.bak" "$PROJECT_DIR/nginx/nginx.conf"
 
+        # `dc up -d` is a no-op here -- nginx is already running (started
+        # above for the ACME challenge) and Compose only recreates a
+        # container when the *service definition* changes, not when a
+        # bind-mounted file's content changes on disk. Without a real
+        # restart, nginx keeps serving the bootstrap config from memory
+        # indefinitely (confirmed live: port 443 refused connections and
+        # port 80 kept serving the bootstrap's placeholder response to
+        # every path, including scanner probes, until restarted).
         if [[ $certbot_status -ne 0 ]]; then
             err "گرفتن گواهی شکست خورد. DNS و پورت ۸۰ را بررسی کن و دوباره مرحله ۶ را اجرا کن."
-            dc up -d nginx || true
+            dc restart nginx || true
             exit 1
         fi
         ok "گواهی گرفته شد."
-        dc up -d nginx
+        dc restart nginx
     fi
 
     log "تست HTTPS..."
-    sleep 2
+    sleep 5
     if curl -sf "https://${DOMAIN_API}/api/settings/" -o /dev/null; then
         ok "https://${DOMAIN_API}/api/settings/ پاسخ ۲۰۰ داد."
     else
@@ -630,7 +638,13 @@ stage_6() {
 
     log "تنظیم تمدید خودکار (cron هفتگی)..."
     local renew_cron="0 3 * * 0 cd $PROJECT_DIR && docker run --rm -v $PROJECT_DIR/certbot/conf:/etc/letsencrypt -v $PROJECT_DIR/certbot/www:/var/www/certbot certbot/certbot renew --webroot -w /var/www/certbot -q && docker compose --env-file $ENV_FILE -f $COMPOSE_FILE restart nginx"
-    (crontab -l 2>/dev/null | grep -vF "certbot/certbot renew"; echo "$renew_cron") | crontab -
+    # `grep -v` exits 1 when nothing survives the filter -- the normal case
+    # on a fresh crontab with no prior entry -- which under set -e+pipefail
+    # aborted this whole line before `echo` ever ran, so the cron job was
+    # silently never installed (confirmed live: crontab -l came back empty
+    # after a "successful" stage 6 run). `|| true` makes "no prior entry"
+    # a non-error, same as it always was meant to be.
+    (crontab -l 2>/dev/null | grep -vF "certbot/certbot renew" || true; echo "$renew_cron") | crontab -
     ok "cron تمدید گواهی هفتگی (یکشنبه ساعت ۳ صبح) تنظیم شد."
 
     summary
@@ -682,7 +696,10 @@ stage_7() {
 
     log "تنظیم cron روزانه (۴ صبح به وقت تهران)..."
     local backup_cron="0 4 * * * $PROJECT_DIR/deploy/backup.sh >> $PROJECT_DIR/deploy/backup.log 2>&1"
-    (crontab -l 2>/dev/null | grep -vF "deploy/backup.sh"; echo "$backup_cron") | crontab -
+    # Same grep-exits-1-on-empty-input pitfall as stage 6's cron line (see
+    # comment there) -- `|| true` so a fresh crontab with no prior entry
+    # doesn't abort this line under set -e+pipefail before echo runs.
+    (crontab -l 2>/dev/null | grep -vF "deploy/backup.sh" || true; echo "$backup_cron") | crontab -
     ok "cron بک‌آپ روزانه تنظیم شد."
 
     if [[ -z "${BACKUP_S3_BUCKET:-}" ]]; then
