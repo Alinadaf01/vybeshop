@@ -47,10 +47,18 @@ fi
 # Retention: keep the 7 newest daily pairs, 4 newest weekly pairs.
 prune() {
     local pattern="$1" keep="$2"
+    # `ls` on a glob with zero matches exits 2 (and its stderr, though
+    # discarded here, would say "No such file or directory") -- under
+    # set -e+pipefail that failure propagates through the whole pipe and
+    # silently kills the script. This is the normal case on every run
+    # until enough backups pile up to actually need pruning (confirmed
+    # live: first-ever run had no weekly-*.dump.gz yet and aborted here).
+    # `|| true` on the whole pipe converts "nothing to prune" into a
+    # non-error, same as its intent always was.
     ls -t "$BACKUPS_DIR"/${pattern}.dump.gz 2>/dev/null | tail -n +$((keep + 1)) | while read -r old; do
         rm -f "$old" "${old%.dump.gz}-media.tar.gz"
         echo "حذف نسخه قدیمی: $old"
-    done
+    done || true
 }
 prune "daily-*" 7
 prune "weekly-*" 4
