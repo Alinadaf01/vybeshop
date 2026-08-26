@@ -18,8 +18,18 @@ from django.template.loader import render_to_string
 from django.utils.html import escape
 from playwright.sync_api import sync_playwright
 
-PUBLIC_FONTS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "public" / "fonts"
-BRAND_DIR = Path(__file__).resolve().parent.parent.parent.parent / "public" / "brand"
+
+# NOTE: these assets are duplicated from the repo-root public/ (the
+# storefront's own static assets) rather than referenced there directly.
+# The Docker build context for this backend is just backend/ (see
+# .github/workflows/build-backend-image.yml) since the storefront and
+# backend deploy completely independently (storefront on Vercel, backend
+# on the VPS) -- a path reaching outside backend/ can never resolve
+# inside the container. Confirmed live: this was never actually run
+# inside a real container until stage 8 verification, and every PDF
+# generation failed with FileNotFoundError.
+PUBLIC_FONTS_DIR = Path(__file__).resolve().parent.parent.parent / "public" / "fonts"
+BRAND_DIR = Path(__file__).resolve().parent.parent.parent / "public" / "brand"
 
 # The footer template renders in an isolated Playwright document that can't
 # inherit the page's <style> (see _footer_template below), so this one color
