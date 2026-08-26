@@ -133,7 +133,11 @@ DOCKERHUB_USER=<یوزرنیم داکرهابت>
      -f docker-compose.prod.yml pull web celery-worker celery-beat
 ۵. docker compose --env-file .env.production -f docker-compose.prod.yml \
      up -d web celery-worker celery-beat
+۶. docker compose --env-file .env.production -f docker-compose.prod.yml \
+     restart nginx
 ```
+
+⚠️ **مرحله ۶ (ری‌استارت nginx) را حذف نکن.** وقتی `web` recreate می‌شود، IP داخلی‌اش داخل شبکه Docker عوض می‌شود، ولی nginx فقط یک‌بار (موقع بالا آمدن خودش) آن IP را resolve و کش می‌کند — بدون ری‌استارت، nginx همچنان به IP قدیمی وصل می‌شود و همه‌چیز با ۵۰۲ Bad Gateway می‌شکند، با اینکه `web` خودش کاملاً healthy است. تأییدشده به‌صورت زنده: دقیقاً همین اتفاق افتاد وقتی فقط `web`/`celery-*` را آپدیت کردم و nginx را فراموش کردم.
 
 این فقط برای تغییرات **بک‌اند** (پوشه `backend/`) است. تغییرات پنل ادمین (`admin/`) هنوز مثل قبل روی خود سرور بیلد می‌شوند (`npm run build` — همان چیزی که مرحله ۴ اجرا کرد)، چون پنل ادمین به Chromium نیازی ندارد و روی سرور بیلد شدنش مشکلی ایجاد نمی‌کند.
 
