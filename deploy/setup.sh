@@ -233,6 +233,41 @@ stage_2() {
 
     sudo apt-get install -y -qq docker-compose-plugin 2>/dev/null || true
 
+    # The link from this server to registries (GHCR/Docker Hub) has been
+    # observed to be slow/unstable rather than blocked — TLS handshakes
+    # sometimes take 7-11s when they'd take <1s to github.com itself.
+    # Downloading every image layer in parallel (Docker's default) makes a
+    # marginal connection much more likely to hit a timeout on *one* of them
+    # and fail the whole pull. Capping to 1 is slower per-pull but far more
+    # likely to actually finish (see deploy/STAGE4-FIX-TASK.md's retry logic
+    # in stage 4, which exists for the same underlying reason).
+    log "تنظیم max-concurrent-downloads=1 در /etc/docker/daemon.json..."
+    sudo mkdir -p /etc/docker
+    local needs_restart
+    needs_restart=$(sudo python3 - <<'PYEOF'
+import json, pathlib
+path = pathlib.Path("/etc/docker/daemon.json")
+data = {}
+if path.exists() and path.stat().st_size > 0:
+    try:
+        data = json.loads(path.read_text())
+    except json.JSONDecodeError:
+        data = {}
+if data.get("max-concurrent-downloads") == 1:
+    print("no")
+else:
+    data["max-concurrent-downloads"] = 1
+    path.write_text(json.dumps(data, indent=2) + "\n")
+    print("yes")
+PYEOF
+)
+    if [[ "$needs_restart" == "yes" ]]; then
+        sudo systemctl restart docker
+        ok "max-concurrent-downloads=1 تنظیم شد و Docker ری‌استارت شد."
+    else
+        log "max-concurrent-downloads از قبل روی ۱ بود — رد شدن."
+    fi
+
     log "بررسی سلامت..."
     docker run --rm hello-world >/tmp/hello-world.log 2>&1 && ok "docker run سالم است." || {
         err "docker run hello-world شکست خورد. اگر خطای permission denied دیدی، از سشن خارج شو و دوباره وارد شو."
@@ -248,6 +283,7 @@ stage_2() {
     echo "docker: $(docker --version)"
     echo "docker compose: $(docker compose version --short 2>/dev/null || echo 'نامشخص')"
     echo "hello-world test: پاس"
+    echo "max-concurrent-downloads: $(grep -o '"max-concurrent-downloads": *[0-9]*' /etc/docker/daemon.json 2>/dev/null || echo 'تنظیم نشد')"
 }
 
 # ---------------------------------------------------------------------------
@@ -338,11 +374,54 @@ stage_4() {
         err "یک GitHub Personal Access Token با scope فقط read:packages بساز و در .env.production بگذار."
         exit 1
     fi
-    log "ورود به ghcr.io..."
-    echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+    # The link from this server to ghcr.io (behind Fastly) has been observed
+    # to be slow/unstable rather than blocked — plain TLS handshakes to it
+    # sometimes take 7-11s when github.com itself is sub-second. Retrying
+    # with backoff turns "occasionally times out" into "occasionally slow",
+    # which is the actual situation. Login and pull are retried SEPARATELY
+    # — login can succeed on attempt 1 while the pull that follows times out
+    # on attempt 3, and conflating them would restart from the wrong step.
+    local retry_delays=(10 20 30 45)
 
-    log "کشیدن ایمیج بک‌اند (تگ: ${BACKEND_IMAGE_TAG:-latest})..."
-    dc pull
+    log "ورود به ghcr.io (تا ۵ تلاش — لینک ایران به GHCR گاهی کند/ناپایدار است، نه بلاک‌شده)..."
+    local login_ok=0
+    for attempt in 1 2 3 4 5; do
+        if echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin; then
+            login_ok=1
+            break
+        fi
+        if [[ $attempt -lt 5 ]]; then
+            local delay="${retry_delays[$((attempt - 1))]}"
+            warn "ورود به ghcr.io — تلاش $attempt از ۵ شکست خورد (شبکه کند/ناپایدار، نه لزوماً خطای واقعی). ${delay} ثانیه صبر و تلاش دوباره — این یعنی در حال تلاش است، هنگ نکرده."
+            sleep "$delay"
+        fi
+    done
+    if [[ $login_ok -ne 1 ]]; then
+        err "بعد از ۵ تلاش، ورود به ghcr.io موفق نشد."
+        err "شبکه به GHCR ناپایدار است — چند دقیقه بعد دوباره ./setup.sh 4 را بزنید."
+        exit 1
+    fi
+    ok "ورود به ghcr.io موفق بود."
+
+    log "کشیدن ایمیج بک‌اند (تگ: ${BACKEND_IMAGE_TAG:-latest}) — تا ۵ تلاش..."
+    local pull_ok=0
+    for attempt in 1 2 3 4 5; do
+        if dc pull; then
+            pull_ok=1
+            break
+        fi
+        if [[ $attempt -lt 5 ]]; then
+            local delay="${retry_delays[$((attempt - 1))]}"
+            warn "کشیدن ایمیج — تلاش $attempt از ۵ شکست خورد (شبکه کند/ناپایدار، نه لزوماً خطای واقعی). ${delay} ثانیه صبر و تلاش دوباره — این یعنی در حال تلاش است، هنگ نکرده."
+            sleep "$delay"
+        fi
+    done
+    if [[ $pull_ok -ne 1 ]]; then
+        err "بعد از ۵ تلاش، کشیدن ایمیج از GHCR موفق نشد."
+        err "شبکه به GHCR ناپایدار است — چند دقیقه بعد دوباره ./setup.sh 4 را بزنید."
+        exit 1
+    fi
+    ok "ایمیج کشیده شد."
 
     log "بالا آوردن سرویس‌ها..."
     dc up -d --remove-orphans
