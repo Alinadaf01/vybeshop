@@ -720,15 +720,86 @@ stage_7() {
     (crontab -l 2>/dev/null | grep -vF "deploy/backup.sh" || true; echo "$backup_cron") | crontab -
     ok "cron بک‌آپ روزانه تنظیم شد."
 
+    local cloud_status="⚠️ تنظیم نشده — بک‌آپ فقط روی همین سرور است"
     if [[ -z "${BACKUP_S3_BUCKET:-}" ]]; then
         warn "BACKUP_S3_BUCKET در .env.production تنظیم نشده — بک‌آپ فقط محلی روی همین سرور ذخیره می‌شود، نه یک فضای جدا. طبق DEPLOY-TASK.md بخش د، این باید یک باکت Object Storage جدا باشد."
+    else
+        if ! command -v aws &>/dev/null; then
+            log "نصب aws CLI (لازم برای آپلود/دانلود از فضای ابری)..."
+            sudo apt-get install -y -qq awscli 2>/dev/null || true
+        fi
+        if ! command -v aws &>/dev/null; then
+            err "BACKUP_S3_BUCKET تنظیم شده ولی نصب aws CLI شکست خورد — بک‌آپ فقط محلی ماند."
+            cloud_status="⚠️ نصب aws CLI شکست خورد"
+        else
+            # backup.sh (already run above) uploads the dump+media it just
+            # made IF BACKUP_S3_BUCKET is set -- but "upload succeeded"
+            # only proves the bytes left this server, not that they
+            # arrived intact and are actually restorable. This downloads
+            # that exact same backup back FROM the bucket (a fresh copy,
+            # not the local file still sitting in deploy/backups/) and
+            # restores it into its own throwaway database, so a real
+            # network round-trip and the actual object in the bucket are
+            # what's being verified, not just the local original.
+            log "دانلود همان بک‌آپی که الان آپلود شد، از فضای ابری (نه فایل محلی) برای تست واقعی..."
+            local cloud_tmp="$BACKUPS_DIR/.cloud-verify-$$"
+            mkdir -p "$cloud_tmp"
+            local dump_name media_name
+            dump_name="$(basename "$latest_dump")"
+            media_name="${dump_name%.dump.gz}-media.tar.gz"
+
+            set +e
+            AWS_ACCESS_KEY_ID="${BACKUP_S3_ACCESS_KEY:-}" AWS_SECRET_ACCESS_KEY="${BACKUP_S3_SECRET_KEY:-}" \
+                aws s3 cp "s3://${BACKUP_S3_BUCKET}/${dump_name}" "$cloud_tmp/${dump_name}" \
+                --endpoint-url "${BACKUP_S3_ENDPOINT:-}" -q
+            local dl_dump_status=$?
+            AWS_ACCESS_KEY_ID="${BACKUP_S3_ACCESS_KEY:-}" AWS_SECRET_ACCESS_KEY="${BACKUP_S3_SECRET_KEY:-}" \
+                aws s3 cp "s3://${BACKUP_S3_BUCKET}/${media_name}" "$cloud_tmp/${media_name}" \
+                --endpoint-url "${BACKUP_S3_ENDPOINT:-}" -q
+            local dl_media_status=$?
+            set -e
+
+            if [[ $dl_dump_status -ne 0 ]] || [[ ! -f "$cloud_tmp/${dump_name}" ]]; then
+                err "دانلود دامپ از فضای ابری شکست خورد — یعنی آپلود واقعاً کار نکرده، حتی اگر پیام موفقیت دیده باشی."
+                cloud_status="⚠️ دانلود از فضای ابری شکست خورد — بک‌آپ ابری قابل‌اعتماد نیست"
+            elif [[ $dl_media_status -ne 0 ]] || [[ ! -f "$cloud_tmp/${media_name}" ]]; then
+                err "دانلود media از فضای ابری شکست خورد."
+                cloud_status="⚠️ دانلود media از فضای ابری شکست خورد"
+            else
+                log "بررسی سلامت media (باز کردن tar بدون استخراج واقعی)..."
+                if ! tar tzf "$cloud_tmp/${media_name}" >/dev/null 2>&1; then
+                    err "فایل media دانلودشده از فضای ابری خراب است (tar باز نمی‌شود)."
+                    cloud_status="⚠️ فایل media ابری خراب است"
+                else
+                    log "تست بازیابی واقعی از نسخه ابری — در یک دیتابیس موقت جدا..."
+                    dc exec -T db psql -U "${POSTGRES_USER:-vybeshop}" -c "DROP DATABASE IF EXISTS restore_test_cloud;" postgres
+                    dc exec -T db psql -U "${POSTGRES_USER:-vybeshop}" -c "CREATE DATABASE restore_test_cloud;" postgres
+                    set +e
+                    gunzip -c "$cloud_tmp/${dump_name}" | dc exec -T db pg_restore -U "${POSTGRES_USER:-vybeshop}" -d restore_test_cloud --no-owner --no-privileges
+                    local cloud_restore_status=$?
+                    set -e
+                    local cloud_table_count
+                    cloud_table_count="$(dc exec -T db psql -U "${POSTGRES_USER:-vybeshop}" -d restore_test_cloud -tAc "SELECT count(*) FROM information_schema.tables WHERE table_schema='public';")"
+                    dc exec -T db psql -U "${POSTGRES_USER:-vybeshop}" -c "DROP DATABASE restore_test_cloud;" postgres
+
+                    if [[ $cloud_restore_status -ne 0 ]] || [[ "${cloud_table_count//[[:space:]]/}" -lt 1 ]]; then
+                        err "بازیابی از نسخه ابری شکست خورد — بک‌آپ ابری قابل‌اعتماد نیست."
+                        cloud_status="⚠️ بازیابی از نسخه ابری شکست خورد"
+                    else
+                        ok "بازیابی از فضای ابری موفق بود — $cloud_table_count جدول، media سالم."
+                        cloud_status="پاس — دانلود، media، و بازیابی هر سه از فضای ابری تأیید شدند ($cloud_table_count جدول)"
+                    fi
+                fi
+            fi
+            rm -rf "$cloud_tmp"
+        fi
     fi
 
     summary
     echo "بک‌آپ آزمایشی: $latest_dump"
-    echo "تست بازیابی: پاس ($table_count جدول)"
+    echo "تست بازیابی محلی: پاس ($table_count جدول)"
     echo "cron روزانه: نصب شد (۴ صبح تهران)"
-    echo "آپلود خارج از سرور: $([ -n "${BACKUP_S3_BUCKET:-}" ] && echo 'تنظیم شده' || echo '⚠️ تنظیم نشده — به من بگو تا کمکت کنم')"
+    echo "بک‌آپ خارج از سرور (S3): $cloud_status"
 }
 
 # ---------------------------------------------------------------------------
