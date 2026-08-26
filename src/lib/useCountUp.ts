@@ -8,7 +8,12 @@ import { useEffect, useRef, useState } from "react";
  */
 export function useCountUp<T extends HTMLElement>(target: number, durationMs = 900) {
   const ref = useRef<T>(null);
-  const [value, setValue] = useState(0);
+  // Starts at `target`, not 0 -- this is what the prerendered/initial HTML
+  // ships (FIX-TASK.md: bots and no-JS visitors must see the real number,
+  // e.g. 1405, not 0). The count-up is a progressive-enhancement animation
+  // that resets to 0 and plays only once actually triggered below, not
+  // something the initial render depends on.
+  const [value, setValue] = useState(target);
   const triggeredRef = useRef(false);
 
   useEffect(() => {
@@ -26,6 +31,7 @@ export function useCountUp<T extends HTMLElement>(target: number, durationMs = 9
         triggeredRef.current = true;
         observer.disconnect();
 
+        setValue(0);
         const start = performance.now();
         function tick(now: number) {
           const progress = Math.min((now - start) / durationMs, 1);
