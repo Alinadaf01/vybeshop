@@ -10,6 +10,9 @@ from .activity import AdminActivityLogMixin
 from .permissions import require_section
 
 
+_URL_FIELDS = ["instagram_url", "telegram_url", "whatsapp_url", "linkedin_url", "youtube_url", "pinterest_url", "trust_badge_url"]
+
+
 class AdminSiteSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteSettings
@@ -23,6 +26,20 @@ class AdminSiteSettingsSerializer(serializers.ModelSerializer):
             "google_analytics_id", "google_tag_manager_id",
             "owner_notification_phone", "notify_owner_new_order",
         ]
+
+    def to_internal_value(self, data):
+        # A non-technical admin pasting "instagram.com/vybeshop" (no
+        # scheme) gets Django's URLField hard-rejecting it as "not a valid
+        # URL" with no hint why -- confirmed as the exact friction point
+        # reported against this page. Every one of these fields is meant
+        # to be a full external link, so a missing scheme is unambiguous:
+        # prepend https:// rather than reject.
+        data = data.copy() if hasattr(data, "copy") else dict(data)
+        for field in _URL_FIELDS:
+            value = data.get(field)
+            if value and isinstance(value, str) and not value.startswith(("http://", "https://")):
+                data[field] = f"https://{value}"
+        return super().to_internal_value(data)
 
 
 class AdminSiteSettingsView(RetrieveUpdateAPIView):
