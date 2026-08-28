@@ -12,6 +12,7 @@ import type { CreateStockMovementValues, InventoryRow, InventorySummary, StockMo
 import type { BulkPriceEditInput, PriceChange, PriceHistoryEntry, ProductPriceRow } from "@/types/pricing";
 import type { AdminProductReview, ReviewStatus } from "@/types/review";
 import type { AdminReturn } from "@/types/return";
+import type { AdminActivityLogEntry } from "@/types/activity";
 import type { AdminCoupon, CouponFormValues } from "@/types/coupon";
 import type { AdminBlogPost, BlogPostFormValues } from "@/types/blog";
 import type {
@@ -683,6 +684,13 @@ export async function listReturns(
 ): Promise<PaginatedResponse<AdminReturn>> {
   const res = await authorizedFetch(`/returns/${buildQuery(params)}`);
   return parseOrThrow(res, "دریافت مرجوعی‌ها ناموفق بود.");
+}
+
+export async function listActivityLog(
+  params: { page?: number; pageSize?: number; model?: string; dateFrom?: string; dateTo?: string },
+): Promise<PaginatedResponse<AdminActivityLogEntry>> {
+  const res = await authorizedFetch(`/activity-log/${buildQuery(params)}`);
+  return parseOrThrow(res, "دریافت گزارش فعالیت ناموفق بود.");
 }
 
 async function returnTransition(id: string, action: string): Promise<AdminReturn> {
