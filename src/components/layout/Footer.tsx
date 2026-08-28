@@ -5,7 +5,6 @@ import { toJalaali } from "jalaali-js";
 import { categories } from "@/data/categories";
 import { getSiteSettings } from "@/lib/api";
 import { VybeWordmark } from "@/components/brand/VybeWordmark";
-import { ZarinpalTrustBadge } from "@/components/layout/ZarinpalTrustBadge";
 
 const quickLinks = [
   { label: "محصولات", href: "/products" },
@@ -162,7 +161,11 @@ export function Footer() {
                       dir="ltr"
                       className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge px-1 text-center font-mono text-micro leading-[1.4] text-titanium"
                     >
-                      <ZarinpalTrustBadge fallbackImage={settings.paymentGatewayImage} fallbackLabel={settings.paymentGatewayLabel} />
+                      {settings.paymentGatewayImage ? (
+                        <img src={settings.paymentGatewayImage} alt={settings.paymentGatewayLabel || "درگاه پرداخت"} className="h-full w-full object-contain" />
+                      ) : (
+                        settings.paymentGatewayLabel
+                      )}
                     </div>
                   )}
                 </div>

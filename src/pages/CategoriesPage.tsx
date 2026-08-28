@@ -1,20 +1,47 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { categories } from "@/data/categories";
+import { getCategories } from "@/lib/api";
 import { getProductsByCategory, products as allProducts } from "@/data/products";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Image } from "@/components/ui/Image";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Seo } from "@/components/seo/Seo";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { categoriesContent as c } from "@/content/categories";
 
-const categoriesWithCounts = categories
-  .map((category) => ({ category, count: getProductsByCategory(category.slug).length }))
-  .sort((a, b) => b.count - a.count);
-
-const featuredCategory = categoriesWithCounts[0];
-const featuredProducts = getProductsByCategory(featuredCategory.category.slug).slice(0, 4);
+// Same staleTime as HomePage's own ["categories"] query (see src/pages/
+// HomePage.tsx and src/entry-server.tsx's prefetch) -- same query key too,
+// so this page and the homepage's category section always agree instead
+// of drifting the way this page used to when it read static content
+// directly instead of the backend.
+const PRERENDERED_STALE_TIME = 60_000;
 
 export default function CategoriesPage() {
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
+    staleTime: PRERENDERED_STALE_TIME,
+  });
+
+  if (!categoriesData) {
+    return (
+      <div className="mx-auto max-w-page px-5 py-10 xl:px-10">
+        <Skeleton className="h-10 w-64" />
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }, (_, i) => (
+            <Skeleton key={i} className="h-64 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const categoriesWithCounts = categoriesData
+    .map((category) => ({ category, count: getProductsByCategory(category.slug).length }))
+    .sort((a, b) => b.count - a.count);
+  const featuredCategory = categoriesWithCounts[0];
+  const featuredProducts = featuredCategory ? getProductsByCategory(featuredCategory.category.slug).slice(0, 4) : [];
+
   return (
     <div className="mx-auto max-w-page px-5 xl:px-10">
       <Seo title={c.seo.title} description={c.seo.description} path="/categories" />
@@ -23,7 +50,7 @@ export default function CategoriesPage() {
       <div className="flex flex-col gap-4 pb-10">
         <h1 className="m-0 text-h1 font-bold">{c.heading}</h1>
         <p className="m-0 max-w-text text-body-large text-gray-800">
-          {c.subtitleTemplate(categories.length, allProducts.length)}
+          {c.subtitleTemplate(categoriesData.length, allProducts.length)}
         </p>
       </div>
 
@@ -57,31 +84,33 @@ export default function CategoriesPage() {
         ))}
       </section>
 
-      <section className="mb-14 grid grid-cols-1 gap-8 rounded-xl bg-graphite p-6 text-fog-white md:mb-20 md:p-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-        <div className="flex flex-col gap-4">
-          <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">
-            {c.featured.kickerPrefix} &middot; {featuredCategory.category.slug.toUpperCase()}
-          </p>
-          <h2 className="m-0 text-h2 font-semibold">{c.featured.headingTemplate(featuredCategory.category.name)}</h2>
-          <p className="m-0 text-body-large leading-[1.7] text-silver [text-wrap:pretty]">
-            {featuredCategory.category.description}
-          </p>
-          <Link
-            to={`/products?category=${featuredCategory.category.slug}`}
-            className="self-start border-b border-titanium pb-1 text-body font-medium text-fog-white no-underline transition-colors duration-fast hover:border-cyan"
-          >
-            {c.featured.linkTemplate(featuredCategory.count, featuredCategory.category.name)}
-          </Link>
-        </div>
-        <div aria-hidden="true" className="grid grid-cols-3 gap-3">
-          {Array.from({ length: 6 }, (_, i) => (
-            <span
-              key={i}
-              className="aspect-square rounded-md bg-[repeating-linear-gradient(135deg,#191919_0_6px,#0B0B0C_6px_12px)]"
-            />
-          ))}
-        </div>
-      </section>
+      {featuredCategory && (
+        <section className="mb-14 grid grid-cols-1 gap-8 rounded-xl bg-graphite p-6 text-fog-white md:mb-20 md:p-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+          <div className="flex flex-col gap-4">
+            <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">
+              {c.featured.kickerPrefix} &middot; {featuredCategory.category.slug.toUpperCase()}
+            </p>
+            <h2 className="m-0 text-h2 font-semibold">{c.featured.headingTemplate(featuredCategory.category.name)}</h2>
+            <p className="m-0 text-body-large leading-[1.7] text-silver [text-wrap:pretty]">
+              {featuredCategory.category.description}
+            </p>
+            <Link
+              to={`/products?category=${featuredCategory.category.slug}`}
+              className="self-start border-b border-titanium pb-1 text-body font-medium text-fog-white no-underline transition-colors duration-fast hover:border-cyan"
+            >
+              {c.featured.linkTemplate(featuredCategory.count, featuredCategory.category.name)}
+            </Link>
+          </div>
+          <div aria-hidden="true" className="grid grid-cols-3 gap-3">
+            {Array.from({ length: 6 }, (_, i) => (
+              <span
+                key={i}
+                className="aspect-square rounded-md bg-[repeating-linear-gradient(135deg,#191919_0_6px,#0B0B0C_6px_12px)]"
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="flex flex-col gap-8 border-t border-gray-100 py-14 md:py-20">
         <div className="flex flex-wrap items-baseline justify-between gap-4">
