@@ -4,10 +4,12 @@ export function SingleImageField({
   label,
   currentUrl,
   onFileSelected,
+  hint,
 }: {
   label: string;
   currentUrl: string | null;
   onFileSelected: (file: File) => void;
+  hint?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -42,6 +44,7 @@ export function SingleImageField({
         )}
       </button>
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleChange} />
+      {hint && <p className="m-0 text-[11px] text-slate-500">{hint}</p>}
     </div>
   );
 }

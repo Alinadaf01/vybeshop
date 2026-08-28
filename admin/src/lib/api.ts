@@ -445,7 +445,7 @@ export async function getSiteSettings(): Promise<AdminSiteSettings> {
 
 export async function updateSiteSettings(
   data: Partial<AdminSiteSettings>,
-  imageFiles?: Partial<Record<"trustBadgeImage" | "logoLight" | "logoDark" | "favicon" | "defaultOgImage", File>>,
+  imageFiles?: Partial<Record<"trustBadgeImage" | "paymentGatewayImage" | "logoLight" | "logoDark" | "favicon" | "defaultOgImage", File>>,
 ): Promise<AdminSiteSettings> {
   const hasFiles = imageFiles && Object.values(imageFiles).some(Boolean);
   let init: RequestInit;

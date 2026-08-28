@@ -22,11 +22,18 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
     business_hours = serializers.JSONField()
     social_links = serializers.SerializerMethodField()
     trust_badge_label = serializers.CharField()
+    trust_badge_url = serializers.CharField()
+    trust_badge_image = serializers.SerializerMethodField()
     payment_gateway_label = serializers.CharField()
+    payment_gateway_image = serializers.SerializerMethodField()
 
     class Meta:
         model = SiteSettings
-        fields = ["phone", "email", "address", "business_hours", "social_links", "trust_badge_label", "payment_gateway_label"]
+        fields = [
+            "phone", "email", "address", "business_hours", "social_links",
+            "trust_badge_label", "trust_badge_url", "trust_badge_image",
+            "payment_gateway_label", "payment_gateway_image",
+        ]
 
     def get_phone(self, obj: SiteSettings) -> dict:
         return {"display": obj.phone_display, "href": obj.phone_href}
@@ -37,6 +44,21 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             for platform, field_name in _SOCIAL_FIELDS
             if getattr(obj, field_name)
         ]
+
+    def get_trust_badge_image(self, obj: SiteSettings) -> str | None:
+        # eNamad's hotlinked logo.aspx (required for their own tracking)
+        # takes priority over a manually uploaded static image, if both
+        # somehow end up set.
+        if obj.trust_badge_image_url:
+            return obj.trust_badge_image_url
+        if obj.trust_badge_image:
+            return absolute_media_url(self.context.get("request"), obj.trust_badge_image)
+        return None
+
+    def get_payment_gateway_image(self, obj: SiteSettings) -> str | None:
+        if not obj.payment_gateway_image:
+            return None
+        return absolute_media_url(self.context.get("request"), obj.payment_gateway_image)
 
 
 class ShippingMethodSerializer(serializers.ModelSerializer):

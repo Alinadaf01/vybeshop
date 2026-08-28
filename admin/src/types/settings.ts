@@ -23,8 +23,10 @@ export interface AdminSiteSettings {
   longitude: number | null;
   trustBadgeLabel: string;
   trustBadgeImage: string | null;
+  trustBadgeImageUrl: string;
   trustBadgeUrl: string;
   paymentGatewayLabel: string;
+  paymentGatewayImage: string | null;
   logoLight: string | null;
   logoDark: string | null;
   favicon: string | null;

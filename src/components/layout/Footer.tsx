@@ -139,20 +139,37 @@ export function Footer() {
                   </a>
                 ))}
               </div>
-              <div className="flex gap-3">
-                <div
-                  dir="ltr"
-                  className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge px-1 text-center font-mono text-micro leading-[1.4] text-titanium"
-                >
-                  {settings.trustBadgeLabel}
+              {(settings.trustBadgeImage || settings.trustBadgeLabel || settings.paymentGatewayImage || settings.paymentGatewayLabel) && (
+                <div className="flex gap-3">
+                  {(settings.trustBadgeImage || settings.trustBadgeLabel) && (
+                    <a
+                      href={settings.trustBadgeUrl || undefined}
+                      target={settings.trustBadgeUrl ? "_blank" : undefined}
+                      rel={settings.trustBadgeUrl ? "noopener noreferrer" : undefined}
+                      dir="ltr"
+                      className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge px-1 text-center font-mono text-micro leading-[1.4] text-titanium no-underline"
+                    >
+                      {settings.trustBadgeImage ? (
+                        <img src={settings.trustBadgeImage} alt={settings.trustBadgeLabel || "نماد اعتماد"} className="h-full w-full object-contain" />
+                      ) : (
+                        settings.trustBadgeLabel
+                      )}
+                    </a>
+                  )}
+                  {(settings.paymentGatewayImage || settings.paymentGatewayLabel) && (
+                    <div
+                      dir="ltr"
+                      className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge px-1 text-center font-mono text-micro leading-[1.4] text-titanium"
+                    >
+                      {settings.paymentGatewayImage ? (
+                        <img src={settings.paymentGatewayImage} alt={settings.paymentGatewayLabel || "درگاه پرداخت"} className="h-full w-full object-contain" />
+                      ) : (
+                        settings.paymentGatewayLabel
+                      )}
+                    </div>
+                  )}
                 </div>
-                <div
-                  dir="ltr"
-                  className="grid h-[72px] w-[72px] place-items-center rounded-md border border-edge px-1 text-center font-mono text-micro leading-[1.4] text-titanium"
-                >
-                  {settings.paymentGatewayLabel}
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>

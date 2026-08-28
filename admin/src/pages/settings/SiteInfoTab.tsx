@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Field, Input, Switch } from "@/components/ui/Field";
+import { Field, Input, Switch, Textarea } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { SingleImageField } from "@/components/ui/SingleImageField";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -13,7 +13,7 @@ import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/lib/ToastContext";
 
-type ImageKey = "trustBadgeImage" | "logoLight" | "logoDark" | "favicon" | "defaultOgImage";
+type ImageKey = "trustBadgeImage" | "paymentGatewayImage" | "logoLight" | "logoDark" | "favicon" | "defaultOgImage";
 
 export function SiteInfoTab() {
   const queryClient = useQueryClient();
@@ -174,24 +174,25 @@ export function SiteInfoTab() {
 
       <section className="glass-card flex flex-col gap-4 p-6">
         <h2 className="m-0 text-sm font-bold text-white">شبکه‌های اجتماعی</h2>
+        <p className="m-0 text-xs text-slate-500">هرکدام را خالی بگذاری، همان یکی در فوتر و صفحه تماس با ما نمایش داده نمی‌شود.</p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="اینستاگرام" htmlFor="s-instagram" error={errors.instagramUrl?.message}>
-            <Input id="s-instagram" dir="ltr" {...register("instagramUrl")} />
+            <Input id="s-instagram" dir="ltr" placeholder="خالی = نمایش داده نمی‌شود" {...register("instagramUrl")} />
           </Field>
           <Field label="تلگرام" htmlFor="s-telegram" error={errors.telegramUrl?.message}>
-            <Input id="s-telegram" dir="ltr" {...register("telegramUrl")} />
+            <Input id="s-telegram" dir="ltr" placeholder="خالی = نمایش داده نمی‌شود" {...register("telegramUrl")} />
           </Field>
           <Field label="واتساپ" htmlFor="s-whatsapp" error={errors.whatsappUrl?.message}>
-            <Input id="s-whatsapp" dir="ltr" {...register("whatsappUrl")} />
+            <Input id="s-whatsapp" dir="ltr" placeholder="خالی = نمایش داده نمی‌شود" {...register("whatsappUrl")} />
           </Field>
           <Field label="لینکدین" htmlFor="s-linkedin" error={errors.linkedinUrl?.message}>
-            <Input id="s-linkedin" dir="ltr" {...register("linkedinUrl")} />
+            <Input id="s-linkedin" dir="ltr" placeholder="خالی = نمایش داده نمی‌شود" {...register("linkedinUrl")} />
           </Field>
           <Field label="یوتیوب" htmlFor="s-youtube" error={errors.youtubeUrl?.message}>
-            <Input id="s-youtube" dir="ltr" {...register("youtubeUrl")} />
+            <Input id="s-youtube" dir="ltr" placeholder="خالی = نمایش داده نمی‌شود" {...register("youtubeUrl")} />
           </Field>
           <Field label="پینترست" htmlFor="s-pinterest" error={errors.pinterestUrl?.message}>
-            <Input id="s-pinterest" dir="ltr" {...register("pinterestUrl")} />
+            <Input id="s-pinterest" dir="ltr" placeholder="خالی = نمایش داده نمی‌شود" {...register("pinterestUrl")} />
           </Field>
         </div>
       </section>
@@ -231,42 +232,71 @@ export function SiteInfoTab() {
           <Field label="متن نماد اعتماد" htmlFor="s-trust-label" error={errors.trustBadgeLabel?.message}>
             <Input id="s-trust-label" {...register("trustBadgeLabel")} />
           </Field>
-          <Field label="لینک نماد اعتماد" htmlFor="s-trust-url" error={errors.trustBadgeUrl?.message}>
-            <Input id="s-trust-url" dir="ltr" {...register("trustBadgeUrl")} />
+          <Field
+            label="لینک نماد اعتماد"
+            htmlFor="s-trust-url"
+            error={errors.trustBadgeUrl?.message}
+            hint="برای eNamad: کل کد نماد (که با <a ... کپی می‌کنی) را همینجا پیست کن — لینک و عکس نماد خودکار جدا و ذخیره می‌شوند. برای بقیه، فقط لینک ساده بنویس."
+          >
+            <Textarea id="s-trust-url" dir="ltr" rows={3} {...register("trustBadgeUrl")} />
           </Field>
+          {settings.trustBadgeImageUrl && (
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <span className="text-xs font-semibold text-slate-300">پیش‌نمایش نماد (از eNamad، لحظه‌ای)</span>
+              <img src={settings.trustBadgeImageUrl} alt="نماد اعتماد" className="h-16 w-16 object-contain" />
+            </div>
+          )}
           <Field label="متن نمایش درگاه پرداخت" htmlFor="s-gateway-label" error={errors.paymentGatewayLabel?.message}>
             <Input id="s-gateway-label" {...register("paymentGatewayLabel")} />
           </Field>
         </div>
-        <SingleImageField
-          label="تصویر نماد اعتماد"
-          currentUrl={settings.trustBadgeImage}
-          onFileSelected={(file) => setImageFiles((prev) => ({ ...prev, trustBadgeImage: file }))}
-        />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <SingleImageField
+            label="تصویر نماد اعتماد (فقط اگر eNamad نیست)"
+            currentUrl={settings.trustBadgeImage}
+            onFileSelected={(file) => setImageFiles((prev) => ({ ...prev, trustBadgeImage: file }))}
+            hint="فقط وقتی لینک بالا کد eNamad نیست استفاده می‌شود. PNG (پس‌زمینه شفاف) یا SVG، حداقل ۱۲۰×۱۲۰ پیکسل، زیر ۲۰۰ کیلوبایت."
+          />
+          <SingleImageField
+            label="تصویر درگاه پرداخت"
+            currentUrl={settings.paymentGatewayImage}
+            onFileSelected={(file) => setImageFiles((prev) => ({ ...prev, paymentGatewayImage: file }))}
+            hint="لوگویی که کنار نماد اعتماد در فوتر نمایش داده می‌شود. PNG (پس‌زمینه شفاف) یا SVG، حداقل ۱۲۰×۱۲۰ پیکسل، زیر ۲۰۰ کیلوبایت."
+          />
+        </div>
       </section>
 
       <section className="glass-card flex flex-col gap-4 p-6">
         <h2 className="m-0 text-sm font-bold text-white">لوگو و آیکون</h2>
+        <p className="m-0 text-xs text-slate-500">
+          این چهار مورد فعلاً در سایت زنده استفاده نمی‌شوند — سایت از یک لوگوی طراحی‌شده ثابت استفاده می‌کند، نه از این آپلودها،
+          و فاوآیکون/تصویر پیش‌فرض اشتراک‌گذاری هم از فایل‌های ثابت پروژه خوانده می‌شوند. اگر می‌خواهی این‌ها واقعاً در سایت
+          اعمال شوند، به توسعه‌دهنده بگو تا وصل شوند.
+        </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <SingleImageField
             label="لوگو روشن"
             currentUrl={settings.logoLight}
             onFileSelected={(file) => setImageFiles((prev) => ({ ...prev, logoLight: file }))}
+            hint="PNG یا SVG، پس‌زمینه شفاف، حداقل عرض ۲۴۰ پیکسل."
           />
           <SingleImageField
             label="لوگو تیره"
             currentUrl={settings.logoDark}
             onFileSelected={(file) => setImageFiles((prev) => ({ ...prev, logoDark: file }))}
+            hint="PNG یا SVG، پس‌زمینه شفاف، حداقل عرض ۲۴۰ پیکسل."
           />
           <SingleImageField
             label="فاوآیکون"
             currentUrl={settings.favicon}
             onFileSelected={(file) => setImageFiles((prev) => ({ ...prev, favicon: file }))}
+            hint="ICO یا PNG، ۳۲×۳۲ یا ۶۴×۶۴ پیکسل."
           />
           <SingleImageField
             label="تصویر پیش‌فرض OG"
             currentUrl={settings.defaultOgImage}
             onFileSelected={(file) => setImageFiles((prev) => ({ ...prev, defaultOgImage: file }))}
+            hint="JPG یا PNG، ۱۲۰۰×۶۳۰ پیکسل."
           />
         </div>
       </section>

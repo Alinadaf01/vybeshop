@@ -15,7 +15,10 @@ export interface SiteSettings {
   businessHours: BusinessHoursRow[];
   socialLinks: SocialLink[];
   trustBadgeLabel: string;
+  trustBadgeUrl: string;
+  trustBadgeImage: string | null;
   paymentGatewayLabel: string;
+  paymentGatewayImage: string | null;
 }
 
 export const siteSettings: SiteSettings = {
@@ -34,5 +37,8 @@ export const siteSettings: SiteSettings = {
     { platform: "YOUTUBE", url: "#" },
   ],
   trustBadgeLabel: "نماد اعتماد",
+  trustBadgeUrl: "#",
+  trustBadgeImage: null,
   paymentGatewayLabel: "درگاه پرداخت",
+  paymentGatewayImage: null,
 };

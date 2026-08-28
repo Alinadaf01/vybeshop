@@ -20,26 +20,67 @@ class SiteSettings(models.Model):
     address = models.CharField(max_length=300, blank=True)
     business_hours = models.JSONField(default=list, help_text="[{day, time}, ...]")
 
-    instagram_url = models.URLField(blank=True)
-    telegram_url = models.URLField(blank=True)
-    whatsapp_url = models.URLField(blank=True)
-    linkedin_url = models.URLField(blank=True)
-    youtube_url = models.URLField(blank=True)
-    pinterest_url = models.URLField(blank=True)
+    instagram_url = models.URLField(blank=True, help_text="لینک کامل، مثلاً https://instagram.com/vybeshop — خالی بگذار تا در فوتر/تماس با ما نمایش داده نشود.")
+    telegram_url = models.URLField(blank=True, help_text="لینک کامل — خالی بگذار تا نمایش داده نشود.")
+    whatsapp_url = models.URLField(blank=True, help_text="لینک کامل (مثلاً https://wa.me/98912...) — خالی بگذار تا نمایش داده نشود.")
+    linkedin_url = models.URLField(blank=True, help_text="لینک کامل — خالی بگذار تا نمایش داده نشود.")
+    youtube_url = models.URLField(blank=True, help_text="لینک کامل — خالی بگذار تا نمایش داده نشود.")
+    pinterest_url = models.URLField(blank=True, help_text="لینک کامل — خالی بگذار تا نمایش داده نشود.")
 
     google_maps_embed = models.TextField(blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
     trust_badge_label = models.CharField(max_length=100, blank=True)
-    trust_badge_image = models.ImageField(upload_to="settings/", blank=True, null=True)
-    trust_badge_url = models.URLField(blank=True)
+    # Legacy path: an admin-uploaded static image, used when the trust
+    # service doesn't require hotlinking its own image (unlike eNamad --
+    # see trust_badge_image_url below, which is what eNamad actually needs).
+    trust_badge_image = models.ImageField(
+        upload_to="settings/", blank=True, null=True,
+        help_text="فقط اگر نماد اعتمادت eNamad نیست و عکس ثابت داری از اینجا آپلود کن. فرمت PNG (پس‌زمینه شفاف) یا SVG، حداقل ۱۲۰×۱۲۰ پیکسل، حجم زیر ۲۰۰ کیلوبایت. برای eNamad به‌جایش «تصویر نماد (لینک eNamad)» را پر کن.",
+    )
+    # eNamad's badge is a hotlinked <img src="https://trustseal.enamad.ir/
+    # logo.aspx?..."> -- eNamad requires linking directly to their own
+    # server (for their own usage tracking/verification), not re-hosting a
+    # downloaded copy. AdminSiteSettingsSerializer auto-extracts this (and
+    # trust_badge_url) when the whole <a>...<img>... embed snippet eNamad
+    # gives you is pasted into trust_badge_url.
+    trust_badge_image_url = models.URLField(
+        max_length=500, blank=True,
+        help_text="برای eNamad: کل کد نماد را در فیلد «لینک نماد» پیست کن، این فیلد خودکار پر می‌شود.",
+    )
+    trust_badge_url = models.URLField(
+        max_length=500, blank=True,
+        help_text="لینک نماد. برای eNamad می‌توانی کل کد <a>...</a> نماد را همینجا پیست کنی -- لینک و عکس هردو خودکار استخراج می‌شوند.",
+    )
     payment_gateway_label = models.CharField(max_length=100, blank=True)
+    payment_gateway_image = models.ImageField(
+        upload_to="settings/", blank=True, null=True,
+        help_text="لوگوی درگاه پرداخت که در فوتر کنار «نماد اعتماد» نشان داده می‌شود. فرمت PNG (پس‌زمینه شفاف) یا SVG، حداقل ۱۲۰×۱۲۰ پیکسل، حجم زیر ۲۰۰ کیلوبایت.",
+    )
 
-    logo_light = models.ImageField(upload_to="settings/", blank=True, null=True)
-    logo_dark = models.ImageField(upload_to="settings/", blank=True, null=True)
-    favicon = models.ImageField(upload_to="settings/", blank=True, null=True)
-    default_og_image = models.ImageField(upload_to="settings/", blank=True, null=True)
+    # None of these four are wired into the live storefront yet -- it uses
+    # a fixed vector wordmark (src/components/brand/VybeWordmark.tsx) for
+    # crisp branding rather than a raster upload, and favicon/OG image are
+    # still static files (index.html, src/components/seo/Seo.tsx's
+    # default). Uploading here saves the file but has no visible effect
+    # until that's deliberately wired up -- see HANDOVER.md.
+    logo_light = models.ImageField(
+        upload_to="settings/", blank=True, null=True,
+        help_text="فعلاً در سایت زنده استفاده نمی‌شود — سایت از یک لوگوی طراحی‌شده ثابت استفاده می‌کند، نه از این آپلود.",
+    )
+    logo_dark = models.ImageField(
+        upload_to="settings/", blank=True, null=True,
+        help_text="فعلاً در سایت زنده استفاده نمی‌شود.",
+    )
+    favicon = models.ImageField(
+        upload_to="settings/", blank=True, null=True,
+        help_text="فعلاً در سایت زنده استفاده نمی‌شود — فاوآیکون فعلی از فایل ثابت index.html خوانده می‌شود. فرمت ICO یا PNG ۳۲×۳۲ یا ۶۴×۶۴ پیکسل.",
+    )
+    default_og_image = models.ImageField(
+        upload_to="settings/", blank=True, null=True,
+        help_text="فعلاً در سایت زنده استفاده نمی‌شود — تصویر پیش‌فرض اشتراک‌گذاری از فایل ثابت خوانده می‌شود. فرمت JPG یا PNG، ۱۲۰۰×۶۳۰ پیکسل.",
+    )
 
     google_analytics_id = models.CharField(max_length=50, blank=True)
     google_tag_manager_id = models.CharField(max_length=50, blank=True)
