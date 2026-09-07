@@ -46,8 +46,8 @@ def resolve_cart(request) -> tuple[Cart, str | None]:
     return cart, new_key
 
 
-def _cart_response(cart: Cart, new_session_key: str | None, http_status=status.HTTP_200_OK) -> Response:
-    response = Response(CartSerializer(cart).data, status=http_status)
+def _cart_response(request, cart: Cart, new_session_key: str | None, http_status=status.HTTP_200_OK) -> Response:
+    response = Response(CartSerializer(cart, context={"request": request}).data, status=http_status)
     if new_session_key:
         response["X-Cart-Session"] = new_session_key
     return response
@@ -56,7 +56,7 @@ def _cart_response(cart: Cart, new_session_key: str | None, http_status=status.H
 class CartDetailView(APIView):
     def get(self, request):
         cart, new_key = resolve_cart(request)
-        return _cart_response(cart, new_key)
+        return _cart_response(request, cart, new_key)
 
 
 class CartItemCreateView(APIView):
@@ -77,7 +77,7 @@ class CartItemCreateView(APIView):
             item.quantity += quantity
             item.save(update_fields=["quantity"])
 
-        return _cart_response(cart, new_key, http_status=status.HTTP_201_CREATED)
+        return _cart_response(request, cart, new_key, http_status=status.HTTP_201_CREATED)
 
 
 class CartItemUpdateDeleteView(APIView):
@@ -95,12 +95,12 @@ class CartItemUpdateDeleteView(APIView):
         serializer.is_valid(raise_exception=True)
         item.quantity = serializer.validated_data["quantity"]
         item.save(update_fields=["quantity"])
-        return _cart_response(cart, new_key)
+        return _cart_response(request, cart, new_key)
 
     def delete(self, request, pk: int):
         item, cart, new_key = self._get_item(request, pk)
         item.delete()
-        return _cart_response(cart, new_key)
+        return _cart_response(request, cart, new_key)
 
 
 class CheckoutView(APIView):

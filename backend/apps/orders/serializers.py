@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from config.media import absolute_media_url
+
 from apps.catalog.models import ColorOption, Product
 
 from .models import Cart, CartItem, Order, OrderItem, OrderStatusLog, Payment
@@ -17,8 +19,19 @@ class CartProductSerializer(serializers.ModelSerializer):
         return str(obj.pk)
 
     def get_image(self, obj: Product) -> str | None:
+        # NOT ProductImage.resolved_url -- that returns a bare `image.url`
+        # for an uploaded file, which is relative to the *backend's* own
+        # origin. The storefront resolves a relative src against its own
+        # origin (vybeshop.ir, not api.vybeshop.ir) and 404s -- confirmed
+        # live as exactly why cart line items showed the placeholder
+        # pattern instead of the real product photo. Same
+        # absolute-vs-external split every other image field in this
+        # codebase already uses (see catalog/serializers.py).
         first = obj.images.order_by("order").first()
-        return first.resolved_url if first else None
+        if not first:
+            return None
+        request = self.context.get("request")
+        return absolute_media_url(request, first.image) if first.image else first.external_url
 
 
 class CartColorOptionSerializer(serializers.ModelSerializer):
