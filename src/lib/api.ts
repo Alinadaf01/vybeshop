@@ -53,6 +53,20 @@ async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   try {
     return await fetch(`${API_BASE_URL}${path}`, init);
   } catch (cause) {
+    if (typeof window === "undefined") {
+      // Running in Node (the prerender build step, see scripts/prerender.mjs)
+      // rather than a real browser. Wrapping this as ApiUnavailableError here
+      // would make withFallback() silently swap in placeholder/local content
+      // with zero warning or non-zero exit code -- confirmed live: an entire
+      // prerendered deploy shipped with "دسته‌بندی ۱" placeholder names and
+      // the static hero.jpg instead of real backend content, because the
+      // backend happened to be unreachable during that one build, and
+      // nothing about the build ever indicated it. Let the real error
+      // propagate so the build fails instead of silently shipping wrong
+      // static content -- Vercel then keeps the last good deployment live
+      // rather than promoting a broken one.
+      throw cause;
+    }
     throw new ApiUnavailableError("Backend unreachable", { cause });
   }
 }

@@ -101,4 +101,11 @@ async function main() {
   );
 }
 
-main();
+main().catch((error) => {
+  // A page's data fetch failing during prerender (backend unreachable at
+  // build time) must fail the build, not silently ship a static snapshot
+  // full of placeholder content -- see src/lib/api.ts's apiFetch for the
+  // matching half of this fix.
+  console.error("prerender failed:", error);
+  process.exit(1);
+});

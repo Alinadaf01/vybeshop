@@ -27,20 +27,32 @@ const BODY_PAGES: Record<string, () => ReactElement> = {
 // site-settings/footer fetch every page needs — prefetched here so the
 // dehydrated state covers everything the page renders on its first paint,
 // not just the chrome around it.
-const ROUTE_PREFETCHES: Record<string, (queryClient: QueryClient) => Promise<void>[]> = {
-  "/catalog": (qc) => [qc.prefetchQuery({ queryKey: ["catalog"], queryFn: getCatalog })],
+//
+// Deliberately `qc.fetchQuery`, not `qc.prefetchQuery` -- prefetchQuery is
+// fire-and-forget by design (React Query docs: it never rejects, a failed
+// fetch just leaves the query in an error state in the cache). That silently
+// swallowed exactly the failure this needs to catch: a real prerender build
+// where the backend was briefly unreachable, so every one of these silently
+// resolved to the withFallback() static content, and the build "succeeded"
+// with placeholder category names and the local hero.jpg baked into the
+// static HTML -- confirmed live, this is not a hypothetical. fetchQuery
+// throws on failure, so a truly unreachable backend now fails the build
+// (see apiFetch in src/lib/api.ts for the matching half of this fix)
+// instead of shipping wrong content with no warning.
+const ROUTE_PREFETCHES: Record<string, (queryClient: QueryClient) => Promise<unknown>[]> = {
+  "/catalog": (qc) => [qc.fetchQuery({ queryKey: ["catalog"], queryFn: getCatalog })],
   "/": (qc) => [
-    qc.prefetchQuery({ queryKey: ["products", "home"], queryFn: () => getProducts({ pageSize: 24 }) }),
-    qc.prefetchQuery({ queryKey: ["categories"], queryFn: () => getCategories() }),
-    qc.prefetchQuery({ queryKey: ["blogPosts", "home"], queryFn: () => getBlogPosts({ pageSize: 3 }) }),
+    qc.fetchQuery({ queryKey: ["products", "home"], queryFn: () => getProducts({ pageSize: 24 }) }),
+    qc.fetchQuery({ queryKey: ["categories"], queryFn: () => getCategories() }),
+    qc.fetchQuery({ queryKey: ["blogPosts", "home"], queryFn: () => getBlogPosts({ pageSize: 3 }) }),
     // Without this, the dehydrated cache is missing the "homepage" query key
     // that HomePage.tsx reads, so hydration refetches it client-side and the
     // hero/showcase/community sections flash from static defaults to real
     // content on first load (HOMEPAGE-ADMIN-TASK.md §5: "این را حتماً تست کن").
-    qc.prefetchQuery({ queryKey: ["homepage"], queryFn: getHomepage }),
+    qc.fetchQuery({ queryKey: ["homepage"], queryFn: getHomepage }),
   ],
   "/blog": (qc) => [
-    qc.prefetchQuery({
+    qc.fetchQuery({
       queryKey: ["blog-posts", { category: undefined, page: 1 }],
       queryFn: () => getBlogPosts({ page: 1, pageSize: 9 }),
     }),
@@ -76,7 +88,7 @@ export async function renderRoute(path: string): Promise<PrerenderResult> {
   // cache immediately instead of returning isLoading on the first (and
   // only) server render pass.
   const queryClient = new QueryClient();
-  const prefetches = [queryClient.prefetchQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings })];
+  const prefetches: Promise<unknown>[] = [queryClient.fetchQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings })];
   prefetches.push(...(ROUTE_PREFETCHES[path]?.(queryClient) ?? []));
   await Promise.all(prefetches);
 
