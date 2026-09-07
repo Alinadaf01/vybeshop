@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProduct, addCartItem } from "@/lib/api";
+import { getProduct, getCategories, addCartItem } from "@/lib/api";
 import { useToast } from "@/lib/useToast";
 import { useFavoriteToggle } from "@/lib/useFavoriteToggle";
-import { categories } from "@/data/categories";
 import { getProductsByCategory } from "@/data/products";
 import { formatPrice, formatDimensions } from "@/lib/formatters";
 import { cn } from "@/lib/cn";
@@ -45,6 +44,10 @@ export default function ProductDetailPage() {
     enabled: !!slug,
     retry: false,
   });
+  // Same ["categories"] query key as HomePage/CategoriesPage/Footer -- React
+  // Query dedupes/caches by key, so this is free if any of those already
+  // fetched it this session, not a second real network round-trip.
+  const { data: categoriesData } = useQuery({ queryKey: ["categories"], queryFn: () => getCategories() });
 
   const addToCartMutation = useMutation({
     mutationFn: addCartItem,
@@ -68,7 +71,7 @@ export default function ProductDetailPage() {
   if (isError) return <NotFoundPage />;
   if (isLoading || !product) return <PageLoadingFallback />;
 
-  const category = categories.find((c2) => c2.slug === product.category);
+  const category = categoriesData?.find((c2) => c2.slug === product.category);
   const isOutOfStock = product.stockCount <= 0;
   const isLowStock = !isOutOfStock && product.stockCount <= LOW_STOCK_THRESHOLD;
   const selectedColor = product.colors[selectedColorIndex];
