@@ -49,8 +49,16 @@ export default function HomePage() {
   const products = productsPage?.results ?? [];
   const showcaseA = products.find((p) => p.slug === "product-a");
   const showcaseB = products.find((p) => p.slug === "product-b");
-  const featuredSlugs = ["product-c", "product-d", "product-e", "product-f"];
-  const featured = featuredSlugs.map((slug) => products.find((p) => p.slug === slug));
+  // Previously four hardcoded slugs ("product-c".."product-f") -- those were
+  // leftover seed-data slugs. Any slug missing from the real catalog left a
+  // permanent Skeleton in this grid (Skeleton only shows while `product` is
+  // falsy, and a slug that doesn't exist is falsy forever, not just during
+  // loading) -- confirmed live via the screenshot showing 2 real products
+  // next to 2 stuck gray boxes. Pick real products instead, same
+  // still-loading-vs-resolved pattern already used for `blogPage` below.
+  const featured: (Product | undefined)[] = productsPage
+    ? products.filter((p) => p.slug !== showcaseA?.slug && p.slug !== showcaseB?.slug).slice(0, 4)
+    : Array.from({ length: 4 });
 
   const hero = homepage?.hero;
   const heroImage = hero?.image || "/images/marketing/hero.jpg";
