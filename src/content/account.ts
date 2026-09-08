@@ -53,7 +53,7 @@ export const accountContent = {
     noPayments: "هنوز پرداختی برای این سفارش ثبت نشده است.",
     addressHeading: "آدرس تحویل",
     invoiceButton: "دانلود فاکتور",
-    invoiceUnavailable: "خروجی فاکتور در فاز بعدی فعال می‌شود.",
+    invoiceUnavailable: "فاکتور فقط برای سفارش‌های پرداخت‌شده در دسترس است.",
     cancelButton: "درخواست لغو",
     cancelUnavailable: "لغو سفارش از پنل کاربری در فاز بعدی فعال می‌شود.",
     loading: "در حال بارگذاری…",

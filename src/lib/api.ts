@@ -579,6 +579,24 @@ export async function getOrder(number: string): Promise<Order> {
   return res.json();
 }
 
+// Same blob-download pattern as the admin panel's downloadOrderInvoice --
+// this hits the customer-facing endpoint (by order number, not id), which
+// the account page never actually called: the button was a permanently
+// disabled placeholder ("در فاز بعدی فعال می‌شود"), not a status-gated bug.
+export async function downloadOrderInvoice(orderNumber: string): Promise<void> {
+  const res = await authorizedFetch(`/orders/${encodeURIComponent(orderNumber)}/invoice.pdf`);
+  if (!res.ok) throw new Error(await readErrorDetail(res, "دریافت فاکتور ناموفق بود."));
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `invoice-${orderNumber}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 // Checkout errors are field-keyed (e.g. { addressId: "..." }, { cart: "..." })
 // so the form can point at the exact step that failed, not just show a
 // generic banner — readErrorDetail's single "detail" string isn't enough here.

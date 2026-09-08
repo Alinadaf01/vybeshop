@@ -22,6 +22,7 @@ import {
   deleteAddress,
   getOrders,
   getOrder,
+  downloadOrderInvoice,
   getFavorites,
   removeFavorite,
 } from "@/lib/api";
@@ -114,6 +115,14 @@ export default function AccountPage() {
     setTab("detail");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
+  // Matches the backend's INVOICE_ELIGIBLE_STATUSES (apps/orders/views.py)
+  // -- an unpaid order has no real invoice yet.
+  const invoiceEligibleStatuses: OrderStatus[] = ["paid", "processing", "shipped", "delivered", "returned"];
+  const invoiceMutation = useMutation({
+    mutationFn: (orderNumber: string) => downloadOrderInvoice(orderNumber),
+    onError: (error: unknown) => showToast({ variant: "danger", message: error instanceof Error ? error.message : "دریافت فاکتور ناموفق بود." }),
+  });
 
   function handleLogout() {
     logout();
@@ -497,9 +506,20 @@ export default function AccountPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="secondary" className="h-11 px-4 text-small" disabled title={c.detail.invoiceUnavailable}>
-                    {c.detail.invoiceButton}
-                  </Button>
+                  {invoiceEligibleStatuses.includes(selectedOrder.status) ? (
+                    <Button
+                      variant="secondary"
+                      className="h-11 px-4 text-small"
+                      disabled={invoiceMutation.isPending}
+                      onClick={() => invoiceMutation.mutate(selectedOrder.number)}
+                    >
+                      {invoiceMutation.isPending ? "در حال دریافت…" : c.detail.invoiceButton}
+                    </Button>
+                  ) : (
+                    <Button variant="secondary" className="h-11 px-4 text-small" disabled title={c.detail.invoiceUnavailable}>
+                      {c.detail.invoiceButton}
+                    </Button>
+                  )}
                   <Button variant="secondary" className="h-11 px-4 text-small text-danger-ink" disabled title={c.detail.cancelUnavailable}>
                     {c.detail.cancelButton}
                   </Button>
