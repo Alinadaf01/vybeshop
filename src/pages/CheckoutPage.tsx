@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Modal } from "@/components/ui/Modal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Seo } from "@/components/seo/Seo";
@@ -52,6 +53,7 @@ export default function CheckoutPage() {
   const [selectedGateway, setSelectedGateway] = useState<PaymentGatewayCode | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const { data: cart, isLoading: cartLoading, isError: cartError } = useQuery({ queryKey: ["cart"], queryFn: getCart });
@@ -557,10 +559,41 @@ export default function CheckoutPage() {
               </label>
 
               <Checkbox
-                label={c.payment.termsLabel}
+                label={
+                  <span>
+                    <button
+                      type="button"
+                      onClick={() => setTermsModalOpen(true)}
+                      className="text-graphite underline decoration-silver underline-offset-4 hover:decoration-graphite"
+                    >
+                      {c.payment.termsLinkLabel}
+                    </button>{" "}
+                    {c.payment.termsLabelAfter}
+                  </span>
+                }
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
               />
+
+              <Modal open={termsModalOpen} onClose={() => setTermsModalOpen(false)} title={c.payment.termsModal.title}>
+                <h2 className="m-0 text-h4 font-semibold">{c.payment.termsModal.title}</h2>
+                <div className="flex max-h-[50vh] flex-col gap-4 overflow-y-auto pe-1 text-small leading-[1.8] text-gray-800">
+                  {c.payment.termsModal.sections.map((section) => (
+                    <div key={section.heading} className="flex flex-col gap-1">
+                      <h3 className="m-0 text-body font-semibold text-graphite">{section.heading}</h3>
+                      <p className="m-0">{section.body}</p>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  onClick={() => {
+                    setTermsAccepted(true);
+                    setTermsModalOpen(false);
+                  }}
+                >
+                  {c.payment.termsModal.closeCta}
+                </Button>
+              </Modal>
 
               {paymentError && <p className="m-0 text-small text-danger-ink">{paymentError}</p>}
 
