@@ -50,6 +50,17 @@ class HomeShowcaseProductSerializer(serializers.ModelSerializer):
 
 class AdminHomeShowcaseSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
+    # Every other entity id in this codebase is serialized as a string (see
+    # HomeShowcaseProductSerializer.get_id right above, and the same pattern
+    # on the public product/category serializers) -- ModelSerializer's
+    # auto-generated PrimaryKeyRelatedField for this FK returns a raw int
+    # instead, which the frontend's showcaseFormSchema (product: z.string())
+    # then rejects with "Expected string, received number" on every PATCH
+    # for a showcase that already has a linked product. Confirmed live: this
+    # silently blocked saving that block no matter what else was edited.
+    product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), allow_null=True, required=False, pk_field=serializers.CharField()
+    )
     product_detail = HomeShowcaseProductSerializer(source="product", read_only=True)
     # Resolved (fallback-applied) values, read-only — lets the admin panel's
     # live preview show exactly what the storefront will render, even
@@ -65,7 +76,6 @@ class AdminHomeShowcaseSerializer(serializers.ModelSerializer):
             "specs", "cta_label", "cta_url", "theme", "is_active",
             "resolved_image", "resolved_title", "resolved_cta_url",
         ]
-        extra_kwargs = {"product": {"allow_null": True, "required": False}}
 
     def get_id(self, obj: HomeShowcase) -> str:
         return str(obj.pk)

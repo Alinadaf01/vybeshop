@@ -163,12 +163,18 @@ function ShowcaseSlot({ order, existing }: { order: 1 | 2; existing: HomeShowcas
     <form
       onSubmit={handleSubmit(
         (values) => saveMutation.mutate({ ...values, product: pickedProduct?.id ?? null }),
-        // Zod blocks submission on an invalid `specs` row (e.g. a spec added
-        // via "+ افزودن مشخصه" left with an empty label/value) but nothing
-        // rendered `errors.specs` -- clicking Save just silently did nothing,
-        // with zero feedback, confirmed live. Surface it so the admin knows
-        // why the click had no effect.
-        () => toast.showError("چند فیلد مشخصات ناقص است. عنوان و مقدار هر مشخصه را کامل کنید."),
+        // Zod blocking submission previously failed completely silently --
+        // clicking Save just did nothing, confirmed live. Now surfaces a
+        // toast either way; if it's the specs array specifically (the most
+        // common real case: an added row left with an empty label/value)
+        // the message says so, otherwise a generic prompt to check the form
+        // rather than guessing wrong at which field actually failed.
+        (errs) => {
+          const message = errs.specs
+            ? "چند فیلد مشخصات ناقص است. عنوان و مقدار هر مشخصه را کامل کنید."
+            : "چند فیلد فرم نامعتبر است. مقادیر را بررسی کنید.";
+          toast.showError(message);
+        },
       )}
       className={cn("glass-card flex flex-col gap-4 p-6", isDark && "!bg-ink-950/80")}
     >

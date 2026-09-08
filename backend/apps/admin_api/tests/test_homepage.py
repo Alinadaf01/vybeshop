@@ -160,6 +160,23 @@ class AdminHomeShowcaseApiTests(AdminApiTestMixin, APITestCase):
         showcase.refresh_from_db()
         self.assertEqual(showcase.product_id, product.pk)
 
+    def test_product_id_serializes_as_string(self):
+        # Every other entity id in this codebase (products, categories,
+        # showcases themselves) serializes as a string -- ModelSerializer's
+        # auto-generated field for this FK returned a raw int instead, which
+        # the admin panel's Zod schema (product: z.string().nullable())
+        # rejected with "Expected string, received number" on every GET-then
+        # -PATCH round trip for a showcase that already had a product linked.
+        # Confirmed live: this silently blocked saving that block no matter
+        # what else was edited (title, specs, isActive, ...), and the
+        # generic invalid-form toast pointed at specs instead of this.
+        product = self.make_product(sku="SHOWCASE-STR", slug="showcase-str", name="String Id Product")
+        showcase = HomeShowcase.objects.create(order=1, product=product, is_active=True)
+        response = self.client.get(reverse("admin-homepage-showcase-detail", args=[showcase.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["product"], str(product.pk))
+        self.assertIsInstance(response.data["product"], str)
+
     def test_linked_product_autofills_title_image_link(self):
         product = self.make_product(sku="SHOWCASE-01", slug="showcase-product", name="Showcase Product")
         showcase = HomeShowcase.objects.create(order=1, product=product, is_active=True)
