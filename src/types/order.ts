@@ -23,11 +23,13 @@ export interface OrderShippingAddress {
 export interface OrderItem {
   id: string;
   productName: string;
+  productSlug: string | null;
   sku: string;
   price: number;
   colorName: string;
   quantity: number;
   subtotal: number;
+  image: string | null;
 }
 
 export type PaymentGatewayCode = "ZARINPAL" | "IDPAY" | "SNAPPPAY" | "DIGIPAY";

@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Image } from "@/components/ui/Image";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Seo } from "@/components/seo/Seo";
 import {
@@ -414,28 +415,41 @@ export default function AccountPage() {
 
                 <div className="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 md:p-12">
                   <h3 className="m-0 text-h4 font-semibold">{c.detail.itemsHeading}</h3>
-                  {selectedOrder.items.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className={"flex gap-3" + (index < selectedOrder.items.length - 1 ? " border-b border-gray-100 pb-3" : "")}
-                    >
-                      <span className="flex aspect-square w-[72px] shrink-0 items-end rounded-md border border-gray-100 bg-[repeating-linear-gradient(135deg,#ECECEC_0_8px,#F5F5F3_8px_16px)] p-1">
-                        <span dir="ltr" className="font-mono text-micro text-gray-800">
-                          {item.sku}
+                  {selectedOrder.items.map((item, index) => {
+                    const thumbnail = (
+                      <Image
+                        src={item.image}
+                        alt={item.productName}
+                        width={72}
+                        height={72}
+                        className="aspect-square w-[72px] shrink-0 rounded-md border border-gray-100 object-cover"
+                      />
+                    );
+                    return (
+                      <div
+                        key={item.id}
+                        className={"flex gap-3" + (index < selectedOrder.items.length - 1 ? " border-b border-gray-100 pb-3" : "")}
+                      >
+                        {item.productSlug ? <Link to={`/products/${item.productSlug}`}>{thumbnail}</Link> : thumbnail}
+                        <span className="flex flex-1 flex-col gap-1">
+                          {item.productSlug ? (
+                            <Link to={`/products/${item.productSlug}`} className="text-body font-medium text-graphite no-underline hover:underline">
+                              {item.productName}
+                            </Link>
+                          ) : (
+                            <span className="text-body font-medium">{item.productName}</span>
+                          )}
+                          <span className="text-small text-gray-800">
+                            {item.colorName ? `${item.colorName} · ` : ""}
+                            {item.quantity} عدد
+                          </span>
                         </span>
-                      </span>
-                      <span className="flex flex-1 flex-col gap-1">
-                        <span className="text-body font-medium">{item.productName}</span>
-                        <span className="text-small text-gray-800">
-                          {item.colorName ? `${item.colorName} · ` : ""}
-                          {item.quantity} عدد
+                        <span dir="ltr" className="font-mono text-small">
+                          {formatPrice(item.subtotal)}
                         </span>
-                      </span>
-                      <span dir="ltr" className="font-mono text-small">
-                        {formatPrice(item.subtotal)}
-                      </span>
-                    </div>
-                  ))}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

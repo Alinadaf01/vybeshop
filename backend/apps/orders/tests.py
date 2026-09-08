@@ -422,6 +422,44 @@ class OrderHistoryApiTests(APITestCase):
         response = self.client.get(reverse("order-detail", args=[order.number]))
         self.assertEqual(response.status_code, 404)
 
+    def test_order_item_links_back_to_live_product(self):
+        # The customer panel's order-item row previously showed only a static
+        # SKU placeholder with no image and no way back to the product --
+        # this checks the live product's slug/image both come through so the
+        # frontend can render a real thumbnail linking to /products/<slug>.
+        user = User.objects.create_user(phone="09121110017", is_verified=True)
+        category = Category.objects.create(slug="order-item-test", name="Order Item Test")
+        product = Product.objects.create(
+            sku="OI-001", slug="order-item-product", name="Order Item Product", price=50000, category=category
+        )
+        order = Order.objects.create(user=user, shipping_address={}, total=50000)
+        OrderItem.objects.create(order=order, product=product, product_name=product.name, sku=product.sku, price=50000)
+
+        self.client.force_authenticate(user=user)
+        response = self.client.get(reverse("order-detail", args=[order.number]))
+        self.assertEqual(response.status_code, 200)
+        item = response.data["items"][0]
+        self.assertEqual(item["product_slug"], "order-item-product")
+
+    def test_order_item_from_deleted_product_has_no_link(self):
+        # OrderItem.product is SET_NULL on delete -- the name/sku snapshot
+        # must survive, but there's no live page left to link to.
+        user = User.objects.create_user(phone="09121110018", is_verified=True)
+        category = Category.objects.create(slug="order-item-deleted", name="Order Item Deleted")
+        product = Product.objects.create(
+            sku="OI-002", slug="order-item-deleted-product", name="Deleted Product", price=50000, category=category
+        )
+        order = Order.objects.create(user=user, shipping_address={}, total=50000)
+        OrderItem.objects.create(order=order, product=product, product_name=product.name, sku=product.sku, price=50000)
+        product.delete()
+
+        self.client.force_authenticate(user=user)
+        response = self.client.get(reverse("order-detail", args=[order.number]))
+        item = response.data["items"][0]
+        self.assertIsNone(item["product_slug"])
+        self.assertIsNone(item["image"])
+        self.assertEqual(item["product_name"], "Deleted Product")
+
 
 def _zarinpal_request_response(authority="A-TEST-AUTHORITY"):
     mock = MagicMock()

@@ -120,13 +120,34 @@ class InitiatePaymentSerializer(serializers.Serializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     subtotal = serializers.IntegerField(read_only=True)
+    # product_name/sku/price are a snapshot at order time (see OrderItem's
+    # docstring) and stay accurate even after the product changes -- but the
+    # customer panel also needs a way back to the *live* product page to see
+    # its current price/specs, which only the FK (nullable -- SET_NULL if
+    # the product was later deleted) can answer. Both null out together when
+    # the product no longer exists, which the frontend renders as a
+    # non-clickable row instead of a dead link.
+    product_slug = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderItem
-        fields = ["id", "product_name", "sku", "price", "color_name", "quantity", "subtotal"]
+        fields = ["id", "product_name", "product_slug", "sku", "price", "color_name", "quantity", "subtotal", "image"]
 
     def get_id(self, obj: OrderItem) -> str:
         return str(obj.pk)
+
+    def get_product_slug(self, obj: OrderItem) -> str | None:
+        return obj.product.slug if obj.product else None
+
+    def get_image(self, obj: OrderItem) -> str | None:
+        if not obj.product:
+            return None
+        first = obj.product.images.order_by("order").first()
+        if not first:
+            return None
+        request = self.context.get("request")
+        return absolute_media_url(request, first.image) if first.image else first.external_url
 
 
 class OrderStatusLogSerializer(serializers.ModelSerializer):
