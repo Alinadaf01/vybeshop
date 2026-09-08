@@ -100,3 +100,22 @@ jobs:
             ${{ env.IMAGE }}:${{ steps.vars.outputs.sha_tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # Docker Hub has started returning 403 (not 401) even on anonymous
+      # registry requests from the deploy server's IP range and from the
+      # maintainer's own network — an IP-level block, not a bad token
+      # (confirmed: a fresh `docker login` with the same credentials also
+      # gets 403). GitHub itself has stayed reachable throughout, so this
+      # gives a way to get the image onto the server without Docker Hub in
+      # the path at all: download this artifact (gh CLI or the Actions UI)
+      # and `docker load` it directly, then `scp` if needed.
+      - name: Save image as a downloadable artifact (Docker Hub pull fallback)
+        run: |
+          docker pull ${{ env.IMAGE }}:${{ steps.vars.outputs.sha_tag }}
+          docker save ${{ env.IMAGE }}:${{ steps.vars.outputs.sha_tag }} -o /tmp/vybeshop-backend.tar
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vybeshop-backend-image
+          path: /tmp/vybeshop-backend.tar
+          retention-days: 3
