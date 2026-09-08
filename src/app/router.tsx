@@ -16,7 +16,10 @@ import HomePage from "@/pages/HomePage";
 import ProductsPage from "@/pages/ProductsPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import CategoriesPage from "@/pages/CategoriesPage";
-import CatalogPage from "@/pages/CatalogPage";
+// CatalogPage/route disabled site-wide on request -- page, content, and data
+// files are untouched, so re-enabling is just uncommenting this import and
+// the route entry below (search "catalog" in this file and navigation.ts).
+// import CatalogPage from "@/pages/CatalogPage";
 import BlogListPage from "@/pages/BlogListPage";
 import BlogPostPage from "@/pages/BlogPostPage";
 import AboutPage from "@/pages/AboutPage";
@@ -44,7 +47,7 @@ export const router = createBrowserRouter([
       { path: "products", element: <ProductsPage /> },
       { path: "products/:slug", element: <ProductDetailPage /> },
       { path: "categories", element: <CategoriesPage /> },
-      { path: "catalog", element: <CatalogPage /> },
+      // { path: "catalog", element: <CatalogPage /> },
       { path: "blog", element: <BlogListPage /> },
       { path: "blog/:slug", element: <BlogPostPage /> },
       { path: "about", element: <AboutPage /> },

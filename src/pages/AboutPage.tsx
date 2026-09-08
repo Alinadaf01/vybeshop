@@ -202,12 +202,6 @@ export default function AboutPage() {
             >
               {c.cta.primaryAction}
             </Link>
-            <Link
-              to="/catalog"
-              className="grid h-12 place-items-center rounded-md border border-silver bg-white px-8 text-body font-medium text-graphite no-underline transition-colors duration-fast hover:border-titanium"
-            >
-              {c.cta.secondaryAction}
-            </Link>
           </div>
         </div>
       </section>

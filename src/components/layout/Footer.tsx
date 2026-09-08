@@ -7,7 +7,6 @@ import { VybeWordmark } from "@/components/brand/VybeWordmark";
 
 const quickLinks = [
   { label: "محصولات", href: "/products" },
-  { label: "کاتالوگ", href: "/catalog" },
   { label: "بلاگ", href: "/blog" },
   { label: "درباره ما", href: "/about" },
 ];

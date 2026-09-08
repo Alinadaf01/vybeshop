@@ -116,7 +116,7 @@ export function listAllRoutes(): string[] {
     "/",
     "/products",
     "/categories",
-    "/catalog",
+    // "/catalog" -- section disabled site-wide, see router.tsx.
     "/blog",
     "/about",
     "/contact",
