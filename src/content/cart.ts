@@ -13,8 +13,8 @@ export const cartContent = {
     checkoutCta: "ادامه و تسویه",
   },
   shippingNote: {
-    kicker: "SHIPPING · RETURNS",
-    body: "ارسال ۲ تا ۴ روز کاری. مرجوعی ۷ روزه بدون قید. قطعه‌های چاپ‌شده به سفارش مشمول مرجوعی نیستند.",
+    kicker: "SHIPPING",
+    body: "ارسال ۲ تا ۴ روز کاری.",
   },
   empty: {
     heading: "سبد خرید خالی است",
