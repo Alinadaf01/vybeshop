@@ -33,8 +33,19 @@ class ZarinpalProvider(PaymentProvider):
     display_name = "زرین‌پال"
 
     def request(self, order, callback_url: str) -> PaymentRequestResult:
+        merchant_id = self.credentials.get("merchantId", "")
+        if not merchant_id:
+            # has_valid_credentials() only checks the JSON is a non-empty
+            # dict, so a row saved with the wrong key name (e.g. "apiKey" --
+            # the generic placeholder every other credential row's editor
+            # shows) passes that check but sends merchant_id="" to Zarinpal,
+            # which Zarinpal rejects with a generic-sounding error. Fail with
+            # the real cause instead of forwarding an empty credential.
+            raise PaymentProviderError(
+                'درگاه زرین‌پال بدون کلید "merchantId" قابل استفاده نیست. کد کلید را در تنظیمات بررسی کنید.'
+            )
         payload = {
-            "merchant_id": self.credentials.get("merchantId", ""),
+            "merchant_id": merchant_id,
             "amount": order.total * _RIAL_PER_TOMAN,
             "callback_url": callback_url,
             "description": f"سفارش {order.number}",

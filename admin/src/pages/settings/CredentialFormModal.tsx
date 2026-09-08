@@ -13,6 +13,23 @@ interface KeyValueRow {
   value: string;
 }
 
+// The key-name editor below is generic (any service, any key) with a
+// placeholder that only ever shows "apiKey" as an example -- so an admin
+// setting up Zarinpal naturally typed a key named "apiKey" there, but
+// apps/orders/providers/zarinpal.py only ever reads credentials["merchantId"].
+// The request silently went out with an empty merchant_id and Zarinpal
+// rejected it -- confirmed live as exactly why "I set the apikey but it
+// doesn't work" happened despite the row showing as configured. Same
+// mismatch risk exists for every other service, so show the real expected
+// key name(s) per service instead of a generic example.
+const REQUIRED_CREDENTIAL_KEYS: Record<ApiCredentialService, string[]> = {
+  kavenegar: ["apiKey"],
+  zarinpal: ["merchantId"],
+  idpay: ["apiKey"],
+  snapppay: ["clientId", "clientSecret", "username", "password"],
+  digipay: ["clientId", "clientSecret"],
+};
+
 export function CredentialFormModal({
   open,
   onClose,
@@ -109,10 +126,16 @@ export function CredentialFormModal({
           </div>
           {editingKeys ? (
             <div className="flex flex-col gap-2">
+              <p className="m-0 text-[11px] text-slate-500">
+                نام کلید{REQUIRED_CREDENTIAL_KEYS[service].length > 1 ? "‌های" : ""} مورد نیاز این سرویس:{" "}
+                <span dir="ltr" className="font-mono text-slate-300">
+                  {REQUIRED_CREDENTIAL_KEYS[service].join(", ")}
+                </span>
+              </p>
               {rows.map((row, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <Input
-                    placeholder="نام کلید (مثلاً apiKey)"
+                    placeholder={`نام کلید (مثلاً ${REQUIRED_CREDENTIAL_KEYS[service][0]})`}
                     dir="ltr"
                     value={row.key}
                     onChange={(e) => setRows((prev) => prev.map((r, i) => (i === index ? { ...r, key: e.target.value } : r)))}
