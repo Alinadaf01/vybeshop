@@ -79,7 +79,7 @@ class AdminProductSerializer(serializers.ModelSerializer):
             "price", "cost_price", "category", "images", "colors",
             "material", "dimensions", "weight", "layer_height",
             "stock_count", "in_stock", "order", "is_active",
-            "shipping_time", "return_policy", "production_status",
+            "shipping_time", "warranty_terms", "production_status",
             "meta_title", "meta_description", "specs",
             "created_at", "updated_at",
         ]

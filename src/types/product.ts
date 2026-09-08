@@ -35,6 +35,7 @@ export interface Product {
   name: string;
   shortDescription: string;
   description: string;
+  warrantyTerms: string;
   price: number;
   images: string[];
   category: string;

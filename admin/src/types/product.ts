@@ -42,7 +42,7 @@ export interface AdminProduct {
   order: number;
   isActive: boolean;
   shippingTime: string;
-  returnPolicy: string;
+  warrantyTerms: string;
   productionStatus: ProductionStatus;
   metaTitle: string;
   metaDescription: string;
@@ -67,7 +67,7 @@ export interface ProductFormValues {
   order: number;
   isActive: boolean;
   shippingTime: string;
-  returnPolicy: string;
+  warrantyTerms: string;
   productionStatus: ProductionStatus;
   metaTitle: string;
   metaDescription: string;

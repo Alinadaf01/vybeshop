@@ -56,6 +56,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "name",
             "short_description",
             "description",
+            "warranty_terms",
             "price",
             "images",
             "category",

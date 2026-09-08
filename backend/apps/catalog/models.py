@@ -46,7 +46,12 @@ class Product(models.Model):
     sku = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(unique=True)
     name = models.CharField(max_length=200)
-    short_description = models.CharField(max_length=300, blank=True)
+    # 160, not the old 300 -- this renders as an unclamped single line in
+    # ProductCard (home/product-list grids) and the one-liner under the
+    # title on the product detail page, both fixed-height contexts; 300
+    # characters reliably overflowed the card box. `description` below is
+    # the actual long-form field, unaffected by this.
+    short_description = models.CharField(max_length=160, blank=True)
     description = models.TextField(blank=True)
     price = models.PositiveIntegerField(help_text="Toman, integer")
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
@@ -68,7 +73,7 @@ class Product(models.Model):
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
     shipping_time = models.CharField(max_length=100, blank=True)
-    return_policy = models.TextField(blank=True)
+    warranty_terms = models.TextField(blank=True, help_text='مثلاً "۶ ماه گارانتی تعویض در صورت نقص ساخت."')
     production_status = models.CharField(
         max_length=20, choices=PRODUCTION_STATUS_CHOICES, default="in_stock"
     )

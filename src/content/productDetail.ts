@@ -15,7 +15,7 @@ export const productDetailContent = {
   savedToFavorites: "ذخیره شد",
   share: "SHARE",
   shipping: { label: "ارسال", value: "۲ تا ۴ روز کاری، تهران و شهرستان" },
-  returns: { label: "مرجوعی", value: "۷ روز، بدون قید" },
+  warranty: { label: "شرایط گارانتی" },
   buildStatus: { label: "وضعیت ساخت", inStock: "IN STOCK · SHIPS FROM WORKSHOP", outOfStock: "OUT OF STOCK" },
   lowStockTemplate: (count: number, colorName: string) => `تنها ${count.toLocaleString("en-US")} عدد در رنگ ${colorName} باقی مانده است.`,
   whyThisShape: {

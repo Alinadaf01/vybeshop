@@ -207,10 +207,12 @@ export default function ProductDetailPage() {
                 <dt className="text-small text-gray-800">{c.shipping.label}</dt>
                 <dd className="m-0 text-small">{c.shipping.value}</dd>
               </div>
-              <div className="flex justify-between gap-4 border-b border-gray-100 py-3">
-                <dt className="text-small text-gray-800">{c.returns.label}</dt>
-                <dd className="m-0 text-small">{c.returns.value}</dd>
-              </div>
+              {product.warrantyTerms && (
+                <div className="flex justify-between gap-4 border-b border-gray-100 py-3">
+                  <dt className="text-small text-gray-800">{c.warranty.label}</dt>
+                  <dd className="m-0 text-small">{product.warrantyTerms}</dd>
+                </div>
+              )}
               <div className="flex justify-between gap-4 py-3">
                 <dt className="text-small text-gray-800">{c.buildStatus.label}</dt>
                 <dd dir="ltr" className={`m-0 font-mono text-small ${isOutOfStock ? "text-danger-ink" : "text-success-ink"}`}>

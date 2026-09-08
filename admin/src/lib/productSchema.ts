@@ -8,7 +8,7 @@ export const productFormSchema = z
       .min(1, "اسلاگ الزامی است.")
       .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "اسلاگ فقط می‌تواند شامل حروف انگلیسی کوچک، عدد و خط تیره باشد."),
     name: z.string().min(1, "نام الزامی است."),
-    shortDescription: z.string(),
+    shortDescription: z.string().max(160, "توضیح کوتاه حداکثر ۱۶۰ کاراکتر می‌تواند باشد."),
     description: z.string(),
     price: z.coerce.number().int().min(0, "قیمت نمی‌تواند منفی باشد."),
     costPrice: z.number().int().min(0, "قیمت تمام‌شده نمی‌تواند منفی باشد.").nullable(),
@@ -24,7 +24,7 @@ export const productFormSchema = z
     order: z.coerce.number().int().min(0),
     isActive: z.boolean(),
     shippingTime: z.string(),
-    returnPolicy: z.string(),
+    warrantyTerms: z.string(),
     productionStatus: z.enum(["in_stock", "made_to_order", "discontinued"]),
     metaTitle: z.string(),
     metaDescription: z.string(),

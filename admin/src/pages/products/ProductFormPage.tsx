@@ -33,7 +33,7 @@ const EMPTY_VALUES: ProductFormSchemaValues = {
   order: 0,
   isActive: true,
   shippingTime: "",
-  returnPolicy: "",
+  warrantyTerms: "",
   productionStatus: "in_stock",
   metaTitle: "",
   metaDescription: "",
@@ -86,7 +86,7 @@ export default function ProductFormPage() {
       order: product.order,
       isActive: product.isActive,
       shippingTime: product.shippingTime,
-      returnPolicy: product.returnPolicy,
+      warrantyTerms: product.warrantyTerms,
       productionStatus: product.productionStatus,
       metaTitle: product.metaTitle,
       metaDescription: product.metaDescription,
@@ -169,8 +169,13 @@ export default function ProductFormPage() {
             </Field>
           </div>
 
-          <Field label="توضیح کوتاه" htmlFor="p-short-desc" error={errors.shortDescription?.message}>
-            <Input id="p-short-desc" {...register("shortDescription")} />
+          <Field
+            label="توضیح کوتاه"
+            htmlFor="p-short-desc"
+            error={errors.shortDescription?.message}
+            hint="حداکثر ۱۶۰ کاراکتر — در باکس کارت محصول جا می‌شود."
+          >
+            <Input id="p-short-desc" maxLength={160} {...register("shortDescription")} />
           </Field>
           <Field label="توضیحات کامل" htmlFor="p-desc" error={errors.description?.message}>
             <Textarea id="p-desc" {...register("description")} />
@@ -221,8 +226,13 @@ export default function ProductFormPage() {
             </Field>
           </div>
 
-          <Field label="وضعیت مرجوعی" htmlFor="p-return" error={errors.returnPolicy?.message}>
-            <Textarea id="p-return" {...register("returnPolicy")} />
+          <Field
+            label="شرایط گارانتی"
+            htmlFor="p-warranty"
+            error={errors.warrantyTerms?.message}
+            hint='مثلاً "۶ ماه گارانتی تعویض در صورت نقص ساخت."'
+          >
+            <Textarea id="p-warranty" {...register("warrantyTerms")} />
           </Field>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
