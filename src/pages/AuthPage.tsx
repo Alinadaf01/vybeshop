@@ -61,7 +61,7 @@ export default function AuthPage() {
 
   const phoneForm = useForm<PhoneFormValues>({
     resolver: zodResolver(phoneFormSchema),
-    defaultValues: { phone: "", rules: false },
+    defaultValues: { phone: "" },
   });
 
   const profileForm = useForm<ProfileFormValues>({
@@ -266,25 +266,6 @@ export default function AuthPage() {
                 </span>
               )}
             </div>
-            <label className="inline-flex cursor-pointer select-none items-start gap-2.5">
-              <span className="relative mt-0.5 inline-flex size-5 shrink-0">
-                <input
-                  type="checkbox"
-                  className="peer absolute inset-0 z-10 size-5 cursor-pointer opacity-0"
-                  {...phoneForm.register("rules")}
-                />
-                <span
-                  className={cn(
-                    "bg-[rgba(255,255,255,0.04)] peer-checked:bg-[rgba(0,209,255,0.2)] pointer-events-none absolute inset-0 rounded-sm border transition-colors duration-fast peer-checked:border-cyan peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan",
-                    phoneForm.formState.errors.rules ? "border-danger" : "border-[rgba(255,255,255,0.2)]",
-                  )}
-                />
-                <svg viewBox="0 0 12 12" fill="none" className="pointer-events-none absolute inset-0 size-5 p-1 opacity-0 peer-checked:opacity-100">
-                  <path d="M2 6.2 4.8 9 10 3" stroke="#00D1FF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <span className="text-body text-silver">{c.phoneStep.rulesLabel}</span>
-            </label>
             <Button
               type="submit"
               loading={phoneForm.formState.isSubmitting}

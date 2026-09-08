@@ -10,7 +10,6 @@ export const authContent = {
     subtitle: "شماره موبایل خود را وارد کنید. اگر حساب نداشته باشید، همین‌جا ساخته می‌شود.",
     phoneLabel: "شماره موبایل *",
     phonePlaceholder: "09xxxxxxxxx",
-    rulesLabel: "شرایط استفاده و سیاست حریم خصوصی را می‌پذیرم. *",
     submit: "دریافت کد تأیید",
     submitting: "در حال ارسال کد…",
   },

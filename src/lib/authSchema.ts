@@ -5,7 +5,6 @@ const PHONE_MESSAGE = "شماره موبایل باید ۱۱ رقمی و با ۰
 
 export const phoneFormSchema = z.object({
   phone: z.string().regex(/^09\d{9}$/, PHONE_MESSAGE),
-  rules: z.boolean().refine((value) => value === true, "برای ادامه باید شرایط را بپذیرید."),
 });
 export type PhoneFormValues = z.infer<typeof phoneFormSchema>;
 
