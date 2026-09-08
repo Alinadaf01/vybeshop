@@ -87,6 +87,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
+      # DEBUG defaults to False (config/settings.py) when unset, which turns
+      # on SECURE_SSL_REDIRECT -- the test client never sends
+      # X-Forwarded-Proto, so that 301-redirected nearly every test instead
+      # of running it. Confirmed live: 182 failures + 57 errors, all
+      # "301 != <expected>", on a suite that passes 275/275 locally where
+      # DEBUG=True is already set. Matches local dev's setting, not a
+      # production-only relaxation.
+      DEBUG: "True"
       DATABASE_URL: postgres://vybeshop:vybeshop@localhost:5432/vybeshop
       SECRET_KEY: ci-only-not-a-real-secret
       # A valid Fernet key is required for encrypted_model_fields to work at
