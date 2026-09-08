@@ -61,7 +61,6 @@ class Product(models.Model):
     height_mm = models.PositiveIntegerField(default=0)
     depth_mm = models.PositiveIntegerField(default=0)
     weight_g = models.PositiveIntegerField(default=0)
-    layer_height_mm = models.DecimalField(max_digits=4, decimal_places=2, default=0)
 
     stock_count = models.PositiveIntegerField(
         default=0, help_text="Derived from StockMovement ledger — never edit directly."

@@ -43,7 +43,6 @@ export interface Product {
   material: string;
   dimensions: ProductDimensions;
   weight: number;
-  layerHeight: number;
   inStock: boolean;
   stockCount: number;
   specs: ProductSpec[];

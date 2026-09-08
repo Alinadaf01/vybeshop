@@ -83,7 +83,6 @@ class Command(BaseCommand):
                     "height_mm": row["dimensions"]["h"],
                     "depth_mm": row["dimensions"]["d"],
                     "weight_g": row["weight"],
-                    "layer_height_mm": row["layerHeight"],
                     "order": index,
                     "is_active": True,
                 },

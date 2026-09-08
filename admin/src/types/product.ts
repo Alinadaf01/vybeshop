@@ -36,7 +36,6 @@ export interface AdminProduct {
   material: string;
   dimensions: { w: number; h: number; d: number };
   weight: number;
-  layerHeight: number;
   stockCount: number;
   inStock: boolean;
   order: number;
@@ -63,7 +62,6 @@ export interface ProductFormValues {
   material: string;
   dimensions: { w: number; h: number; d: number };
   weight: number;
-  layerHeight: number;
   order: number;
   isActive: boolean;
   shippingTime: string;

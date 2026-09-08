@@ -63,9 +63,6 @@ class AdminProductSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     dimensions = serializers.SerializerMethodField()
     weight = serializers.IntegerField(source="weight_g", required=False, default=0)
-    layer_height = serializers.DecimalField(
-        source="layer_height_mm", max_digits=4, decimal_places=2, coerce_to_string=False, required=False, default=0
-    )
     images = AdminProductImageSerializer(many=True, read_only=True)
     colors = AdminColorOptionSerializer(many=True, read_only=True)
     stock_count = serializers.IntegerField(read_only=True)
@@ -77,7 +74,7 @@ class AdminProductSerializer(serializers.ModelSerializer):
         fields = [
             "id", "sku", "slug", "name", "short_description", "description",
             "price", "cost_price", "category", "images", "colors",
-            "material", "dimensions", "weight", "layer_height",
+            "material", "dimensions", "weight",
             "stock_count", "in_stock", "order", "is_active",
             "shipping_time", "warranty_terms", "production_status",
             "meta_title", "meta_description", "specs",

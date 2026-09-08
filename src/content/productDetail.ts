@@ -4,7 +4,7 @@ export const productDetailContent = {
   ratingValue: 4.6,
   ratingCount: 23,
   priceNote: "قیمت نهایی؛ ارسال جداگانه محاسبه می‌شود.",
-  colorLegend: "رنگ فیلامنت",
+  colorLegend: "رنگ",
   addToCart: "افزودن به سبد",
   addingToCart: "در حال افزودن…",
   addedToCartToast: "به سبد اضافه شد.",
@@ -14,6 +14,8 @@ export const productDetailContent = {
   saveToFavorites: "ذخیره در علاقه‌مندی‌ها",
   savedToFavorites: "ذخیره شد",
   share: "SHARE",
+  shareLinkCopied: "لینک محصول کپی شد.",
+  shareFailed: "کپی لینک ناموفق بود.",
   shipping: { label: "ارسال", value: "۲ تا ۴ روز کاری، تهران و شهرستان" },
   warranty: { label: "شرایط گارانتی" },
   buildStatus: { label: "وضعیت ساخت", inStock: "IN STOCK · SHIPS FROM WORKSHOP", outOfStock: "OUT OF STOCK" },
@@ -28,9 +30,7 @@ export const productDetailContent = {
   },
   specTable: {
     kicker: "TECHNICAL SPEC",
-    labels: { sku: "کد مدل", dimensions: "ابعاد", weight: "وزن", material: "متریال", layerHeight: "ارتفاع لایه", category: "دسته‌بندی" },
-    careNoteBefore: "PLA در آفتاب مستقیم داخل خودرو نرم می‌شود. جزئیات نگهداری در",
-    careLinkLabel: "راهنمای نگهداری قطعات",
+    labels: { sku: "کد مدل", dimensions: "ابعاد", weight: "وزن", material: "متریال", category: "دسته‌بندی" },
   },
   howItsMade: {
     kicker: "HOW IT IS MADE",

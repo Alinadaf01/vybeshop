@@ -68,6 +68,29 @@ export default function ProductDetailPage() {
   // it's only used once the user can actually click the button below.
   const favoriteToggle = useFavoriteToggle(product?.id ?? "");
 
+  // Web Share API on mobile/supporting browsers opens the native share
+  // sheet directly; everywhere else (most desktop browsers) falls back to
+  // copying the link, which is the best a "share" button can do without it.
+  async function handleShare() {
+    if (!product) return;
+    const url = absoluteUrl(`/products/${product.slug}`);
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: product.name, url });
+      } catch {
+        // AbortError when the user just closes the native share sheet --
+        // not a real failure, nothing to show the user for it.
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast({ variant: "success", message: c.shareLinkCopied });
+    } catch {
+      showToast({ variant: "danger", message: c.shareFailed });
+    }
+  }
+
   if (isError) return <NotFoundPage />;
   if (isLoading || !product) return <PageLoadingFallback />;
 
@@ -190,7 +213,7 @@ export default function ProductDetailPage() {
               >
                 {favoriteToggle.isFavorited ? c.savedToFavorites : c.saveToFavorites}
               </Button>
-              <Button variant="secondary" className="font-mono text-micro">
+              <Button variant="secondary" className="font-mono text-micro" onClick={handleShare}>
                 {c.share}
               </Button>
             </div>
@@ -249,7 +272,6 @@ export default function ProductDetailPage() {
                 { label: c.specTable.labels.dimensions, value: formatDimensions(product.dimensions) },
                 { label: c.specTable.labels.weight, value: `${product.weight} g` },
                 { label: c.specTable.labels.material, value: product.material },
-                { label: c.specTable.labels.layerHeight, value: `${product.layerHeight} mm` },
                 { label: c.specTable.labels.category, value: category?.name ?? product.category },
                 ...product.specs.map((spec) => ({
                   label: spec.label,
@@ -257,16 +279,6 @@ export default function ProductDetailPage() {
                 })),
               ]}
             />
-            <p className="m-0 border-t border-gray-100 pt-4 text-small leading-[1.6] text-gray-800">
-              {c.specTable.careNoteBefore}{" "}
-              <Link
-                to="/blog/blog-3"
-                className="text-gray-800 underline decoration-silver underline-offset-4 hover:decoration-graphite"
-              >
-                {c.specTable.careLinkLabel}
-              </Link>
-              .
-            </p>
           </div>
         </section>
 

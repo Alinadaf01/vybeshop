@@ -20,7 +20,6 @@ export const productFormSchema = z
       d: z.coerce.number().int().min(0),
     }),
     weight: z.coerce.number().int().min(0),
-    layerHeight: z.coerce.number().min(0),
     order: z.coerce.number().int().min(0),
     isActive: z.boolean(),
     shippingTime: z.string(),

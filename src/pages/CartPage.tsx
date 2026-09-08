@@ -203,7 +203,7 @@ function CartItemRow({
           {item.product.name}
         </Link>
         {item.colorOption && (
-          <span className="text-small text-gray-800">رنگ فیلامنت: {item.colorOption.name}</span>
+          <span className="text-small text-gray-800">رنگ: {item.colorOption.name}</span>
         )}
         <span dir="ltr" className={"font-mono text-micro " + (item.product.inStock ? "text-success-ink" : "text-danger-ink")}>
           {item.product.inStock ? c.inStock : c.outOfStock}
