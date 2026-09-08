@@ -2,8 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toJalaali } from "jalaali-js";
-import { categories } from "@/data/categories";
-import { getSiteSettings } from "@/lib/api";
+import { getSiteSettings, getCategories } from "@/lib/api";
 import { VybeWordmark } from "@/components/brand/VybeWordmark";
 
 const quickLinks = [
@@ -13,12 +12,15 @@ const quickLinks = [
   { label: "درباره ما", href: "/about" },
 ];
 
-const supportLinks: { label: string; href?: string }[] = [
-  { label: "پیگیری سفارش" },
-  { label: "ارسال و تحویل" },
-  { label: "مرجوعی" },
+// پیگیری سفارش واقعاً به حساب کاربری می‌رود (سفارش‌های کاربر آنجاست). برای
+// بقیه صفحه اختصاصی‌ای هنوز نداریم، پس به تماس با ما می‌روند تا لینک مرده
+// نباشند -- ساخت صفحه‌های سیاست ارسال/مرجوعی/سؤالات متداول خودش یک کار جدا است.
+const supportLinks: { label: string; href: string }[] = [
+  { label: "پیگیری سفارش", href: "/account" },
+  { label: "ارسال و تحویل", href: "/contact" },
+  { label: "مرجوعی", href: "/contact" },
   { label: "نگهداری قطعات", href: "/blog/blog-3" },
-  { label: "سؤالات متداول" },
+  { label: "سؤالات متداول", href: "/contact" },
 ];
 
 const aboutLinks: { label: string; href?: string }[] = [
@@ -42,6 +44,12 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
 export function Footer() {
   const [subscribed, setSubscribed] = useState(false);
   const { data: settings } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings });
+  // Same ["categories"] query key as HomePage/CategoriesPage/ProductDetailPage
+  // -- was reading the static src/data/categories.ts module directly before,
+  // so renaming a category in the admin panel never showed up here even
+  // though the homepage's own category section (fed by this same query) was
+  // already correct.
+  const { data: categoriesData } = useQuery({ queryKey: ["categories"], queryFn: () => getCategories() });
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,7 +66,7 @@ export function Footer() {
 
         <div className="grid grid-cols-1 gap-8 border-b border-edge py-12 md:grid-cols-2 lg:grid-cols-4">
           <FooterColumn title="دسته‌بندی‌ها">
-            {categories.slice(0, 6).map((category) => (
+            {(categoriesData ?? []).slice(0, 6).map((category) => (
               <Link
                 key={category.slug}
                 to={`/products?category=${category.slug}`}
@@ -78,17 +86,11 @@ export function Footer() {
           </FooterColumn>
 
           <FooterColumn title="پشتیبانی و راهنما">
-            {supportLinks.map((link) =>
-              link.href ? (
-                <Link key={link.label} to={link.href} className="text-small text-silver no-underline hover:text-white">
-                  {link.label}
-                </Link>
-              ) : (
-                <span key={link.label} className="text-small text-silver">
-                  {link.label}
-                </span>
-              ),
-            )}
+            {supportLinks.map((link) => (
+              <Link key={link.label} to={link.href} className="text-small text-silver no-underline hover:text-white">
+                {link.label}
+              </Link>
+            ))}
           </FooterColumn>
 
           <FooterColumn title="درباره VYBE">
