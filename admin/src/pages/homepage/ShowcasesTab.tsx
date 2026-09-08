@@ -69,6 +69,7 @@ function ShowcaseSlot({ order, existing }: { order: 1 | 2; existing: HomeShowcas
       : null,
   );
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const initialProductId = existing?.product ?? null;
 
   const {
     register,
@@ -150,12 +151,25 @@ function ShowcaseSlot({ order, existing }: { order: 1 | 2; existing: HomeShowcas
   });
 
   const hasPendingImage = Boolean(imageFile);
+  // ProductSearchSelect keeps `pickedProduct` in its own useState, outside
+  // react-hook-form -- so picking/clearing a product alone never set
+  // isDirty, and the Save button stayed disabled with no way to submit
+  // that change. Compared against the id the slot loaded with instead.
+  const productChanged = (pickedProduct?.id ?? null) !== initialProductId;
   const theme = watch("theme");
   const isDark = theme === "dark";
 
   return (
     <form
-      onSubmit={handleSubmit((values) => saveMutation.mutate({ ...values, product: pickedProduct?.id ?? null }))}
+      onSubmit={handleSubmit(
+        (values) => saveMutation.mutate({ ...values, product: pickedProduct?.id ?? null }),
+        // Zod blocks submission on an invalid `specs` row (e.g. a spec added
+        // via "+ افزودن مشخصه" left with an empty label/value) but nothing
+        // rendered `errors.specs` -- clicking Save just silently did nothing,
+        // with zero feedback, confirmed live. Surface it so the admin knows
+        // why the click had no effect.
+        () => toast.showError("چند فیلد مشخصات ناقص است. عنوان و مقدار هر مشخصه را کامل کنید."),
+      )}
       className={cn("glass-card flex flex-col gap-4 p-6", isDark && "!bg-ink-950/80")}
     >
       <div className="flex items-center justify-between">
@@ -210,31 +224,40 @@ function ShowcaseSlot({ order, existing }: { order: 1 | 2; existing: HomeShowcas
           <p className="m-0 text-xs text-slate-500">مشخصه‌ای ثبت نشده.</p>
         ) : (
           <div className="flex flex-col gap-2">
-            {specs.map((spec, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  placeholder="عنوان (مثلاً وزن)"
-                  value={spec.label}
-                  onChange={(e) => updateSpec(index, "label", e.target.value)}
-                />
-                <Input
-                  placeholder="مقدار (مثلاً ۲۵۰ گرم)"
-                  dir="ltr"
-                  value={spec.value}
-                  onChange={(e) => updateSpec(index, "value", e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeSpec(index)}
-                  aria-label="حذف مشخصه"
-                  className="icon-btn !h-10 !w-10 shrink-0 hover:!text-danger"
-                >
-                  <svg className="size-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            ))}
+            {specs.map((spec, index) => {
+              const labelError = errors.specs?.[index]?.label?.message;
+              const valueError = errors.specs?.[index]?.value?.message;
+              return (
+                <div key={index} className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      placeholder="عنوان (مثلاً وزن)"
+                      value={spec.label}
+                      onChange={(e) => updateSpec(index, "label", e.target.value)}
+                    />
+                    <Input
+                      placeholder="مقدار (مثلاً ۲۵۰ گرم)"
+                      dir="ltr"
+                      value={spec.value}
+                      onChange={(e) => updateSpec(index, "value", e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeSpec(index)}
+                      aria-label="حذف مشخصه"
+                      className="icon-btn !h-10 !w-10 shrink-0 hover:!text-danger"
+                    >
+                      <svg className="size-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  {(labelError || valueError) && (
+                    <p className="m-0 text-[11px] text-danger">{labelError || valueError}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -266,7 +289,7 @@ function ShowcaseSlot({ order, existing }: { order: 1 | 2; existing: HomeShowcas
       />
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isSubmitting || (!isDirty && !hasPendingImage)}>
+        <Button type="submit" disabled={isSubmitting || (!isDirty && !hasPendingImage && !productChanged)}>
           {isSubmitting ? "در حال ذخیره…" : existing ? "ذخیره بلوک" : "ایجاد بلوک"}
         </Button>
       </div>

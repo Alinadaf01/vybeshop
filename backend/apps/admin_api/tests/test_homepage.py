@@ -99,6 +99,67 @@ class AdminHomeShowcaseApiTests(AdminApiTestMixin, APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_multipart_patch_with_specs_and_image_saves(self):
+        # Reproduces exactly what the admin panel's buildFormData() sends
+        # when an admin edits an existing showcase and also picks a new
+        # image: every field goes through FormData.append(), so specs
+        # (an array of {label, value} objects) arrives as a JSON *string*,
+        # product arrives as "" when unset, and isActive arrives as the
+        # string "true" rather than a real boolean.
+        showcase = HomeShowcase.objects.create(order=1, title="Before", is_active=True)
+        response = self.client.patch(
+            reverse("admin-homepage-showcase-detail", args=[showcase.pk]),
+            {
+                "order": "1",
+                "product": "",
+                "imageAlt": "alt text",
+                "title": "Renamed via multipart",
+                "description": "desc",
+                "specs": '[{"label": "وزن", "value": "250 گرم"}]',
+                "ctaLabel": "جزئیات را ببینید",
+                "ctaUrl": "",
+                "theme": "dark",
+                "isActive": "true",
+                "image": _fake_image_file(),
+            },
+            format="multipart",
+            HTTP_X_FORWARDED_PROTO="https",
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        showcase.refresh_from_db()
+        self.assertEqual(showcase.title, "Renamed via multipart")
+        self.assertEqual(showcase.specs, [{"label": "وزن", "value": "250 گرم"}])
+        self.assertTrue(showcase.is_active)
+
+    def test_json_patch_only_product_change_saves(self):
+        # Reproduces editing ONLY the linked product (no other field touched)
+        # -- the admin panel's ProductSearchSelect keeps its own React state
+        # outside react-hook-form, so a product-only change may not mark the
+        # form "dirty" and could leave the submit button disabled client-side.
+        # This test isolates whether the *backend* accepts such a request.
+        product = self.make_product(sku="SHOWCASE-PICK", slug="showcase-pick", name="Pickable Product")
+        showcase = HomeShowcase.objects.create(order=1, title="Manual Title", is_active=True)
+        response = self.client.patch(
+            reverse("admin-homepage-showcase-detail", args=[showcase.pk]),
+            {
+                "order": showcase.order,
+                "product": product.pk,
+                "imageAlt": "",
+                "title": "Manual Title",
+                "description": "",
+                "specs": [],
+                "ctaLabel": "جزئیات را ببینید",
+                "ctaUrl": "",
+                "theme": "light",
+                "isActive": True,
+            },
+            format="json",
+            HTTP_X_FORWARDED_PROTO="https",
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        showcase.refresh_from_db()
+        self.assertEqual(showcase.product_id, product.pk)
+
     def test_linked_product_autofills_title_image_link(self):
         product = self.make_product(sku="SHOWCASE-01", slug="showcase-product", name="Showcase Product")
         showcase = HomeShowcase.objects.create(order=1, product=product, is_active=True)
