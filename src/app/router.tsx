@@ -23,6 +23,7 @@ import CategoriesPage from "@/pages/CategoriesPage";
 import BlogListPage from "@/pages/BlogListPage";
 import BlogPostPage from "@/pages/BlogPostPage";
 import AboutPage from "@/pages/AboutPage";
+import FaqPage from "@/pages/FaqPage";
 
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
       { path: "blog", element: <BlogListPage /> },
       { path: "blog/:slug", element: <BlogPostPage /> },
       { path: "about", element: <AboutPage /> },
+      { path: "faq", element: <FaqPage /> },
       { path: "contact", element: withSuspense(<ContactPage />) },
       { path: "search", element: withSuspense(<SearchPage />) },
       { path: "auth", element: withSuspense(<AuthPage />) },

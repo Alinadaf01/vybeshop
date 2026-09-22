@@ -5,6 +5,7 @@ import { QueryClient, dehydrate, type DehydratedState } from "@tanstack/react-qu
 import { PrerenderLayout } from "@/app/PrerenderLayout";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
+import FaqPage from "@/pages/FaqPage";
 import CatalogPage from "@/pages/CatalogPage";
 import CategoriesPage from "@/pages/CategoriesPage";
 import HomePage from "@/pages/HomePage";
@@ -17,6 +18,7 @@ export { listAllRoutes };
 const BODY_PAGES: Record<string, () => ReactElement> = {
   "/": HomePage,
   "/about": AboutPage,
+  "/faq": FaqPage,
   "/contact": ContactPage,
   "/catalog": CatalogPage,
   "/categories": CategoriesPage,

@@ -12,6 +12,7 @@ import { blogPosts } from "@/data/blog";
 import { homeContent } from "@/content/home";
 import { aboutContent } from "@/content/about";
 import { contactContent } from "@/content/contact";
+import { faqContent } from "@/content/faq";
 import { categoriesContent } from "@/content/categories";
 import { catalogContent } from "@/content/catalog";
 import { blogListContent } from "@/content/blog";
@@ -64,6 +65,9 @@ export function getRouteHead(path: string): RouteHead | null {
   }
   if (path === "/contact") {
     return { title: contactContent.seo.title, description: contactContent.seo.description, path, image: DEFAULT_OG_IMAGE, type: "website" };
+  }
+  if (path === "/faq") {
+    return { title: faqContent.seo.title, description: faqContent.seo.description, path, image: DEFAULT_OG_IMAGE, type: "website" };
   }
   if (path === "/categories") {
     return { title: categoriesContent.seo.title, description: categoriesContent.seo.description, path, image: DEFAULT_OG_IMAGE, type: "website" };
@@ -119,6 +123,7 @@ export function listAllRoutes(): string[] {
     // "/catalog" -- section disabled site-wide, see router.tsx.
     "/blog",
     "/about",
+    "/faq",
     "/contact",
     ...products.map((p) => `/products/${p.slug}`),
     ...blogPosts.map((p) => `/blog/${p.slug}`),
