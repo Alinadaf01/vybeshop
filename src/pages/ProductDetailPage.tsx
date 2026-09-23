@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProduct, getCategories, addCartItem } from "@/lib/api";
+import { getProduct, getCategories, addCartItem, getSiteSettings } from "@/lib/api";
 import { useToast } from "@/lib/useToast";
 import { useFavoriteToggle } from "@/lib/useFavoriteToggle";
 import { getProductsByCategory } from "@/data/products";
@@ -15,7 +15,7 @@ import { Rating } from "@/components/ui/Rating";
 import { SpecTable } from "@/components/product/SpecTable";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductCard } from "@/components/product/ProductCard";
-import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { Image } from "@/components/ui/Image";
 import { PageLoadingFallback } from "@/pages/PageLoadingFallback";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { Seo } from "@/components/seo/Seo";
@@ -48,6 +48,13 @@ export default function ProductDetailPage() {
   // Query dedupes/caches by key, so this is free if any of those already
   // fetched it this session, not a second real network round-trip.
   const { data: categoriesData } = useQuery({ queryKey: ["categories"], queryFn: () => getCategories() });
+  // Same ["site-settings"] query key as Footer/ContactPage -- feeds the
+  // Instagram-promo banner below with the real, admin-configured link.
+  const { data: settings } = useQuery({ queryKey: ["site-settings"], queryFn: getSiteSettings });
+  const rawInstagramUrl = settings?.socialLinks.find((link) => link.platform.toUpperCase() === "INSTAGRAM")?.url;
+  // "#" is the dev-only placeholder used by src/data/siteSettings.ts's mock
+  // fallback -- treat it the same as unset rather than rendering a dead link.
+  const instagramUrl = rawInstagramUrl && rawInstagramUrl !== "#" ? rawInstagramUrl : undefined;
 
   const addToCartMutation = useMutation({
     mutationFn: addCartItem,
@@ -282,29 +289,27 @@ export default function ProductDetailPage() {
           </div>
         </section>
 
-        <section className="mb-14 grid grid-cols-1 gap-8 rounded-xl bg-graphite p-6 text-fog-white md:mb-20 md:p-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-          {/* «ماکرو خطوط لایه‌ای» با وجود نامش یک تصویرسازی کارتونی سبز با
-          لوگوی «vybe» روی آن است — گرافیک آماده دیگری از همان دسته
-          (FIX-TASK.md دور دوم) — تا نسخه واقعی برسد جای‌نگهدار می‌ماند. */}
-          <ImagePlaceholder
-            caption={c.howItsMade.macroImageAlt}
-            dark
-            className="h-[280px] w-full rounded-lg border border-edge"
-          />
-          <div className="flex flex-col gap-4">
-            <p dir="ltr" className="m-0 font-mono text-micro tracking-[0.08em] text-titanium">
-              {c.howItsMade.kicker}
-            </p>
-            <h2 className="m-0 text-h2 font-semibold">{c.howItsMade.heading}</h2>
-            <p className="m-0 text-body-large leading-[1.7] text-silver [text-wrap:pretty]">{c.howItsMade.body}</p>
-            <Link
-              to="/blog/blog-2"
-              className="self-start border-b border-titanium pb-1 text-body font-medium text-fog-white no-underline transition-colors duration-fast hover:border-cyan"
-            >
-              {c.howItsMade.linkLabel}
-            </Link>
-          </div>
-        </section>
+        {/* بنر تبلیغ اینستاگرام -- خودِ عکس شامل متن و آدرس کامل است، پس
+        صفحه فقط لینک را دور آن می‌پیچد. اگر لینک اینستاگرام در تنظیمات
+        سایت خالی باشد، کل بنر مخفی می‌شود (مثل بقیه بخش‌های شبکه اجتماعی
+        در فوتر). */}
+        {instagramUrl && (
+          <a
+            href={instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={c.instagramPromo.alt}
+            className="mb-14 block overflow-hidden rounded-xl md:mb-20"
+          >
+            <Image
+              src="/images/marketing/instagram-promo.jpg"
+              alt={c.instagramPromo.alt}
+              width={1672}
+              height={940}
+              className="w-full object-cover transition-transform duration-slow hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100"
+            />
+          </a>
+        )}
 
         <section id="reviews" className="grid grid-cols-1 gap-10 border-t border-gray-100 py-14 md:py-20 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-16">
           <div className="flex flex-col gap-4 lg:sticky lg:top-[104px] lg:self-start">

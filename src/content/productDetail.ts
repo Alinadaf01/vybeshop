@@ -32,12 +32,11 @@ export const productDetailContent = {
     kicker: "TECHNICAL SPEC",
     labels: { sku: "کد مدل", dimensions: "ابعاد", weight: "وزن", material: "متریال", category: "دسته‌بندی" },
   },
-  howItsMade: {
-    kicker: "HOW IT IS MADE",
-    heading: "خط لایه را پنهان نمی‌کنیم",
-    body: "هر قطعه در کارگاه خودمان چاپ، پخ‌زنی و بازرسی می‌شود. رد ساخت روی سطح می‌ماند؛ این بخشی از شکل محصول است، نه نقص آن.",
-    macroImageAlt: "MACRO · LAYER LINES 0.2 MM",
-    linkLabel: "فرایند تولید",
+  // Promo banner already has all its text baked into the image itself
+  // (public/images/marketing/instagram-promo.jpg) -- this is only the alt
+  // text / accessible label, not rendered as visible page copy.
+  instagramPromo: {
+    alt: "ما را در اینستاگرام دنبال کنید — برای دیدن محصولات، ایده‌ها و محتوای بیشتر",
   },
   reviews: {
     heading: "دیدگاه‌ها",
