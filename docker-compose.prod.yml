@@ -120,6 +120,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./storefront/dist:/var/www/storefront:ro
       - ./admin/dist:/var/www/admin:ro
       - static:/var/www/static:ro
       - media:/var/www/media:ro
